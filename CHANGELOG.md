@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.6.0
+
+- Entity-Erkennung der Steuerung gegen die aktuelle `greghesp/ha-bambulab`-Struktur neu aufgebaut: `button`, `select`, `number`, `fan`, `light` und `switch` werden domain- und translation-key-genau zugeordnet.
+- Schreibschutz/Hybrid-Modus wird erkannt und mit der offiziellen Plugin-Erklärung angezeigt; wenn die Integration nur Licht freigibt, zeigt das Dashboard keine erfundenen Regler.
+- Aktives Filament (`active_tray`, Tray/ExternalSpool-Fallback) wird jetzt tatsächlich im Druckstatus gerendert, inklusive Farbe und Restwert, sofern gemeldet.
+- Druckerbilder verwenden ausschließlich proportionserhaltende `max-width/max-height`-Skalierung.
+- X2D-Kamera erhält Diagnose mit Entity, HA-Status, Token und More-Info-Link; das rote Ausrufezeichen ist der Fallback der Integration bei fehlendem nutzbaren RTSP-Endpunkt.
+- Wartungsquellen sind anklickbar und öffnen ein responsives Popup mit direktem Link auf die offiziellen Bambu-PDFs.
+- Gesamtlaufzeit wird ausschließlich aus `total_usage_hours` gelesen; letzter gültiger Gesamtwert wird lokal zwischengespeichert, damit Offline-Drucker nicht auf die letzte Druckdauer zurückfallen.
+
 ## 1.5.0
 
 - Steuer-Entity-Erkennung auf kompletten Printer-Gerätebaum erweitert.

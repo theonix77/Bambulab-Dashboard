@@ -1,4 +1,4 @@
-# Validierung v1.5.0
+# Validierung v1.6.0
 
 Statisch/automatisiert geprüft:
 

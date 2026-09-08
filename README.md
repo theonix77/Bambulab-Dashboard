@@ -1,141 +1,121 @@
 # Bambu Lab Dashboard for Home Assistant
 
-Ein eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt die Daten und Steuer-Entitäten der Home-Assistant-Integration [greghesp/ha-bambulab](https://github.com/greghesp/ha-bambulab). Die zusätzlichen Bambu-Lovelace-Karten sind **keine Pflicht**.
+Eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt ausschließlich die Geräte, Entitäten und Services der Home-Assistant-Integration [greghesp/ha-bambulab](https://github.com/greghesp/ha-bambulab). Zusätzliche Bambu-Lovelace-Karten sind nicht erforderlich.
 
-## Voraussetzungen
+## Wichtig: Schreibzugriffe und „nur Licht geht“
 
-- Home Assistant
-- HACS
-- [greghesp/ha-bambulab](https://github.com/greghesp/ha-bambulab)
-- mindestens ein dort eingerichteter Bambu-Lab-Drucker
+`greghesp/ha-bambulab` dokumentiert selbst eine Firmware-/Autorisierungsbeschränkung von Bambu Lab: Lesefunktionen bleiben erhalten, aber im Cloud-/Hybrid-Betrieb können die meisten Schreibfunktionen fehlen. Für ältere Hybrid-Firmwares nennt die Integration ausdrücklich den Fall, dass **nur das Licht steuerbar bleibt**. Für volle Schreibzugriffe verlangt die Integration LAN Mode plus Developer LAN Mode. Das Dashboard kann diese Sperre nicht umgehen und zeigt sie ab v1.6.0 direkt im Steuerbereich an.
 
-Das Dashboard stellt **keine eigene Verbindung zu Bambu Cloud/LAN oder MQTT her**. Verbindung, Sensoren, Kamera, AMS und Steuerbefehle kommen aus `greghesp/ha-bambulab`.
+Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 
-## Installation über HACS
+## Installation
 
-1. HACS öffnen → **Dashboard**.
-2. Oben rechts **⋮ → Benutzerdefinierte Repositories**.
-3. Repository eintragen: [theonix77/Bambulab-Dashboard](https://github.com/theonix77/Bambulab-Dashboard)
-4. Typ **Dashboard** wählen.
-5. **Bambu Lab Dashboard** installieren.
-6. Browser mit **Strg+F5** neu laden.
-
-HACS registriert normalerweise automatisch:
-
-```text
-/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js
-```
-
-Typ: **JavaScript-Modul**.
-
-Danach im Dashboard **Karte hinzufügen → Bambu Lab Dashboard** wählen oder manuell:
+1. HACS → Dashboard → Benutzerdefinierte Repositories.
+2. `https://github.com/theonix77/Bambulab-Dashboard` als Typ **Dashboard** hinzufügen.
+3. Installieren und Browser mit `Strg+F5` neu laden.
+4. Karte hinzufügen oder YAML verwenden:
 
 ```yaml
 type: custom:bambu-lab-dashboard
 ```
 
-## Was v1.5.0 kann
+## Funktionen in v1.6.0
 
-- mehrere Drucker automatisch erkennen und gleichzeitig in einer Übersicht anzeigen
-- Reihenfolge und Anzeigename pro Drucker ändern
-- responsive Desktop-, Tablet- und Mobilansicht
-- Dark, Light oder automatische Anpassung an das Home-Assistant-Theme
-- Status, Fortschritt, Restzeit, Layer, Temperaturen, WLAN und Druckinformationen anzeigen
-- aktuelles Druckbild/Cover in der Detailansicht groß darstellen, wenn die Bambu-Integration es bereitstellt
-- Kamera anzeigen
-- AMS dem jeweiligen Drucker automatisch oder manuell zuordnen
-- AMS-Slots anklickbar machen und Slot-/Spulendetails anzeigen
-- Pause, Fortsetzen, Stop, Licht und weitere von der Integration vorhandene Buttons nutzen
-- Solltemperaturen über vorhandene `number`-Entitäten ändern
-- Lüfter über vorhandene `fan`-Entitäten steuern
-- Druckgeschwindigkeit und weitere vorhandene `select`-Entitäten bedienen
-- externe Leistungs- und Energiesensoren frei aus allen `sensor.*`-Entitäten auswählen
-- Strompreis/Kosten anzeigen
-- Gesamtlaufzeit aus `total_usage_hours` unter Beachtung der von Home Assistant gelieferten Zeiteinheit darstellen
-- optionale Wartungsintervalle pro Drucker anzeigen
+- Mehrere Bambu-Drucker automatisch erkennen.
+- Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
+- Druckerbilder ausschließlich proportional skalieren (`object-fit: contain`, keine Verzerrung).
+- Dark / Light / automatisch nach Home Assistant.
+- Druckbild/Cover groß in der Detailansicht.
+- Kamera mit Diagnose der tatsächlichen `camera.*`-Entity.
+- AMS und einzelne Slots/Spulen mit Detailansicht.
+- Aktives Filament aus `active_tray` bzw. aktivem Tray/ExternalSpool, inklusive Farbe und Restwert, sofern die Integration diese Daten meldet.
+- Echte Steuerung über die von `ha-bambulab` bereitgestellten Domains:
+  - `button`: Pause, Fortsetzen, Stop, Buzzer
+  - `select`: Druckgeschwindigkeit (`printing_speed`), ggf. Airduct-Modus
+  - `number`: Solltemperaturen Düse/Bett/Kammer
+  - `fan`: Bauteil-, Aux-, Kammer- und weitere Lüfter
+  - `light`: Kammerlicht
+  - `switch`: Kamera-/Bildmodus und Hinweistöne, sofern vorhanden
+- Externe Smart-Steckdose als `switch.*` pro Drucker, inklusive EIN/AUS und Sicherheitsabfrage beim Ausschalten während eines Drucks.
+- Leistungs- und Energiesensoren frei zuordnen.
+- Wartungsplan pro Drucker mit quittierbaren Aufgaben und Wartungsbuch.
+- Offizielle Wartungsquelle pro Aufgabe anklickbar; responsive Popup-Ansicht mit direktem Original-Link.
+
+## Steuerung: genaue Zuordnung zum offiziellen Plugin
+
+v1.6.0 ordnet Steuerungen nicht mehr anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
+
+| Funktion | `ha-bambulab` Entity |
+|---|---|
+| Pause | `button` / `pause` |
+| Fortsetzen | `button` / `resume` |
+| Stop | `button` / `stop` |
+| Druckgeschwindigkeit | `select` / `printing_speed` |
+| Düse Soll | `number` / `target_nozzle_temperature` |
+| Bett Soll | `number` / `target_bed_temperature` |
+| Kammer Soll | `number` / `target_chamber_temperature` |
+| Bauteillüfter | `fan` / `cooling_fan` |
+| Aux-Lüfter | `fan` / `aux_fan` |
+| Kammerlüfter | `fan` / `chamber_fan` |
+| Licht | `light` / `chamber_light` |
+| Airduct-Modus | `select` / `airduct_mode` |
+
+Wenn diese Entities im Plugin wegen Firmware-/Hybrid-Beschränkung nicht erzeugt werden, kann das Dashboard sie nicht schalten. Stattdessen erscheint ein Diagnosehinweis mit `hybrid_mode_blocks_control`, `developer_lan_mode` und `mqtt_encryption`.
+
+## Kamera / X2D
+
+Die X2D-Kamera wird von `ha-bambulab` als RTSP-fähige `camera.*`-Entity bereitgestellt. Das Dashboard verwendet den Home-Assistant-Kamera-Proxy und zeigt zusätzlich Entity, HA-Status und Tokenstatus an. Das **schwarze Bild mit rotem Ausrufezeichen** stammt aus der Integration selbst: `ha-bambulab` erzeugt dieses Platzhalterbild, wenn kein nutzbarer RTSP-Endpunkt aufgebaut werden kann. In diesem Fall ist nicht die Dashboard-Darstellung die Ursache. Über „In Home Assistant öffnen“ lässt sich dieselbe Kameraentity direkt prüfen.
 
 ## Druckerbilder
 
-Die Karte verwendet für Modellbilder **dieselbe Upstream-Bildquelle wie die Bambu-Karten** aus [greghesp/ha-bambulab-cards](https://github.com/greghesp/ha-bambulab-cards). Bilder werden mit `object-fit: contain` dargestellt und dadurch nicht gestaucht.
+Für Modelle mit Bild im Projekt `greghesp/ha-bambulab-cards` wird diese Upstream-Bildquelle verwendet. Die Darstellung erfolgt immer mit proportionaler Maximalgröße statt erzwungener Breite/Höhe.
 
-Wichtig zum **A2L**: Das Upstream-Kartenprojekt führt den A2L als Modell, stellt derzeit aber kein eigenständiges korrektes `A2L.png` bereit. Das Dashboard ersetzt den A2L deshalb **nicht** durch ein falsches A1-Bild. Solange upstream kein korrektes A2L-Modellbild bereitstellt, erscheint der neutrale Drucker-Fallback.
+Für den A2L existiert im aktuellen `ha-bambulab-cards`-Repository weiterhin kein eigenes korrektes A2L-PNG. Das Dashboard verwendet deshalb keinen falschen A1-Ersatz. Als Fallback wird ein A2L-Produktbild aus einer offiziellen Bambu-Lab-Veröffentlichung verwendet.
 
-## Steuerung
+## Gesamtlaufzeit
 
-Das Dashboard steuert nur Entitäten, die `greghesp/ha-bambulab` tatsächlich in deiner Home-Assistant-Instanz bereitstellt. Die Integration erzeugt unter anderem je nach Drucker/Firmware:
+Die Gesamtlaufzeit wird ausschließlich aus der Bambu-Entity `total_usage_hours` gelesen. Sie wird **nicht** aus der letzten Druckdauer berechnet. Wenn ein Drucker offline ist und die Entity `unavailable` wird, zeigt das Dashboard den zuletzt tatsächlich von `total_usage_hours` gemeldeten Wert aus dem lokalen Cache mit Kennzeichnung „zuletzt gemeldet“.
 
-- `button`: Pause, Resume, Stop, Refresh und teilweise Buzzer
-- `select`: Druckgeschwindigkeit, teilweise Airduct-Modus
-- `number`: Zieltemperatur Düse, Bett und bei unterstützten Geräten Kammer
-- `fan`: Bauteil-, Aux-, Kammer- und weitere Lüfter
-- `light`: Kammerlicht
+## Wartung
 
-Bei Firmware mit MQTT-Signatur oder blockiertem Hybrid-Modus kann die Bambu-Integration Schreibzugriffe absichtlich nicht anbieten. Das Dashboard umgeht diese Sperren nicht.
+Für den X2D basiert der Plan auf dem offiziellen **Bambu Lab X2D 3D Printing User Manual, Kapitel 11**. Dort sind u. a. folgende Intervalle angegeben:
 
-## AMS und Spulendetails
+- Build Plate: 1 Woche
+- Live-View-Kamera: 1 Monat
+- Kammerboden/Innenraum: 1 Monat
+- X-/Y-Achsen: 1 Monat
+- Z-Achse: 3 Monate
+- Luftfilter: 3 Monate
+- Toolhead-Kamera / Extruder / Hotend: 1 Monat
 
-AMS-Geräte werden zuerst über Home Assistants Gerätehierarchie (`via_device_id`) dem Drucker zugeordnet. Falls das bei deiner Installation nicht eindeutig ist, lässt sich die AMS-Zuordnung im Karteneditor manuell setzen.
+Bei hoher Nutzung (>8 h/Tag im Mittel bzw. lange High-Temperature-/Engineering-Filament-Drucke) empfiehlt Bambu eine höhere Wartungsfrequenz.
 
-Die Slots werden anhand der Bambu-`tray`-Entitäten und deren `slot`-Attribut erkannt. Ein Klick auf einen Slot öffnet eine Detailansicht mit den von Home Assistant gelieferten Attributen und zusätzlich einen Link zur normalen Home-Assistant-Mehr-Info-Ansicht der Tray-Entity.
+Offizielles X2D-Handbuch: https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf
 
-## Energie / Smart-Steckdose
+Für A2L werden nur die Wartungsbereiche angezeigt, die im offiziellen Quick Start genannt werden. Wo Bambu dort kein fixes Kalenderintervall angibt, erfindet das Dashboard keines.
 
-Im Karteneditor werden **alle `sensor.*`-Entitäten** in einer direkten Auswahlliste mit Gerätename, Friendly Name, Entity-ID und Einheit angeboten. Damit kann auch eine Smart-Steckdose verwendet werden, deren Sensor nicht sauber als `device_class: power` oder `energy` klassifiziert ist.
+Offizieller A2L Quick Start: https://csm.bblcdn.com/hub/4efdb4e04ab34111a8da112e81028430.pdf
 
-Pro Drucker können zugeordnet werden:
+Quittierte Wartungen werden mit Zeitstempel im Wartungsbuch gespeichert. Das Wartungsbuch liegt aktuell im Browser-`localStorage` und ist damit browser-/gerätebezogen.
 
-- Leistungssensor, typischerweise W/kW
-- Energiesensor, typischerweise Wh/kWh
+## Smart-Steckdose / Energie
 
-Das Dashboard erfindet keine Verbrauchswerte.
+Pro Drucker können im Karteneditor zugeordnet werden:
 
-## Design
+- Smart-Steckdose: `switch.*`
+- Leistung: beliebige `sensor.*`-Entity
+- Energie: beliebige `sensor.*`-Entity
 
-Im visuellen Editor gibt es:
+Beim Ausschalten der Steckdose während eines aktiven Drucks verlangt das Dashboard eine zusätzliche Bestätigung.
 
-- **Automatisch** – folgt dem Home-Assistant-Theme
-- **Dunkel**
-- **Hell**
-
-Die Karte nutzt die von Home Assistant zugewiesene Section-Breite vollständig. Die Section selbst wird weiterhin von Home Assistant konfiguriert.
-
-## Mobil / Responsive
-
-Die Druckerbilder behalten ihre Proportionen. Auf kleinen Breiten werden Kennzahlen und Navigation angepasst, ohne das Bild zu verzerren. v1.5.0 bewahrt außerdem die Scrollposition bei Live-Updates, damit Fortschrittsänderungen nicht mehr bei jedem Home-Assistant-State-Update nach oben springen sollen.
-
-## Updates
-
-Nach einem Commit/Push in dein Repository:
-
-1. HACS → **Bambu Lab Dashboard**
-2. **⋮ → Neu herunterladen**
-3. anschließend **Strg+F5**
-
-## Fehlerbehebung
-
-Siehe [docs/HELP.md](docs/HELP.md) und [docs/INSTALLATION.md](docs/INSTALLATION.md).
-
-## Technische Validierung
+## Validierung
 
 ```bash
 npm run validate
 ```
 
-Die mitgelieferten Tests prüfen Syntax, Custom-Element-Registrierung, Discovery und wichtige statische Features. Ein echter Ende-zu-Ende-Test mit allen Bambu-Firmwareständen ist nur in einer realen Home-Assistant-Installation möglich.
+Die Tests prüfen Syntax, Discovery, Entity-Zuordnung, Steuerungs-Rendering, Hybrid-Warnung, aktives Filament und Custom-Element-Registrierung. Ein echter End-to-End-Schaltversuch am physischen Drucker kann nur in der jeweiligen Home-Assistant-Installation erfolgen.
 
 ## Lizenz
 
 MIT. Bambu Lab ist eine Marke des jeweiligen Rechteinhabers. Dieses Community-Projekt ist nicht offiziell mit Bambu Lab verbunden.
-
-
-## Steuerung in v1.5.0
-
-Das Dashboard nutzt die von `greghesp/ha-bambulab` bereitgestellten steuerbaren Entitäten aus dem kompletten Gerätebaum des Druckers (inklusive Child Devices): Buttons für Pause/Fortsetzen/Stop, `select` für Druckgeschwindigkeit und Luftkanal-Modus, `number` für Solltemperaturen, `fan` für Lüfter, `light` und vorhandene Bambu-Schalter. Zusätzlich kann pro Drucker eine externe `switch.*`-Entity als Smart-Steckdose zugeordnet werden. Beim Ausschalten während eines laufenden Drucks erscheint eine Sicherheitsabfrage.
-
-## Wartungsbuch
-
-Für X2D sind die im offiziellen X2D User Manual genannten regelmäßigen Wartungen mit Kalenderintervallen hinterlegt. A2L zeigt die im offiziellen Quick Start genannten Wartungsbereiche; dort nennt Bambu im Quick Start keine festen Zeitintervalle, daher erfindet das Dashboard keine. Quittierte Wartungen verschwinden als fällig und werden im Wartungsbuch protokolliert. Das Wartungsbuch wird im Browser (`localStorage`) gespeichert; es ist deshalb browser-/gerätelokal.
-
-## Aktives Filament
-
-Wenn `active_tray` oder eine als aktiv markierte Tray-/External-Spool-Entity vorhanden ist, zeigt die Übersicht und Detailansicht das aktuell verwendete Filament samt Farbe an.

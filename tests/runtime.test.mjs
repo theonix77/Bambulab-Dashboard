@@ -19,6 +19,8 @@ card._hass={themes:{darkMode:true},entities:{
  'button.p_pause':{entity_id:'button.p_pause',device_id:'p',translation_key:'pause',platform:'bambu_lab'},
  'number.p_nozzle':{entity_id:'number.p_nozzle',device_id:'p',translation_key:'target_nozzle_temperature',platform:'bambu_lab'},
  'fan.p_cooling':{entity_id:'fan.p_cooling',device_id:'p',translation_key:'cooling_fan',platform:'bambu_lab'},
+ 'binary_sensor.p_hybrid':{entity_id:'binary_sensor.p_hybrid',device_id:'p',translation_key:'hybrid_mode_blocks_control',platform:'bambu_lab'},
+ 'sensor.p_active_tray':{entity_id:'sensor.p_active_tray',device_id:'p',translation_key:'active_tray',platform:'bambu_lab'},
 },states:{
  'sensor.p_status':{entity_id:'sensor.p_status',state:'running',attributes:{}},
  'sensor.p_progress':{entity_id:'sensor.p_progress',state:'42',attributes:{unit_of_measurement:'%'}},
@@ -27,11 +29,14 @@ card._hass={themes:{darkMode:true},entities:{
  'button.p_pause':{entity_id:'button.p_pause',state:'unknown',attributes:{}},
  'number.p_nozzle':{entity_id:'number.p_nozzle',state:'220',attributes:{min:0,max:320,step:1}},
  'fan.p_cooling':{entity_id:'fan.p_cooling',state:'on',attributes:{percentage:50}},
+ 'binary_sensor.p_hybrid':{entity_id:'binary_sensor.p_hybrid',state:'on',attributes:{}},
+ 'sensor.p_active_tray':{entity_id:'sensor.p_active_tray',state:'Bambu PETG',attributes:{name:'Bambu PETG',type:'PETG',color:'#112233',remain:66}},
 }};
 assert.equal(card._isPrinterActive(printer),true);
 assert.equal(card._formatDurationState(card._hass.states['sensor.p_usage']),'1 h 30 min');
 assert.equal(card._themeClass(),'theme-dark');
 card._config.theme='light'; assert.equal(card._themeClass(),'theme-light');
 assert.match(card._renderPrinterOverviewCard(printer),/42<span>%<\/span>/);
-const controls=card._renderControls(printer); assert.match(controls,/Pause/); assert.match(controls,/Düse Soll/); assert.match(controls,/Bauteillüfter/); assert.match(controls,/Druckgeschwindigkeit/);
+const controls=card._renderControls(printer); assert.match(controls,/Pause/); assert.match(controls,/Düse Soll/); assert.match(controls,/Bauteillüfter/); assert.match(controls,/Druckgeschwindigkeit/); assert.match(controls,/Schreibzugriffe sind für diesen Drucker eingeschränkt/);
+assert.match(card._renderActiveFilament(printer),/Bambu PETG/); assert.match(card._renderActiveFilament(printer),/66%/);
 console.log('runtime tests: ok');

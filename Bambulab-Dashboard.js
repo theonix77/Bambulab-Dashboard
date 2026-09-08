@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.5.0 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.6.0 | standalone HACS resource */
 
-const VERSION = "1.5.0";
+const VERSION = "1.6.0";
 const DOMAIN = "bambu_lab";
 
 
@@ -102,6 +102,9 @@ const ENTITY_KEYS = {
   imageCameraSwitch: ["imagecamera"],
   promptSound: ["prompt_sound"],
   activeTray: ["active_tray"],
+  hybridModeBlocksControl: ["hybrid_mode_blocks_control"],
+  developerLanMode: ["developer_lan_mode"],
+  mqttEncryption: ["mqtt_encryption"],
 };
 
 const ENTITY_OVERRIDE_FIELDS = Object.freeze({
@@ -532,7 +535,7 @@ const styles = `
   .hero-body { grid-template-columns:minmax(180px,.9fr) minmax(160px,.72fr) minmax(230px,1.18fr); }
   .printer-visual { position:relative; min-height:245px; border-radius:18px; overflow:hidden; display:grid; place-items:center; background:radial-gradient(circle at 50% 45%, rgba(80,217,38,.09), rgba(255,255,255,.018) 46%, rgba(0,0,0,.18) 100%); border:1px solid rgba(255,255,255,.045); }
   .printer-visual::before { content:""; position:absolute; left:12%; right:12%; bottom:12%; height:18%; border-radius:50%; background:rgba(80,217,38,.08); filter:blur(24px); }
-  .printer-product-image { position:relative; z-index:1; width:92%; height:225px; object-fit:contain; filter:drop-shadow(0 22px 28px rgba(0,0,0,.58)); }
+  .printer-product-image { position:relative; z-index:1; width:auto; height:auto; max-width:92%; max-height:225px; object-fit:contain; object-position:center; filter:drop-shadow(0 22px 28px rgba(0,0,0,.58)); }
   .printer-product-fallback { position:relative; z-index:1; display:none; width:100%; height:210px; place-items:center; color:rgba(80,217,38,.55); }
   .printer-product-fallback ha-icon { --mdc-icon-size:96px; }
   .printer-model-chip { position:absolute; z-index:2; left:10px; bottom:10px; display:inline-flex; align-items:center; gap:6px; max-width:calc(100% - 20px); padding:6px 9px; border-radius:999px; border:1px solid rgba(80,217,38,.24); background:rgba(4,10,7,.76); backdrop-filter:blur(9px); color:#c9ffc0; font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
@@ -564,7 +567,7 @@ const styles = `
   .active-filament{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--bd-muted);font-size:12px}.active-filament strong{color:var(--bd-text)}.filament-dot{--filament:#8e9a92;width:14px;height:14px;border-radius:50%;background:var(--filament);border:2px solid rgba(255,255,255,.25);box-shadow:0 0 10px color-mix(in srgb,var(--filament) 45%,transparent);flex:0 0 auto}.active-filament.muted{opacity:.7}
   .number-set-row{display:grid;grid-template-columns:1fr auto;gap:7px}.number-set-row button,.maint-actions button{border:1px solid var(--bd-green-dim);background:rgba(80,217,38,.08);color:var(--bd-text);border-radius:9px;padding:8px 10px;cursor:pointer}.toggle-row{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bd-border);background:var(--bd-card);color:var(--bd-text);border-radius:11px;padding:10px;cursor:pointer}.toggle-row.on strong,.plug-state.on{color:var(--bd-green)}
   .smart-plug{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--bd-border);border-radius:13px;padding:12px;margin-bottom:12px}.smart-plug small,.smart-plug strong,.smart-plug span{display:block}.plug-state{margin-top:4px;font-size:11px;font-weight:800;color:var(--bd-muted)}
-  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}
+  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}.control-warning{margin:0 17px 14px;padding:12px 13px;border:1px solid rgba(241,162,27,.45);background:rgba(241,162,27,.08);border-radius:13px;font-size:11px;line-height:1.5}.control-warning strong{display:block;margin-bottom:4px}.control-warning a,.maint-source-link,.maintenance-modal a{color:var(--bd-green);font-weight:800;text-decoration:none}.capability-list{display:grid;gap:5px;margin-top:8px}.capability-row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--bd-border);padding-top:5px}.capability-row code{font-size:9px;overflow-wrap:anywhere;text-align:right}.maint-source-link{background:none;border:0;padding:0;cursor:pointer;font:inherit}.maintenance-modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.maintenance-modal{width:min(720px,96vw);max-height:min(86vh,820px);overflow:auto;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:20px}.maintenance-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.maintenance-modal h3{margin:4px 0 10px;font-size:22px}.maintenance-modal p{line-height:1.6;color:var(--bd-muted)}.maintenance-modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.maintenance-modal-actions a,.maintenance-modal-actions button{border:1px solid var(--bd-border);border-radius:10px;padding:10px 12px;background:var(--bd-card);color:var(--bd-text);font-weight:800;cursor:pointer}.maintenance-modal-actions a{background:rgba(80,217,38,.10);border-color:rgba(80,217,38,.35)}@media(max-width:600px){.maintenance-modal-backdrop{padding:0}.maintenance-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px;box-sizing:border-box}}
   .shell.theme-light .active-filament strong,.shell.theme-light .toggle-row,.shell.theme-light .number-set-row button,.shell.theme-light .maint-actions button{color:#102017!important}.shell.theme-light .toggle-row,.shell.theme-light .smart-plug{background:#fff!important;border-color:#c9d8cd!important}
 
   .camera-wrap { position:relative; aspect-ratio:16/9; margin:14px 17px 17px; border-radius:15px; overflow:hidden; background:#030504; border:1px solid rgba(255,255,255,.05); display:grid; place-items:center; }
@@ -711,7 +714,7 @@ const styles = `
     .hero-body { grid-template-columns:1fr; }
     .hero-body .task { grid-column:auto; }
     .printer-visual { min-height:210px; }
-    .printer-product-image { height:190px; }
+    .printer-product-image { width:auto; height:auto; max-height:190px; max-width:92%; }
   }
   @container (max-width: 460px) {
     .workspace-head .header-meta .pill:last-child { display:none; }
@@ -769,7 +772,7 @@ const styles = `
   .fleet-card { overflow:hidden; }
   .fleet-main { display:grid; grid-template-columns:minmax(110px,150px) minmax(0,1fr); gap:16px; align-items:center; margin:14px 0; }
   .fleet-visual { height:136px; min-height:136px; position:relative; overflow:hidden; }
-  .fleet-visual img { width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; object-position:center; display:block; aspect-ratio:auto; }
+  .fleet-visual img { width:auto; height:auto; max-width:94%; max-height:94%; object-fit:contain; object-position:center; display:block; }
   .fleet-fallback { width:100%; height:100%; display:grid; place-items:center; color:rgba(80,217,38,.62); }
   .fleet-fallback ha-icon { --mdc-icon-size:72px; }
   .fleet-progress { align-self:center; min-width:0; overflow:hidden; }
@@ -819,6 +822,7 @@ class BambuLabDashboard extends HTMLElement {
     this._loading = false;
     this._loadError = null;
     this._cameraBust = Date.now();
+    this._maintenanceModalTask = null;
     this._powerSamples = new Map();
     this._lastPowerSampleAt = new Map();
     this._selectedSpoolEntityId = null;
@@ -909,6 +913,63 @@ class BambuLabDashboard extends HTMLElement {
     }
     return [...merged.values()];
   }
+  _findExactEntity(printer, domain, keys) {
+    const wanted = new Set((keys || []).map(normalize));
+    const candidates = this._entityEntries(printer).filter((e) => {
+      if (!e?.entity_id || e.entity_id.split(".")[0] !== domain) return false;
+      const tk = normalize(e.translation_key);
+      const uid = normalize(e.unique_id);
+      const eid = normalize(e.entity_id.split(".")[1]);
+      return [...wanted].some((k) => tk === k || entitySuffixMatches(uid, k) || eid === k || eid.endsWith(`_${k}`));
+    });
+    candidates.sort((a,b) => {
+      const sa = this._hass?.states?.[a.entity_id] ? 1 : 0;
+      const sb = this._hass?.states?.[b.entity_id] ? 1 : 0;
+      return sb-sa;
+    });
+    return candidates[0] || null;
+  }
+
+  _controlEntity(printer, key) {
+    const override = this._configuredEntityId(printer, key);
+    if (override) return { entity_id: override, ...(this._hass?.entities?.[override] || {}) };
+    const spec = {
+      pause:["button",["pause"]], resume:["button",["resume"]], stop:["button",["stop"]],
+      chamberLight:["light",["chamber_light"]],
+      targetNozzleControl:["number",["target_nozzle_temperature"]],
+      targetBedControl:["number",["target_bed_temperature"]],
+      targetChamberControl:["number",["target_chamber_temperature"]],
+      coolingFanControl:["fan",["cooling_fan"]], auxFanControl:["fan",["aux_fan"]],
+      chamberFanControl:["fan",["chamber_fan"]], secondaryAuxFanControl:["fan",["secondary_aux_fan"]],
+      speed:["select",["printing_speed","speed"]], airductMode:["select",["airduct_mode"]],
+      cameraSwitch:["switch",["camera"]], imageCameraSwitch:["switch",["imagecamera"]], promptSound:["switch",["prompt_sound"]],
+      buzzerSilence:["button",["buzzer_silence"]], buzzerFire:["button",["buzzer_fire_alarm"]], buzzerBeep:["button",["buzzer_beeping"]]
+    }[key];
+    return spec ? this._findExactEntity(printer, spec[0], spec[1]) : this._entry(printer,key);
+  }
+
+  _writeRestriction(printer) {
+    const hybrid = this._findExactEntity(printer, "binary_sensor", ["hybrid_mode_blocks_control"]);
+    const dev = this._findExactEntity(printer, "binary_sensor", ["developer_lan_mode"]);
+    const enc = this._findExactEntity(printer, "binary_sensor", ["mqtt_encryption"]);
+    const stateOf=(e)=>normalize(e?.entity_id ? this._hass?.states?.[e.entity_id]?.state : "");
+    const restricted = stateOf(hybrid)==="on" || (stateOf(enc)==="on" && stateOf(dev)!=="on");
+    return { restricted, hybrid, dev, enc, hybridState:stateOf(hybrid), developerState:stateOf(dev), encryptionState:stateOf(enc) };
+  }
+
+  _totalUsageState(printer) {
+    const override=this._configuredEntityId(printer,"totalUsage");
+    const reg=override?{entity_id:override}:this._findExactEntity(printer,"sensor",["total_usage_hours"]);
+    const st=reg?.entity_id?this._hass?.states?.[reg.entity_id]:null;
+    const key=`bambu-dashboard-total-usage:${printer.id}`;
+    if (st && hasMeaningfulValue(st)) {
+      try { localStorage.setItem(key, JSON.stringify({state:st.state,attributes:st.attributes,entity_id:reg.entity_id,ts:Date.now()})); } catch(_) {}
+      return { state:st, entity:reg, cached:false };
+    }
+    try { const c=JSON.parse(localStorage.getItem(key)||"null"); if(c){return {state:{entity_id:c.entity_id,state:c.state,attributes:c.attributes||{}},entity:{entity_id:c.entity_id},cached:true,ts:c.ts};} } catch(_) {}
+    return {state:null,entity:reg,cached:false};
+  }
+
   _configuredEntityId(printer, key) {
     const field = ENTITY_OVERRIDE_FIELDS[key];
     if (!field) return null;
@@ -981,8 +1042,9 @@ class BambuLabDashboard extends HTMLElement {
     this._lastPowerSampleAt.set(printer.id, now);
   }
 
-  _cameraUrl(printer) {
-    const st = this._st(printer, "camera");
+  _cameraUrl(printer, cameraReg = null) {
+    const reg = cameraReg || this._findExactEntity(printer, "camera", ["camera"]) || this._entry(printer, "camera");
+    const st = reg?.entity_id ? this._hass?.states?.[reg.entity_id] || null : null;
     if (!st) return null;
     const entityId = st.entity_id;
     const token = st.attributes?.access_token;
@@ -1045,7 +1107,7 @@ class BambuLabDashboard extends HTMLElement {
     if (!this.shadowRoot) return;
     const scrollState = this._captureScrollState();
     const body = this._renderBody();
-    this.shadowRoot.innerHTML = `<style>${styles}</style>${body}`;
+    this.shadowRoot.innerHTML = `<style>${styles}</style>${body}${this._renderMaintenanceModal()}`;
     this._bindEvents();
     this._restoreScrollState(scrollState);
   }
@@ -1086,7 +1148,7 @@ class BambuLabDashboard extends HTMLElement {
         <div><span>Restzeit</span><strong>${!isPrinting || remaining === null ? "–" : formatDurationMinutes(remaining)}</strong></div>
         <div><span>Düse</span><strong>${this._formatStateWithUnit(nozzle)}</strong></div>
         <div><span>Bett</span><strong>${this._formatStateWithUnit(bed)}</strong></div>
-        <div><span>AMS</span><strong>${amsCount || "–"}</strong></div><div><span>Laufzeit</span><strong>${this._formatDurationState(this._st(printer,"totalUsage"))}</strong></div>
+        <div><span>AMS</span><strong>${amsCount || "–"}</strong></div><div><span>Laufzeit</span><strong>${this._formatDurationState(this._totalUsageState(printer).state)}</strong></div>
       </div>
       <button class="fleet-detail" data-open-printer="${cssEscape(printer.id)}">Details öffnen <ha-icon icon="mdi:arrow-right"></ha-icon></button>
     </article>`;
@@ -1177,7 +1239,7 @@ class BambuLabDashboard extends HTMLElement {
       <div class="hero-body">
         <div class="printer-visual">${productVisual}${cover ? `<img class="print-cover-mini" src="${cover}" alt="Aktueller Druck">` : ""}<div class="printer-model-chip"><ha-icon icon="mdi:printer-3d-nozzle"></ha-icon>${cssEscape(model)}</div></div>
         <div class="progress-wrap"><div class="progress-ring" style="--p:${progress}"><div class="progress-inner"><div class="progress-number">${formatNumber(progress, 0)}<span>%</span></div><div class="status-badge ${statusClass(statusRaw)}"><span class="dot"></span>${cssEscape(status)}</div></div></div></div>
-        <div class="task"><div class="task-name">${cssEscape(task)}</div><div class="task-meta"><span>${cssEscape(this._val(printer, "currentStage", status))}</span></div>
+        <div class="task"><div class="task-name">${cssEscape(task)}</div><div class="task-meta"><span>${cssEscape(this._val(printer, "currentStage", status))}</span></div>${this._renderActiveFilament(printer)}
           <div class="metric-grid">
             <div class="metric"><div class="label">Restzeit</div><div class="value">${remaining === null ? "–" : formatDurationMinutes(remaining)}</div></div>
             <div class="metric"><div class="label">Layer</div><div class="value">${currentLayer === null ? "–" : formatNumber(currentLayer)}${totalLayers === null ? "" : ` / ${formatNumber(totalLayers)}`}</div></div>
@@ -1196,7 +1258,7 @@ class BambuLabDashboard extends HTMLElement {
     const progress = this._isPrinterActive(printer) ? safePercent(this._num(printer, "progress", 0)) : 0;
     const currentLayer = this._num(printer, "currentLayer", null);
     const totalLayers = this._num(printer, "totalLayers", null);
-    return `<section class="panel job-art-panel"><div class="panel-head"><div><div class="eyebrow">Aktueller Druck</div><div class="panel-title">Bauteil / Vorschau</div></div></div><div class="job-art-body"><div class="job-art-image"><img src="${cssEscape(image)}" alt="${cssEscape(task)}"></div><div class="job-art-info"><h3>${cssEscape(task)}</h3><p>${formatNumber(progress,0)} % abgeschlossen${currentLayer === null ? "" : ` · Layer ${formatNumber(currentLayer)}${totalLayers === null ? "" : ` / ${formatNumber(totalLayers)}`}`}</p></div></div></section>`;
+    return `<section class="panel job-art-panel"><div class="panel-head"><div><div class="eyebrow">Aktueller Druck</div><div class="panel-title">Bauteil / Vorschau</div></div></div><div class="job-art-body"><div class="job-art-image"><img src="${cssEscape(image)}" alt="${cssEscape(task)}"></div><div class="job-art-info"><h3>${cssEscape(task)}</h3>${this._renderActiveFilament(printer)}<p>${formatNumber(progress,0)} % abgeschlossen${currentLayer === null ? "" : ` · Layer ${formatNumber(currentLayer)}${totalLayers === null ? "" : ` / ${formatNumber(totalLayers)}`}`}</p></div></div></section>`;
   }
 
   _durationToHours(st) {
@@ -1264,8 +1326,13 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _renderCamera(printer) {
-    const cameraUrl = this._cameraUrl(printer);
-    return `<section class="panel camera-panel"><div class="panel-head"><div><div class="eyebrow">Live Camera</div><div class="panel-title">Kamera</div></div></div><div class="camera-wrap">${cameraUrl ? `<img src="${cameraUrl}" alt="Live-Kamera von ${cssEscape(displayName(printer.device))}">` : `<div class="camera-empty"><ha-icon icon="mdi:cctv-off"></ha-icon>Keine Kamera-Entität verfügbar oder Kamera nicht aktiviert.</div>`}<div class="camera-actions"><button class="icon-btn" data-action="refresh-camera" title="Kamera aktualisieren"><ha-icon icon="mdi:refresh"></ha-icon></button></div></div></section>`;
+    const reg=this._findExactEntity(printer,"camera",["camera"]);
+    const st=reg?.entity_id?this._hass?.states?.[reg.entity_id]:null;
+    const cameraUrl = reg ? this._cameraUrl(printer, reg) : null;
+    const camSwitch=this._controlEntity(printer,"cameraSwitch");
+    const imgSwitch=this._controlEntity(printer,"imageCameraSwitch");
+    const diag=reg?`<div class="control-warning" style="margin-top:0"><strong>Kamera-Diagnose</strong><div class="capability-list"><div class="capability-row"><span>Entity</span><code>${cssEscape(reg.entity_id)}</code></div><div class="capability-row"><span>HA-Status</span><code>${cssEscape(st?.state||"unbekannt")}</code></div><div class="capability-row"><span>Access-Token</span><code>${st?.attributes?.access_token?"vorhanden":"fehlt"}</code></div></div><div style="margin-top:8px"><button class="maint-source-link" data-more-info="${cssEscape(reg.entity_id)}">In Home Assistant öffnen</button></div></div>`:"";
+    return `<section class="panel camera-panel"><div class="panel-head"><div><div class="eyebrow">Live Camera</div><div class="panel-title">Kamera</div></div></div><div class="camera-wrap">${cameraUrl ? `<img src="${cameraUrl}" alt="Live-Kamera von ${cssEscape(displayName(printer.device))}">` : `<div class="camera-empty"><ha-icon icon="mdi:cctv-off"></ha-icon>Keine Kamera-Entität verfügbar oder Kamera nicht aktiviert.</div>`}<div class="camera-actions"><button class="icon-btn" data-action="refresh-camera" title="Kamera aktualisieren"><ha-icon icon="mdi:refresh"></ha-icon></button></div></div>${diag}${(camSwitch||imgSwitch)?`<div class="control-groups" style="padding-top:0">${camSwitch?`<button class="toggle-row ${normalize(this._hass?.states?.[camSwitch.entity_id]?.state)==="on"?"on":""}" data-entity-action="${cssEscape(camSwitch.entity_id)}"><span>Kamera aktiv</span><strong>${normalize(this._hass?.states?.[camSwitch.entity_id]?.state)==="on"?"EIN":"AUS"}</strong></button>`:""}${imgSwitch?`<button class="toggle-row ${normalize(this._hass?.states?.[imgSwitch.entity_id]?.state)==="on"?"on":""}" data-entity-action="${cssEscape(imgSwitch.entity_id)}"><span>Einzelbild-Modus</span><strong>${normalize(this._hass?.states?.[imgSwitch.entity_id]?.state)==="on"?"EIN":"AUS"}</strong></button>`:""}</div>`:""}</section>`;
   }
 
   _renderAMS(printer) {
@@ -1359,22 +1426,17 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _activeFilament(printer) {
-    const active = this._st(printer, "activeTray");
-    if (active && hasMeaningfulValue(active)) {
-      const a = active.attributes || {};
-      return {
-        name: a.name || a.filament_name || a.tray_type || active.state || "Filament",
-        type: a.type || a.tray_type || a.filament_type || "",
-        color: colorFromAttributes(a) || "#8e9a92",
-        source: "active_tray"
-      };
+    const activeReg=this._findExactEntity(printer,"sensor",["active_tray"]);
+    const active=activeReg?.entity_id?this._hass?.states?.[activeReg.entity_id]:null;
+    if (active && hasMeaningfulValue(active) && normalize(active.state)!=="none") {
+      const a=active.attributes||{};
+      return {name:a.name||active.state||"Filament",type:a.type||a.tray_type||"",color:colorFromAttributes(a)||"#8e9a92",remain:a.remain,source:activeReg.entity_id};
     }
-    // Fallback: look for a tray/external-spool entity that explicitly reports active=true.
-    for (const e of [...this._entityEntries(printer), ...(printer.childEntries || [])]) {
-      const st = e?.entity_id ? this._hass.states[e.entity_id] : null;
-      if (!st || st.attributes?.active !== true) continue;
-      const a=st.attributes||{};
-      return { name:a.name||a.filament_name||a.tray_type||st.state||"Filament", type:a.type||a.tray_type||"", color:colorFromAttributes(a)||"#8e9a92", source:e.entity_id };
+    for (const e of this._entityEntries(printer)) {
+      if (!e?.entity_id || !["sensor","binary_sensor"].includes(e.entity_id.split(".")[0])) continue;
+      const st=this._hass?.states?.[e.entity_id]; if(!st) continue; const a=st.attributes||{};
+      const isTray=normalize(e.translation_key)==="tray" || normalize(e.translation_key)==="external_spool" || /tray|external_spool/.test(normalize(e.entity_id));
+      if(isTray && (a.active===true || normalize(a.active)==="true" || normalize(st.state)==="active")) return {name:a.name||st.state||"Filament",type:a.type||a.tray_type||"",color:colorFromAttributes(a)||"#8e9a92",remain:a.remain,source:e.entity_id};
     }
     return null;
   }
@@ -1382,41 +1444,27 @@ class BambuLabDashboard extends HTMLElement {
   _renderActiveFilament(printer) {
     const f=this._activeFilament(printer);
     if (!f) return `<div class="active-filament muted"><span class="filament-dot"></span><span>Aktives Filament nicht gemeldet</span></div>`;
-    return `<div class="active-filament"><span class="filament-dot" style="--filament:${cssEscape(f.color)}"></span><span><strong>${cssEscape(f.name)}</strong>${f.type && f.type!==f.name ? ` · ${cssEscape(f.type)}` : ""}</span></div>`;
+    return `<div class="active-filament"><span class="filament-dot" style="--filament:${cssEscape(f.color)}"></span><span><strong>${cssEscape(f.name)}</strong>${f.type && normalize(f.type)!==normalize(f.name) ? ` · ${cssEscape(f.type)}` : ""}${Number.isFinite(Number(f.remain)) ? ` · ${formatNumber(f.remain)}%` : ""}</span></div>`;
   }
 
   _renderControls(printer) {
-    const byKey=(key)=>this._entry(printer,key);
-    const usable=(reg)=>!!reg?.entity_id;
-    const state=(reg)=>reg?.entity_id ? this._hass.states[reg.entity_id] : null;
-    const domain=(reg)=>reg?.entity_id?.split(".")[0] || "";
-
-    const buttons = [
-      [byKey("pause"),"mdi:pause","Pause",false], [byKey("resume"),"mdi:play","Fortsetzen",false], [byKey("stop"),"mdi:stop","Stop",true],
-      [byKey("chamberLight"),"mdi:lightbulb","Licht",false], [byKey("buzzerSilence"),"mdi:alarm-light-off-outline","Alarm aus",false], [byKey("buzzerBeep"),"mdi:alarm-light-outline","Signalton",false]
-    ].filter(([r])=>usable(r));
-    const switches=[
-      [byKey("cameraSwitch"),"Kamera aktiv"], [byKey("imageCameraSwitch"),"Kamera Einzelbilder"], [byKey("promptSound"),"Hinweistöne"]
-    ].filter(([r])=>usable(r) && domain(r)==="switch");
-    const numbers=[
-      [byKey("targetNozzleControl"),"Düse Soll"],[byKey("targetBedControl"),"Bett Soll"],[byKey("targetChamberControl"),"Kammer Soll"]
-    ].filter(([r])=>usable(r));
-    const fans=[
-      [byKey("coolingFanControl"),"Bauteillüfter"],[byKey("auxFanControl"),"Aux-Lüfter"],[byKey("chamberFanControl"),"Kammerlüfter"],[byKey("secondaryAuxFanControl"),"Aux-Lüfter 2"]
-    ].filter(([r])=>usable(r));
-    const selects=[];
-    const speedOverride=this._configuredEntityId(printer,"speed");
-    const speed=speedOverride?{entity_id:speedOverride}:byKey("speed");
-    if (usable(speed) && domain(speed)==="select") selects.push([speed,"Druckgeschwindigkeit"]);
-    const airduct=byKey("airductMode"); if(usable(airduct) && domain(airduct)==="select") selects.push([airduct,"Luftkanal-Modus"]);
-
+    const ce=(key)=>this._controlEntity(printer,key);
+    const state=(r)=>r?.entity_id?this._hass?.states?.[r.entity_id]:null;
+    const buttons=[[ce("pause"),"mdi:pause","Pause",false],[ce("resume"),"mdi:play","Fortsetzen",false],[ce("stop"),"mdi:stop","Stop",true],[ce("chamberLight"),"mdi:lightbulb","Licht",false],[ce("buzzerSilence"),"mdi:alarm-light-off-outline","Alarm aus",false],[ce("buzzerBeep"),"mdi:alarm-light-outline","Signalton",false]].filter(([r])=>r?.entity_id);
+    const switches=[[ce("cameraSwitch"),"Kamera aktiv"],[ce("imageCameraSwitch"),"Kamera Einzelbilder"],[ce("promptSound"),"Hinweistöne"]].filter(([r])=>r?.entity_id);
+    const numbers=[[ce("targetNozzleControl"),"Düse Soll"],[ce("targetBedControl"),"Bett Soll"],[ce("targetChamberControl"),"Kammer Soll"]].filter(([r])=>r?.entity_id);
+    const fans=[[ce("coolingFanControl"),"Bauteillüfter"],[ce("auxFanControl"),"Aux-Lüfter"],[ce("chamberFanControl"),"Kammerlüfter"],[ce("secondaryAuxFanControl"),"Aux-Lüfter 2"]].filter(([r])=>r?.entity_id);
+    const selects=[[ce("speed"),"Druckgeschwindigkeit"],[ce("airductMode"),"Luftkanal-Modus"]].filter(([r])=>r?.entity_id);
+    const restriction=this._writeRestriction(printer);
+    const writableCount=buttons.filter(([r])=>r.entity_id.split(".")[0]!=="light").length+switches.length+numbers.length+fans.length+selects.length;
+    const warning=(restriction.restricted || writableCount===0) ? `<div class="control-warning"><strong>Schreibzugriffe sind für diesen Drucker eingeschränkt.</strong>Die offizielle ha-bambulab-Integration dokumentiert, dass bei gesperrter Firmware bzw. Hybrid-/Cloud-Betrieb die meisten Schreibfunktionen nicht bereitgestellt werden; bei älteren Hybrid-Firmwares bleibt ausdrücklich nur das Licht steuerbar. Für volle Schreibzugriffe verlangt die Integration LAN Mode + Developer LAN Mode. <a href="https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx" target="_blank" rel="noopener">Plugin-Hinweis öffnen</a><div class="capability-list"><div class="capability-row"><span>Hybrid blockiert</span><code>${cssEscape(restriction.hybridState||"nicht gemeldet")}</code></div><div class="capability-row"><span>Developer LAN Mode</span><code>${cssEscape(restriction.developerState||"nicht gemeldet")}</code></div><div class="capability-row"><span>MQTT-Verschlüsselung</span><code>${cssEscape(restriction.encryptionState||"nicht gemeldet")}</code></div></div></div>` : "";
     const buttonHtml=buttons.length?`<div class="control-group"><div class="control-group-title">Druck & Gerät</div><div class="controls">${buttons.map(([r,i,l,d])=>`<button class="control-btn ${d?"danger":""}" data-entity-action="${cssEscape(r.entity_id)}"><ha-icon icon="${i}"></ha-icon>${l}</button>`).join("")}</div></div>`:"";
-    const switchHtml=switches.length?`<div class="control-group"><div class="control-group-title">Schalter</div><div class="control-grid">${switches.map(([r,l])=>{const st=state(r);const on=normalize(st?.state)==="on";return `<button class="toggle-row ${on?"on":""}" data-entity-action="${cssEscape(r.entity_id)}"><span>${l}</span><strong>${on?"EIN":"AUS"}</strong></button>`}).join("")}</div></div>`:"";
-    const numberHtml=numbers.length?`<div class="control-group"><div class="control-group-title">Temperaturen</div><div class="control-grid">${numbers.map(([r,l])=>{const st=state(r); const cur=st?.state??""; return `<div class="control-field"><label>${l}</label><div class="number-set-row"><input type="number" data-number-input="${cssEscape(r.entity_id)}" value="${cssEscape(cur)}" min="${cssEscape(st?.attributes?.min??0)}" max="${cssEscape(st?.attributes?.max??350)}" step="${cssEscape(st?.attributes?.step??1)}"><button data-number-set="${cssEscape(r.entity_id)}">Setzen</button></div></div>`}).join("")}</div></div>`:"";
-    const fanHtml=fans.length?`<div class="control-group"><div class="control-group-title">Lüfter</div><div class="control-grid">${fans.map(([r,l])=>{const st=state(r); const pct=Number(st?.attributes?.percentage ?? 0); return `<div class="control-field"><label>${l}</label><div class="fan-control-row"><input type="range" min="0" max="100" step="5" value="${Number.isFinite(pct)?pct:0}" data-fan-entity="${cssEscape(r.entity_id)}"><strong data-fan-value>${Number.isFinite(pct)?Math.round(pct):0}%</strong></div></div>`}).join("")}</div></div>`:"";
-    const selectHtml=selects.length?`<div class="control-group"><div class="control-group-title">Modi</div><div class="control-grid">${selects.map(([r,l])=>{const st=state(r); const opts=st?.attributes?.options||[]; return `<div class="control-field"><label>${l}</label><select data-select-entity="${cssEscape(r.entity_id)}" ${opts.length?"":"disabled"}>${opts.map(o=>`<option value="${cssEscape(o)}" ${st?.state===o?"selected":""}>${cssEscape(o)}</option>`).join("")}</select>${opts.length?"":`<small>Entity vorhanden, aber aktuell keine Optionen verfügbar.</small>`}</div>`}).join("")}</div></div>`:"";
+    const switchHtml=switches.length?`<div class="control-group"><div class="control-group-title">Schalter</div><div class="control-grid">${switches.map(([r,l])=>{const st=state(r),on=normalize(st?.state)==="on";return `<button class="toggle-row ${on?"on":""}" data-entity-action="${cssEscape(r.entity_id)}"><span>${l}</span><strong>${on?"EIN":"AUS"}</strong></button>`}).join("")}</div></div>`:"";
+    const numberHtml=numbers.length?`<div class="control-group"><div class="control-group-title">Temperaturen</div><div class="control-grid">${numbers.map(([r,l])=>{const st=state(r);return `<div class="control-field"><label>${l}</label><div class="number-set-row"><input type="number" data-number-input="${cssEscape(r.entity_id)}" value="${cssEscape(st?.state??"")}" min="${cssEscape(st?.attributes?.min??0)}" max="${cssEscape(st?.attributes?.max??350)}" step="${cssEscape(st?.attributes?.step??1)}" ${st?"":"disabled"}><button data-number-set="${cssEscape(r.entity_id)}" ${st?"":"disabled"}>Setzen</button></div><small>${cssEscape(r.entity_id)}</small></div>`}).join("")}</div></div>`:"";
+    const fanHtml=fans.length?`<div class="control-group"><div class="control-group-title">Lüfter</div><div class="control-grid">${fans.map(([r,l])=>{const st=state(r);const pct=Number(st?.attributes?.percentage ?? 0);return `<div class="control-field"><label>${l}</label><div class="fan-control-row"><input type="range" min="0" max="100" step="5" value="${Number.isFinite(pct)?pct:0}" data-fan-entity="${cssEscape(r.entity_id)}" ${st?"":"disabled"}><strong data-fan-value>${Number.isFinite(pct)?Math.round(pct):0}%</strong></div><small>${cssEscape(r.entity_id)}</small></div>`}).join("")}</div></div>`:"";
+    const selectHtml=selects.length?`<div class="control-group"><div class="control-group-title">Modi</div><div class="control-grid">${selects.map(([r,l])=>{const st=state(r),opts=st?.attributes?.options||[];return `<div class="control-field"><label>${l}</label><select data-select-entity="${cssEscape(r.entity_id)}" ${opts.length?"":"disabled"}>${opts.map(o=>`<option value="${cssEscape(o)}" ${st?.state===o?"selected":""}>${cssEscape(o)}</option>`).join("")}</select><small>${cssEscape(r.entity_id)}${opts.length?"":" · aktuell keine Optionen"}</small></div>`}).join("")}</div></div>`:"";
     const any=buttonHtml||switchHtml||numberHtml||fanHtml||selectHtml;
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Quick Controls</div><div class="panel-title">Steuerung</div></div></div>${any?`<div class="control-groups">${buttonHtml}${switchHtml}${numberHtml}${fanHtml}${selectHtml}</div>`:`<div class="empty">Keine steuerbaren Bambu-Entities gefunden. Prüfe in Home Assistant, ob die jeweiligen CONFIG-Entities aktiviert und verfügbar sind bzw. ob Firmware/Hybrid-Modus Schreibzugriffe blockieren.</div>`}</section>`;
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Quick Controls</div><div class="panel-title">Steuerung</div></div></div>${warning}${any?`<div class="control-groups">${buttonHtml}${switchHtml}${numberHtml}${fanHtml}${selectHtml}</div>`:`<div class="empty">Die Bambu-Integration stellt für diesen Drucker aktuell keine steuerbaren Entities außer ggf. Licht bereit.</div>`}</section>`;
   }
 
   _controlButton(action, icon, label, danger = false) {
@@ -1465,31 +1513,35 @@ class BambuLabDashboard extends HTMLElement {
   _officialMaintenanceTasks(printer){
     const model=normalizedPrinterModel(printer.device);
     if(model==="X2D") return [
-      {id:"build_plate",name:"Build Plate reinigen",days:7,source:"X2D User Manual · Kap. 11",note:"Mit warmem Wasser und Spülmittel reinigen."},
-      {id:"live_camera",name:"Live-View-Kamera reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Linse mit geeignetem Tuch und Alkohol reinigen."},
-      {id:"chamber",name:"Druckraum / Boden reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Filamentreste und Ablagerungen entfernen."},
-      {id:"xy_axes",name:"X-/Y-Achsen reinigen & schmieren",days:30,source:"X2D User Manual · Kap. 11",note:"Linearführungen reinigen; vorgesehenes Öl verwenden."},
-      {id:"z_axis",name:"Z-Achse reinigen & schmieren",days:90,source:"X2D User Manual · Kap. 11",note:"Linear rods mit Öl, Lead Screws mit Fett; nicht verwechseln."},
-      {id:"air_filter",name:"Luftfilter prüfen / reinigen",days:90,source:"X2D User Manual · Kap. 11",note:"Filterabdeckung reinigen; Aktivkohlefilter bei Verschmutzung/Sättigung ersetzen."},
-      {id:"toolhead_camera",name:"Toolhead-Kamera reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Linse vorsichtig reinigen."},
-      {id:"extruder",name:"Extruder reinigen & schmieren",days:30,source:"X2D User Manual · Kap. 11",note:"Ablagerungen entfernen und vorgesehene Zahnräder schmieren."},
-      {id:"hotend",name:"Hotend prüfen / reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Bei Bedarf Cold Pull; Verschleißteile prüfen."}
+      {id:"build_plate",name:"Build Plate reinigen",days:7,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Mit warmem Wasser und Spülmittel reinigen."},
+      {id:"live_camera",name:"Live-View-Kamera reinigen",days:30,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Linse mit geeignetem Tuch und Alkohol reinigen."},
+      {id:"chamber",name:"Druckraum / Boden reinigen",days:30,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Filamentreste und Ablagerungen entfernen."},
+      {id:"xy_axes",name:"X-/Y-Achsen reinigen & schmieren",days:30,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Linearführungen reinigen; vorgesehenes Öl verwenden."},
+      {id:"z_axis",name:"Z-Achse reinigen & schmieren",days:90,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Linear rods mit Öl, Lead Screws mit Fett; nicht verwechseln."},
+      {id:"air_filter",name:"Luftfilter prüfen / reinigen",days:90,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Filterabdeckung reinigen; Aktivkohlefilter bei Verschmutzung/Sättigung ersetzen."},
+      {id:"toolhead_camera",name:"Toolhead-Kamera reinigen",days:30,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Linse vorsichtig reinigen."},
+      {id:"extruder",name:"Extruder reinigen & schmieren",days:30,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Ablagerungen entfernen und vorgesehene Zahnräder schmieren."},
+      {id:"hotend",name:"Hotend prüfen / reinigen",days:30,source:"X2D User Manual · Kap. 11",url:"https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf#page=137",note:"Bei Bedarf Cold Pull; Verschleißteile prüfen."}
     ];
     if(model==="A2L") return [
-      {id:"moving_parts",name:"Schienen / Führungen / Rollen / Lead Screws schmieren",days:null,source:"A2L Quick Start · Regular Maintenance",note:"X/Y und Umlenkrollen mit Öl; Lead Screws und Extruder-Zahnräder mit Fett. Hersteller nennt im Quick Start kein fixes Zeitintervall."},
-      {id:"consumables",name:"Filament-Cutter, Wiper und PTFE prüfen",days:null,source:"A2L Quick Start · Regular Maintenance",note:"Auf Alterung, Verformung und Verschleiß prüfen; bei Bedarf ersetzen."},
-      {id:"camera_fans",name:"Kamera, Lüfter und Filamentsensor reinigen",days:null,source:"A2L Quick Start · Regular Maintenance",note:"Staub/Schmutz entfernen; Kamera vorsichtig mit IPA/Alkohol reinigen."}
+      {id:"moving_parts",name:"Schienen / Führungen / Rollen / Lead Screws schmieren",days:null,source:"A2L Quick Start · Regular Maintenance",url:"https://csm.bblcdn.com/hub/4efdb4e04ab34111a8da112e81028430.pdf",note:"X/Y und Umlenkrollen mit Öl; Lead Screws und Extruder-Zahnräder mit Fett. Hersteller nennt im Quick Start kein fixes Zeitintervall."},
+      {id:"consumables",name:"Filament-Cutter, Wiper und PTFE prüfen",days:null,source:"A2L Quick Start · Regular Maintenance",url:"https://csm.bblcdn.com/hub/4efdb4e04ab34111a8da112e81028430.pdf",note:"Auf Alterung, Verformung und Verschleiß prüfen; bei Bedarf ersetzen."},
+      {id:"camera_fans",name:"Kamera, Lüfter und Filamentsensor reinigen",days:null,source:"A2L Quick Start · Regular Maintenance",url:"https://csm.bblcdn.com/hub/4efdb4e04ab34111a8da112e81028430.pdf",note:"Staub/Schmutz entfernen; Kamera vorsichtig mit IPA/Alkohol reinigen."}
     ];
     return [];
   }
   _renderMaintenance(printer) {
-    const totalOverride=this._configuredEntityId(printer,"totalUsage");
-    const exactTotal=totalOverride?{entity_id:totalOverride}:this._entityEntries(printer).find(e=>normalize(e.translation_key)==="total_usage_hours");
-    const totalState=exactTotal?.entity_id?this._hass?.states?.[exactTotal.entity_id]||null:null;
+    const total=this._totalUsageState(printer); const totalState=total.state; const exactTotal=total.entity;
     const state=this._maintenanceState(printer.id); const now=Date.now(); const tasks=this._officialMaintenanceTasks(printer);
-    const rows=tasks.map(t=>{const last=state.last?.[t.id]||null; const due=t.days?(!last || now-last>=t.days*86400000):false; const next=t.days?(last?new Date(last+t.days*86400000).toLocaleDateString("de-DE"):"jetzt prüfen"):"regelmäßig / nach Zustand"; return `<div class="maint-item ${due?"due":""}"><div class="maint-top"><strong>${cssEscape(t.name)}</strong><span>${due?"FÄLLIG":cssEscape(next)}</span></div><small>${cssEscape(t.note)}</small><div class="maint-actions"><span>${cssEscape(t.source)}</span><button data-maint-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}">Als erledigt quittieren</button></div></div>`}).join("");
-    const history=(state.history||[]).slice(-12).reverse().map(h=>`<tr><td>${new Date(h.ts).toLocaleString("de-DE")}</td><td>${cssEscape(h.name)}</td></tr>`).join("");
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Maintenance</div><div class="panel-title">Wartung · ${cssEscape(configuredPrinterName(this._config,printer))}</div></div></div><div class="maintenance">${totalState?`<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit laut Bambu-Integration</strong><span>${this._formatDurationState(totalState)}</span></div><small>Entity: ${cssEscape(exactTotal.entity_id)}</small></div>`:`<div class="notice">Keine total_usage_hours-Entity gefunden. Dieser Wert wird nicht aus der letzten Druckdauer abgeleitet.</div>`}${rows||`<div class="notice">Für dieses Modell ist noch kein belastbarer Hersteller-Wartungsplan hinterlegt.</div>`}<details class="maintenance-log"><summary>Wartungsbuch (${(state.history||[]).length})</summary>${history?`<table><thead><tr><th>Zeitpunkt</th><th>Wartung</th></tr></thead><tbody>${history}</tbody></table>`:`<div class="empty">Noch keine Wartung quittiert.</div>`}</details></div></section>`;
+    const rows=tasks.map(t=>{const last=state.last?.[t.id]||null;const due=t.days?(!last||now-last>=t.days*86400000):false;const next=t.days?(last?new Date(last+t.days*86400000).toLocaleDateString("de-DE"):"jetzt prüfen"):"regelmäßig / nach Zustand";return `<div class="maint-item ${due?"due":""}"><div class="maint-top"><strong>${cssEscape(t.name)}</strong><span>${due?"FÄLLIG":cssEscape(next)}</span></div><small>${cssEscape(t.note)}</small><div class="maint-actions"><button class="maint-source-link" data-maint-source="${cssEscape(t.id)}">${cssEscape(t.source)}</button><button data-maint-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}">Als erledigt quittieren</button></div></div>`}).join("");
+    const history=(state.history||[]).slice().reverse().map(h=>`<tr><td>${new Date(h.ts).toLocaleString("de-DE")}</td><td>${cssEscape(h.name)}</td></tr>`).join("");
+    const totalHtml=totalState?`<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit laut Bambu-Integration</strong><span>${this._formatDurationState(totalState)}</span></div><small>Entity: ${cssEscape(exactTotal?.entity_id||"")}${total.cached?` · zuletzt gemeldet ${new Date(total.ts).toLocaleString("de-DE")}`:""}</small></div>`:`<div class="notice">Keine total_usage_hours-Entity bzw. kein letzter Gesamtwert verfügbar. Die letzte Druckdauer wird ausdrücklich nicht als Gesamtlaufzeit verwendet.</div>`;
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Maintenance</div><div class="panel-title">Wartung · ${cssEscape(configuredPrinterName(this._config,printer))}</div></div></div><div class="maintenance">${totalHtml}${rows||`<div class="notice">Für dieses Modell ist noch kein belastbarer Hersteller-Wartungsplan hinterlegt.</div>`}<details class="maintenance-log"><summary>Wartungsbuch (${(state.history||[]).length})</summary>${history?`<table><thead><tr><th>Zeitpunkt</th><th>Wartung</th></tr></thead><tbody>${history}</tbody></table>`:`<div class="empty">Noch keine Wartung quittiert.</div>`}</details></div></section>`;
+  }
+
+  _renderMaintenanceModal() {
+    const t=this._maintenanceModalTask; if(!t) return "";
+    return `<div class="maintenance-modal-backdrop" data-close-maint-modal><div class="maintenance-modal" data-maint-modal-box><div class="maintenance-modal-head"><div><div class="eyebrow">Offizielle Wartungsanleitung</div><h3>${cssEscape(t.name)}</h3></div><button class="icon-btn" data-close-maint-modal title="Schließen"><ha-icon icon="mdi:close"></ha-icon></button></div><p>${cssEscape(t.note)}</p><p><strong>Intervall:</strong> ${t.days?`${t.days} Tage`:"regelmäßig / nach Zustand"}<br><strong>Quelle:</strong> ${cssEscape(t.source)}</p><div class="maintenance-modal-actions"><a href="${cssEscape(t.url)}" target="_blank" rel="noopener">Originalanleitung öffnen</a><button data-maint-modal-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}">Als erledigt quittieren</button></div></div></div>`;
   }
 
   _formatStateWithUnit(st) {
@@ -1523,6 +1575,9 @@ class BambuLabDashboard extends HTMLElement {
 
     this.shadowRoot.querySelectorAll("[data-smart-plug]").forEach(el=>el.addEventListener("click",async ev=>{ const id=ev.currentTarget.dataset.smartPlug; const running=this._selectedPrinter() && ["running","printing","prepare","preparing"].includes(normalize(this._val(this._selectedPrinter(),"status",""))); const st=this._hass.states[id]; if(running && normalize(st?.state)==="on" && !confirm("Der Drucker druckt gerade. Smart-Steckdose wirklich ausschalten?")) return; await this._callEntity({entity_id:id}); }));
     this.shadowRoot.querySelectorAll("[data-maint-done]").forEach(el=>el.addEventListener("click",ev=>{ const printer=this._selectedPrinter(); if(!printer)return; const data=this._maintenanceState(printer.id); data.last=data.last||{}; data.history=data.history||[]; const ts=Date.now(); data.last[ev.currentTarget.dataset.maintDone]=ts; data.history.push({ts,name:ev.currentTarget.dataset.maintName}); this._saveMaintenanceState(printer.id,data); this._render(); }));
+    this.shadowRoot.querySelectorAll("[data-maint-source]").forEach(el=>el.addEventListener("click",ev=>{const printer=this._selectedPrinter();if(!printer)return;this._maintenanceModalTask=this._officialMaintenanceTasks(printer).find(t=>t.id===ev.currentTarget.dataset.maintSource)||null;this._render();}));
+    this.shadowRoot.querySelectorAll("[data-close-maint-modal]").forEach(el=>el.addEventListener("click",ev=>{if(ev.target.closest?.("[data-maint-modal-box]") && !ev.target.closest?.("[data-close-maint-modal]:not(.maintenance-modal-backdrop)")) return; this._maintenanceModalTask=null;this._render();}));
+    this.shadowRoot.querySelector("[data-maint-modal-done]")?.addEventListener("click",ev=>{const printer=this._selectedPrinter();if(!printer)return;const data=this._maintenanceState(printer.id);data.last=data.last||{};data.history=data.history||[];const ts=Date.now();data.last[ev.currentTarget.dataset.maintModalDone]=ts;data.history.push({ts,name:ev.currentTarget.dataset.maintName});this._saveMaintenanceState(printer.id,data);this._maintenanceModalTask=null;this._render();});
     const select = this.shadowRoot.querySelector("[data-speed-select]");
     if (select) select.addEventListener("change", (ev) => this._setSpeed(ev.target.value));
   }
@@ -1534,6 +1589,7 @@ class BambuLabDashboard extends HTMLElement {
       const reg = this._entry(printer, "forceRefresh");
       if (reg) await this._callEntity(reg);
       this._cameraBust = Date.now();
+    this._maintenanceModalTask = null;
       this._render();
       return;
     }
