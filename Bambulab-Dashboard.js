@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.6.3 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.7.0 | standalone HACS resource */
 
-const VERSION = "1.6.3";
+const VERSION = "1.7.0";
 const DOMAIN = "bambu_lab";
 
 
@@ -400,6 +400,71 @@ function formatWatt(value) {
 }
 
 
+
+const I18N_EN = Object.freeze({
+  "Übersicht":"Overview","Drucker-Details":"Printer Details","Energie":"Energy","Wartung":"Maintenance",
+  "Restzeit":"Remaining","Düse":"Nozzle","Bett":"Bed","Laufzeit":"Runtime","Details öffnen":"Open details",
+  "Alle Drucker":"All printers","Drucker erkannt":"printers detected","aktiv":"active","druckt":"printing","gesamt":"total",
+  "Kein Drucker ausgewählt.":"No printer selected.","Mehrdrucker-Control-Center mit AMS, Kamera, Steuerung, Energie und Wartung.":"Multi-printer control center with AMS, camera, controls, energy and maintenance.",
+  "Bambu-Geräte werden automatisch erkannt …":"Bambu devices are being detected automatically …","Geräteerkennung fehlgeschlagen":"Device discovery failed",
+  "Kein sichtbarer Bambu-Lab-Drucker gefunden.":"No visible Bambu Lab printer found.","Zusätzliche Lovelace-Karten sind nicht erforderlich.":"Additional Lovelace cards are not required.",
+  "Datenquelle":"Data source","Drucker":"Printer","Geschwindigkeit":"Speed","Aktueller Druck":"Current Print","Bauteil / Vorschau":"Part / Preview",
+  "abgeschlossen":"complete","Temperaturen & Lüfter":"Temperatures & Fans","Keine passenden Temperatur- oder Lüfter-Entitäten vorhanden.":"No matching temperature or fan entities available.",
+  "Druckerinformationen":"Printer Information","Keine zusätzlichen Druckerinformationen vorhanden.":"No additional printer information available.","Tür":"Door","Offen":"Open","Geschlossen":"Closed",
+  "Kamera-Diagnose":"Camera Diagnostics","HA-Status":"HA State","Access-Token":"Access Token","vorhanden":"present","fehlt":"missing","unbekannt":"unknown","In Home Assistant öffnen":"Open in Home Assistant",
+  "Kamera":"Camera","Keine Kamera-Entität verfügbar oder Kamera nicht aktiviert.":"No camera entity available or camera is not enabled.","Kamera aktiv":"Camera enabled","Einzelbild-Modus":"Still image mode","EIN":"ON","AUS":"OFF",
+  "Kein AMS für diesen Drucker erkannt.":"No AMS detected for this printer.","Einheit":"unit","Einheiten":"units","AMS Slot Details":"AMS Slot Details","Schließen":"Close","Home-Assistant-Details öffnen":"Open Home Assistant details",
+  "Aktives Filament nicht gemeldet":"Active filament not reported","Schreibzugriffe sind für diesen Drucker eingeschränkt.":"Write access is restricted for this printer.",
+  "Druck & Gerät":"Print & Device","Smart-Steckdose":"Smart Plug","Ausschalten":"Turn off","Einschalten":"Turn on","Strom & Steckdose":"Power & Smart Plug","Leistung":"Power","Kosten":"Cost",
+  "Bambu-Lab-Intervalllogik:":"Bambu Lab interval logic:","Gesamtlaufzeit laut Bambu-Integration":"Total runtime reported by Bambu integration",
+  "Nächste Wartungen":"Upcoming Maintenance","FÄLLIG":"DUE","Als erledigt quittieren":"Mark as completed","Wartungsbuch":"Maintenance Log",
+  "Aktuell ist keine Wartung fällig. Noch nicht fällige Arbeiten erscheinen automatisch wieder zum nächsten Herstellerintervall.":"No maintenance is currently due. Tasks that are not yet due will automatically reappear at the next manufacturer interval.",
+  "Noch keine Wartung quittiert.":"No maintenance has been completed yet.","Zeitpunkt":"Date / time","Offizielle Wartungsanleitung":"Official maintenance instructions","Intervall":"Interval","Quelle":"Source",
+  "Originalanleitung öffnen":"Open original instructions","Intensive Nutzung":"Intensive use","Tage (normale Nutzung)":"days (normal use)","Tage laut verkürztem Bambu-Intervall":"days according to Bambu's shortened interval",
+  "regelmäßig / nach Zustand":"regularly / as needed","Filter":"Filter","Alle Arbeiten":"All tasks","Nur letzte 30 Tage":"Last 30 days only","Einträge pro Seite":"Entries per page",
+  "Vorherige":"Previous","Nächste":"Next","Seite":"Page","von":"of","Eintrag löschen":"Delete entry","Logbuch leeren":"Clear log","Auswertung":"Summary","Einträge gesamt":"Total entries","Letzte 30 Tage":"Last 30 days","Häufigste Wartung":"Most frequent task",
+  "Wartung als erledigt gespeichert.":"Maintenance completion saved.","Wartungseintrag gelöscht.":"Maintenance entry deleted.","Wartungsbuch wurde geleert.":"Maintenance log cleared.",
+  "Diesen Wartungseintrag wirklich löschen?":"Delete this maintenance entry?","Das komplette Wartungsbuch dieses Druckers wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.":"Clear the complete maintenance log for this printer? This cannot be undone.",
+  "Build Plate reinigen":"Clean build plate","Live-View-Kamera reinigen":"Clean live-view camera","Druckraum / Boden reinigen":"Clean chamber / bottom","X-/Y-Achsen reinigen & schmieren":"Clean & lubricate X/Y axes","Z-Achse reinigen & schmieren":"Clean & lubricate Z axis","Luftfilter prüfen / reinigen":"Check / clean air filter","Toolhead-Kamera reinigen":"Clean toolhead camera","Extruder reinigen & schmieren":"Clean & lubricate extruder","Hotend reinigen":"Clean hotend",
+  "Schienen / Führungen / Rollen / Lead Screws schmieren":"Lubricate rails / guides / rollers / lead screws","Filament-Cutter, Wiper und PTFE prüfen":"Check filament cutter, wiper and PTFE","Kamera, Lüfter und Filamentsensor reinigen":"Clean camera, fans and filament sensor",
+  "Druckt":"Printing","Vorbereitung":"Preparing","Pausiert":"Paused","Fertig":"Finished","Bereit":"Ready","Fehler":"Error","Unbekannt":"Unknown",
+  "Plugin-Hinweis öffnen":"Open integration note","Hybrid blockiert":"Hybrid blocked","nicht gemeldet":"not reported","MQTT-Verschlüsselung":"MQTT encryption",
+  "Automatisch (Home Assistant)":"Automatic (Home Assistant)","Dunkel":"Dark","Hell":"Light","Strompreis in €/kWh":"Electricity price in €/kWh","Anzeigename":"Display name","Reihenfolge":"Order","anzeigen":"show",
+  "Leistungssensor":"Power sensor","Energiesensor":"Energy sensor","Bereiche im Detail":"Detail sections","AMS-Zuordnung":"AMS assignment","Erweiterte Entity-Zuordnung":"Advanced entity mapping","automatisch":"automatic","Nicht zugeordnet":"Not assigned",
+  "Mit warmem Wasser und Spülmittel reinigen und vollständig trocknen. Bambu Lab nennt bei normaler Nutzung 1 Woche.":"Clean with warm water and dish soap, then dry completely. Bambu Lab specifies one week for normal use.",
+  "Kamerafläche mit Wattestäbchen oder fusselfreiem Tuch und wenig Alkohol reinigen. Normal: 1 Monat; bei intensiver Nutzung laut Bambu wöchentlich.":"Clean the camera surface with a cotton swab or lint-free cloth and a small amount of alcohol. Normal: one month; weekly for intensive use according to Bambu.",
+  "Filamentreste und Fremdkörper abbürsten, anschließend mit einem fusselfreien, leicht mit Alkohol angefeuchteten Tuch reinigen. Normal: 1 Monat.":"Brush away filament residue and debris, then clean with a lint-free cloth lightly dampened with alcohol. Normal: one month.",
+  "X/Y-Linearführungen reinigen und danach mit Schmieröl ölen. Normal: 1 Monat. Nach Wartung wichtiger Achskomponenten empfiehlt Bambu eine vollständige Druckkalibrierung.":"Clean the X/Y linear guides and lubricate them with oil. Normal: one month. After maintenance on major axis components, Bambu recommends a full printer calibration.",
+  "Linearführungen mit Schmieröl, Gewindespindeln mit Schmierfett behandeln – die Schmierstoffe nicht verwechseln. Normal: 3 Monate.":"Lubricate linear guides with oil and lead screws with grease – do not mix up the lubricants. Normal: three months.",
+  "Filterabdeckung von Staub befreien. Aktivkohlefilter regelmäßig ersetzen, insbesondere wenn er sichtbar verschmutzt oder gesättigt ist. Normal: 3 Monate.":"Remove dust from the filter cover. Replace the activated-carbon filter regularly, especially when visibly dirty or saturated. Normal: three months.",
+  "Kamerafläche mit Wattestäbchen oder fusselfreiem Tuch und wenig Alkohol reinigen. Ablagerungen können Bild und Erkennung beeinträchtigen. Normal: 1 Monat.":"Clean the camera surface with a cotton swab or lint-free cloth and a small amount of alcohol. Deposits can affect the image and detection. Normal: one month.",
+  "Interne Ablagerungen entfernen und die vorgesehenen Zahnräder mit Schmierfett schmieren. Normal: 1 Monat; für die Demontage verweist Bambu auf die X2D-Anleitung im Wiki.":"Remove internal deposits and lubricate the specified gears with grease. Normal: one month; Bambu refers to the X2D wiki instructions for disassembly.",
+  "Bambu nennt für die regelmäßige Hotend-Reinigung einen Cold Pull. Normal: 1 Monat.":"Bambu specifies a cold pull for regular hotend cleaning. Normal: one month.",
+  "X/Y und Umlenkrollen mit Öl; Lead Screws und Extruder-Zahnräder mit Fett. Bambu nennt im A2L Quick Start kein fixes Zeitintervall – deshalb erfolgt hier keine erfundene Fälligkeitsberechnung.":"Use oil on X/Y and idler rollers; use grease on lead screws and extruder gears. The A2L Quick Start does not specify a fixed interval, so the dashboard does not invent one.",
+  "Auf Alterung, Verformung und Verschleiß prüfen; bei Bedarf ersetzen. Ohne Herstellerintervall wird kein Datum berechnet.":"Check for aging, deformation and wear; replace as needed. No date is calculated without a manufacturer interval.",
+  "Staub und Schmutz entfernen; Kamera vorsichtig reinigen. Ohne Herstellerintervall wird kein Datum berechnet.":"Remove dust and dirt; clean the camera carefully. No date is calculated without a manufacturer interval.",
+  "Die Gesamtbetriebsstunden dienen hier nur als Information und lösen keine Wartung aus. Die normalen X2D-Intervalle stammen aus Kapitel 11 des offiziellen Handbuchs. Bei dauerhaftem Druck mit Hochtemperatur-/Engineering-Filamenten oder bei durchschnittlich mehr als 8 Druckstunden pro Tag verlangt Bambu häufigere Wartung: 3-Monats-Arbeiten monatlich und Monats-Arbeiten wöchentlich. Zusätzlich kann der X2D mit aktueller Firmware eigene Wartungshinweise anhand von Aufgabe und Druckdauer ausgeben. Die Dashboard-Termine sind Erinnerungen anhand der Bambu-Vorgaben; sichtbarer Verschleiß, Verschmutzung oder eine direkte Wartungsmeldung des Druckers haben Vorrang.":"Total runtime is informational only and does not trigger maintenance. The normal X2D intervals come from chapter 11 of the official manual. For continuous high-temperature/engineering filament use or an average of more than 8 print hours per day, Bambu requires more frequent maintenance: three-month tasks monthly and monthly tasks weekly. With current firmware, the X2D may also issue its own maintenance notices based on task and print duration. Dashboard dates are reminders based on Bambu guidance; visible wear, contamination or a direct printer maintenance notice takes priority.",
+  "Die offizielle ha-bambulab-Integration dokumentiert, dass bei gesperrter Firmware bzw. Hybrid-/Cloud-Betrieb die meisten Schreibfunktionen nicht bereitgestellt werden; bei älteren Hybrid-Firmwares bleibt ausdrücklich nur das Licht steuerbar. Für volle Schreibzugriffe verlangt die Integration LAN Mode + Developer LAN Mode.":"The official ha-bambulab integration documents that locked-down firmware or hybrid/cloud operation can remove most write controls; with older hybrid firmware, only the light may remain controllable. Full write access requires LAN Mode + Developer LAN Mode.",
+  "Keine total_usage_hours-Entity bzw. kein letzter Gesamtwert verfügbar. Die letzte Druckdauer wird ausdrücklich nicht als Gesamtlaufzeit verwendet.":"No total_usage_hours entity or last total value is available. The last print duration is explicitly not used as total runtime.",
+  "zuletzt gemeldet":"last reported"
+});
+function uiLanguage(hass){ return String(hass?.language || hass?.locale?.language || globalThis.navigator?.language || "en").toLowerCase().split("-")[0]; }
+function uiLocale(hass){ return uiLanguage(hass)==="de" ? "de-DE" : "en-US"; }
+function translateUiText(text,hass){
+  if(uiLanguage(hass)==="de") return text;
+  let out=String(text??"");
+  const entries=Object.entries(I18N_EN).sort((a,b)=>b[0].length-a[0].length);
+  for(const [de,en] of entries) out=out.split(de).join(en);
+  return out;
+}
+function applyUiTranslations(root,hass){
+  if(!root || uiLanguage(hass)==="de") return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  for(const n of nodes){ if(n.parentElement?.closest('style,script')) continue; n.nodeValue=translateUiText(n.nodeValue,hass); }
+  root.querySelectorAll('[title],[aria-label],[placeholder]').forEach(el=>{ for(const a of ['title','aria-label','placeholder']) if(el.hasAttribute(a)) el.setAttribute(a,translateUiText(el.getAttribute(a),hass)); });
+}
+
 const styles = `
   :host {
     --bd-bg: #050907;
@@ -567,7 +632,7 @@ const styles = `
   .active-filament{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--bd-muted);font-size:12px}.active-filament strong{color:var(--bd-text)}.filament-dot{--filament:#8e9a92;width:14px;height:14px;border-radius:50%;background:var(--filament);border:2px solid rgba(255,255,255,.25);box-shadow:0 0 10px color-mix(in srgb,var(--filament) 45%,transparent);flex:0 0 auto}.active-filament.muted{opacity:.7}
   .number-set-row{display:grid;grid-template-columns:1fr auto;gap:7px}.number-set-row button,.maint-actions button{border:1px solid var(--bd-green-dim);background:rgba(80,217,38,.08);color:var(--bd-text);border-radius:9px;padding:8px 10px;cursor:pointer}.toggle-row{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bd-border);background:var(--bd-card);color:var(--bd-text);border-radius:11px;padding:10px;cursor:pointer}.toggle-row.on strong,.plug-state.on{color:var(--bd-green)}
   .smart-plug{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--bd-border);border-radius:13px;padding:12px;margin-bottom:12px}.smart-plug small,.smart-plug strong,.smart-plug span{display:block}.plug-state{margin-top:4px;font-size:11px;font-weight:800;color:var(--bd-muted)}
-  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-note{padding:11px 12px;border-radius:13px;border:1px solid var(--bd-border);background:rgba(80,217,38,.045);color:var(--bd-muted);font-size:11px;line-height:1.5}.maintenance-next{padding:11px 12px;border-radius:13px;border:1px solid var(--bd-border);background:rgba(255,255,255,.018)}.maintenance-next strong{display:block;margin-bottom:7px}.maintenance-next-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 0;border-top:1px solid var(--bd-border);font-size:11px}.maintenance-next-row:first-of-type{border-top:0}.maintenance-next-row span:last-child{font-weight:800;white-space:nowrap}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}.control-warning{margin:0 17px 14px;padding:12px 13px;border:1px solid rgba(241,162,27,.45);background:rgba(241,162,27,.08);border-radius:13px;font-size:11px;line-height:1.5}.control-warning strong{display:block;margin-bottom:4px}.control-warning a,.maint-source-link,.maintenance-modal a{color:var(--bd-green);font-weight:800;text-decoration:none}.capability-list{display:grid;gap:5px;margin-top:8px}.capability-row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--bd-border);padding-top:5px}.capability-row code{font-size:9px;overflow-wrap:anywhere;text-align:right}.maint-source-link{background:none;border:0;padding:0;cursor:pointer;font:inherit}.spool-modal-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px;touch-action:pan-y}.spool-modal{width:min(680px,96vw);max-height:min(86vh,820px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:18px;box-sizing:border-box}.spool-dialog-grid{display:grid;gap:7px;margin-top:14px}.spool-detail-row{display:grid;grid-template-columns:minmax(110px,.8fr) minmax(0,1.2fr);gap:12px;padding:8px 0;border-bottom:1px solid var(--bd-border)}.spool-detail-row small{color:var(--bd-muted);text-transform:capitalize}.spool-detail-row strong{overflow-wrap:anywhere}.spool-dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}@media(max-width:600px){.spool-modal-backdrop{padding:0}.spool-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px}.spool-detail-row{grid-template-columns:1fr;gap:3px}}.maintenance-modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.maintenance-modal{width:min(720px,96vw);max-height:min(86vh,820px);overflow:auto;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:20px}.maintenance-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.maintenance-modal h3{margin:4px 0 10px;font-size:22px}.maintenance-modal p{line-height:1.6;color:var(--bd-muted)}.maintenance-modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.maintenance-modal-actions a,.maintenance-modal-actions button{border:1px solid var(--bd-border);border-radius:10px;padding:10px 12px;background:var(--bd-card);color:var(--bd-text);font-weight:800;cursor:pointer}.maintenance-modal-actions a{background:rgba(80,217,38,.10);border-color:rgba(80,217,38,.35)}@media(max-width:600px){.maintenance-modal-backdrop{padding:0}.maintenance-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px;box-sizing:border-box}}
+  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-note{padding:11px 12px;border-radius:13px;border:1px solid var(--bd-border);background:rgba(80,217,38,.045);color:var(--bd-muted);font-size:11px;line-height:1.5}.maintenance-next{padding:11px 12px;border-radius:13px;border:1px solid var(--bd-border);background:rgba(255,255,255,.018)}.maintenance-next strong{display:block;margin-bottom:7px}.maintenance-next-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:6px 0;border-top:1px solid var(--bd-border);font-size:11px}.maintenance-next-row:first-of-type{border-top:0}.maintenance-next-row span:last-child{font-weight:800;white-space:nowrap}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}.maintenance-log-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin:12px 0}.maintenance-log-toolbar label{display:grid;gap:4px;font-size:10px;color:var(--bd-muted)}.maintenance-log-toolbar select,.maintenance-log-toolbar input{min-height:34px;border:1px solid var(--bd-border);border-radius:9px;background:var(--bd-card);color:var(--bd-text);padding:6px 9px}.maintenance-log-actions{display:flex;gap:7px;flex-wrap:wrap;margin-left:auto}.maintenance-log-actions button,.maintenance-pager button,.maint-actions button,.maintenance-modal-actions button{border:1px solid rgba(80,217,38,.28);background:rgba(80,217,38,.08);color:var(--bd-text);border-radius:9px;padding:8px 10px;font-weight:800;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease}.maintenance-log-actions button:hover,.maintenance-pager button:hover,.maint-actions button:hover,.maintenance-modal-actions button:hover{background:rgba(80,217,38,.20);border-color:rgba(80,217,38,.62);box-shadow:0 0 0 2px rgba(80,217,38,.08);transform:translateY(-1px)}.maintenance-log-actions button:active,.maintenance-pager button:active,.maint-actions button:active,.maintenance-modal-actions button:active{transform:translateY(0);background:rgba(80,217,38,.28)}.maintenance-log-actions .danger,.maintenance-log .danger{border-color:rgba(255,90,90,.34);background:rgba(255,90,90,.07)}.maintenance-log-actions .danger:hover,.maintenance-log .danger:hover{border-color:rgba(255,90,90,.65);background:rgba(255,90,90,.16)}.maintenance-pager{display:flex;justify-content:center;align-items:center;gap:9px;padding:10px 0}.maintenance-pager button:disabled{opacity:.35;cursor:default;transform:none;box-shadow:none}.maintenance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.maintenance-summary div{border:1px solid var(--bd-border);border-radius:10px;padding:9px;background:rgba(255,255,255,.018)}.maintenance-summary small{display:block;color:var(--bd-muted);margin-bottom:4px}.maintenance-summary strong{display:block;overflow-wrap:anywhere}.maintenance-toast{position:sticky;top:8px;z-index:4;padding:10px 12px;border:1px solid rgba(80,217,38,.45);background:rgba(80,217,38,.14);border-radius:10px;font-weight:800}.maintenance-log td:last-child,.maintenance-log th:last-child{text-align:right;width:1%}.maintenance-log td button{white-space:nowrap}.maint-source-link:hover{color:var(--bd-text);text-decoration:underline}.maint-actions button:focus-visible,.maintenance-log button:focus-visible,.maintenance-pager button:focus-visible{outline:2px solid var(--bd-green);outline-offset:2px}@media(max-width:700px){.maintenance-summary{grid-template-columns:1fr}.maintenance-log-toolbar{display:grid;grid-template-columns:1fr 1fr}.maintenance-log-actions{grid-column:1/-1;margin-left:0}.maintenance-log table{display:block;overflow-x:auto}.maintenance-log-toolbar label:first-child{grid-column:1/-1}}.control-warning{margin:0 17px 14px;padding:12px 13px;border:1px solid rgba(241,162,27,.45);background:rgba(241,162,27,.08);border-radius:13px;font-size:11px;line-height:1.5}.control-warning strong{display:block;margin-bottom:4px}.control-warning a,.maint-source-link,.maintenance-modal a{color:var(--bd-green);font-weight:800;text-decoration:none}.capability-list{display:grid;gap:5px;margin-top:8px}.capability-row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--bd-border);padding-top:5px}.capability-row code{font-size:9px;overflow-wrap:anywhere;text-align:right}.maint-source-link{background:none;border:0;padding:0;cursor:pointer;font:inherit}.spool-modal-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px;touch-action:pan-y}.spool-modal{width:min(680px,96vw);max-height:min(86vh,820px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:18px;box-sizing:border-box}.spool-dialog-grid{display:grid;gap:7px;margin-top:14px}.spool-detail-row{display:grid;grid-template-columns:minmax(110px,.8fr) minmax(0,1.2fr);gap:12px;padding:8px 0;border-bottom:1px solid var(--bd-border)}.spool-detail-row small{color:var(--bd-muted);text-transform:capitalize}.spool-detail-row strong{overflow-wrap:anywhere}.spool-dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}@media(max-width:600px){.spool-modal-backdrop{padding:0}.spool-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px}.spool-detail-row{grid-template-columns:1fr;gap:3px}}.maintenance-modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.maintenance-modal{width:min(720px,96vw);max-height:min(86vh,820px);overflow:auto;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:20px}.maintenance-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.maintenance-modal h3{margin:4px 0 10px;font-size:22px}.maintenance-modal p{line-height:1.6;color:var(--bd-muted)}.maintenance-modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.maintenance-modal-actions a,.maintenance-modal-actions button{border:1px solid var(--bd-border);border-radius:10px;padding:10px 12px;background:var(--bd-card);color:var(--bd-text);font-weight:800;cursor:pointer}.maintenance-modal-actions a{background:rgba(80,217,38,.10);border-color:rgba(80,217,38,.35)}@media(max-width:600px){.maintenance-modal-backdrop{padding:0}.maintenance-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px;box-sizing:border-box}}
   .shell.theme-light .active-filament strong,.shell.theme-light .toggle-row,.shell.theme-light .number-set-row button,.shell.theme-light .maint-actions button{color:#102017!important}.shell.theme-light .toggle-row,.shell.theme-light .smart-plug{background:#fff!important;border-color:#c9d8cd!important}
 
   .camera-wrap { position:relative; aspect-ratio:16/9; margin:14px 17px 17px; border-radius:15px; overflow:hidden; background:#030504; border:1px solid rgba(255,255,255,.05); display:grid; place-items:center; }
@@ -823,6 +888,11 @@ class BambuLabDashboard extends HTMLElement {
     this._loadError = null;
     this._cameraBust = Date.now();
     this._maintenanceModalTask = null;
+    this._maintenanceLogPage = 1;
+    this._maintenanceLogFilter = "all";
+    this._maintenanceLogRecentOnly = false;
+    this._maintenanceToast = "";
+    this._maintenanceToastTimer = null;
     this._powerSamples = new Map();
     this._lastPowerSampleAt = new Map();
     this._selectedSpoolEntityId = null;
@@ -1136,6 +1206,7 @@ class BambuLabDashboard extends HTMLElement {
     const scrollState = this._captureScrollState();
     const body = this._renderBody();
     this.shadowRoot.innerHTML = `<style>${styles}</style>${body}${this._renderMaintenanceModal()}${this._renderSelectedSpoolDetail()}`;
+    applyUiTranslations(this.shadowRoot,this._hass);
     this._bindEvents();
     this._restoreScrollState(scrollState);
   }
@@ -1573,27 +1644,85 @@ class BambuLabDashboard extends HTMLElement {
     if(!task.days) return {due:false,nextTs:null,nextLabel:"regelmäßig / nach Zustand"};
     const base=Number.isFinite(state.last?.[task.id])?state.last[task.id]:state.initializedAt;
     const nextTs=base+task.days*86400000;
-    return {due:now>=nextTs,nextTs,nextLabel:new Date(nextTs).toLocaleDateString("de-DE")};
+    return {due:now>=nextTs,nextTs,nextLabel:new Date(nextTs).toLocaleDateString(uiLocale(this._hass))};
   }
+
+  _setMaintenanceToast(message){
+    this._maintenanceToast=message;
+    if(this._maintenanceToastTimer) clearTimeout(this._maintenanceToastTimer);
+    this._maintenanceToastTimer=setTimeout(()=>{this._maintenanceToast="";this._render();},2600);
+  }
+
+  _recordMaintenance(printer,taskId,taskName){
+    const data=this._maintenanceState(printer.id); data.last=data.last||{}; data.history=data.history||[];
+    const ts=Date.now(); data.last[taskId]=ts;
+    data.history.push({id:`${ts}-${Math.random().toString(36).slice(2,8)}`,ts,taskId,name:taskName});
+    this._saveMaintenanceState(printer.id,data);
+    this._maintenanceLogPage=1;
+    this._setMaintenanceToast("Wartung als erledigt gespeichert.");
+  }
+
+  _maintenanceHistoryView(state,tasks){
+    const taskById=new Map(tasks.map(t=>[t.id,t]));
+    const taskByName=new Map(tasks.map(t=>[t.name,t]));
+    let entries=(state.history||[]).map((h,index)=>({
+      ...h,_index:index,
+      taskId:h.taskId||taskByName.get(h.name)?.id||"legacy",
+      name:h.name||taskById.get(h.taskId)?.name||"Wartung"
+    }));
+    if(this._maintenanceLogFilter!=="all") entries=entries.filter(h=>h.taskId===this._maintenanceLogFilter || h.name===this._maintenanceLogFilter);
+    if(this._maintenanceLogRecentOnly){ const cutoff=Date.now()-30*86400000; entries=entries.filter(h=>Number(h.ts)>=cutoff); }
+    entries.sort((a,b)=>Number(b.ts)-Number(a.ts));
+    return entries;
+  }
+
+  _renderMaintenanceLog(printer,state,tasks){
+    const all=(state.history||[]);
+    const entries=this._maintenanceHistoryView(state,tasks);
+    const pageSize=15;
+    const totalPages=Math.max(1,Math.ceil(entries.length/pageSize));
+    this._maintenanceLogPage=Math.min(Math.max(1,this._maintenanceLogPage||1),totalPages);
+    const start=(this._maintenanceLogPage-1)*pageSize;
+    const pageEntries=entries.slice(start,start+pageSize);
+    const recentCount=all.filter(h=>Number(h.ts)>=Date.now()-30*86400000).length;
+    const counts=new Map(); all.forEach(h=>{const k=h.taskId||h.name||"Wartung";counts.set(k,(counts.get(k)||0)+1)});
+    const top=[...counts.entries()].sort((a,b)=>b[1]-a[1])[0];
+    const taskMap=new Map(tasks.map(t=>[t.id,t.name]));
+    const topLabel=top?`${taskMap.get(top[0])||top[0]} (${top[1]})`:"–";
+    const filterOptions=[`<option value="all" ${this._maintenanceLogFilter==="all"?"selected":""}>Alle Arbeiten</option>`]
+      .concat(tasks.map(t=>`<option value="${cssEscape(t.id)}" ${this._maintenanceLogFilter===t.id?"selected":""}>${cssEscape(t.name)}</option>`)).join("");
+    const rows=pageEntries.map(h=>`<tr><td>${new Date(h.ts).toLocaleString(uiLocale(this._hass))}</td><td>${cssEscape(h.name)}</td><td><button class="danger" data-maint-log-delete="${h._index}" title="Eintrag löschen"><ha-icon icon="mdi:delete-outline"></ha-icon></button></td></tr>`).join("");
+    return `<details class="maintenance-log" open><summary>Wartungsbuch (${all.length})</summary>
+      <div class="maintenance-summary"><div><small>Einträge gesamt</small><strong>${all.length}</strong></div><div><small>Letzte 30 Tage</small><strong>${recentCount}</strong></div><div><small>Häufigste Wartung</small><strong>${cssEscape(topLabel)}</strong></div></div>
+      <div class="maintenance-log-toolbar">
+        <label>Filter<select data-maint-log-filter>${filterOptions}</select></label>
+        <label><span>Nur letzte 30 Tage</span><input type="checkbox" data-maint-log-recent ${this._maintenanceLogRecentOnly?"checked":""}></label>
+        <div class="maintenance-log-actions"><button class="danger" data-maint-log-clear ${all.length?"":"disabled"}><ha-icon icon="mdi:delete-sweep-outline"></ha-icon> Logbuch leeren</button></div>
+      </div>
+      ${rows?`<table><thead><tr><th>Zeitpunkt</th><th>Wartung</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="empty">Noch keine Wartung quittiert.</div>`}
+      ${entries.length>pageSize?`<div class="maintenance-pager"><button data-maint-log-page="prev" ${this._maintenanceLogPage<=1?"disabled":""}>‹ Vorherige</button><strong>Seite ${this._maintenanceLogPage} von ${totalPages}</strong><button data-maint-log-page="next" ${this._maintenanceLogPage>=totalPages?"disabled":""}>Nächste ›</button></div>`:""}
+    </details>`;
+  }
+
   _renderMaintenance(printer) {
     const total=this._totalUsageState(printer); const totalState=total.state; const exactTotal=total.entity;
     const state=this._maintenanceState(printer.id); const now=Date.now(); const tasks=this._officialMaintenanceTasks(printer);
     const timed=tasks.map(t=>({task:t,timing:this._maintenanceTiming(t,state,now)}));
     const visible=timed.filter(({task,timing})=>task.alwaysVisible||!task.days||timing.due);
     const upcoming=timed.filter(({task,timing})=>task.days&&!task.alwaysVisible&&!timing.due&&timing.nextTs).sort((a,b)=>a.timing.nextTs-b.timing.nextTs);
-    const rows=visible.map(({task:t,timing})=>{const status=t.days?(timing.due?"FÄLLIG":timing.nextLabel):timing.nextLabel;return `<div class="maint-item ${timing.due?"due":""}"><div class="maint-top"><strong>${cssEscape(t.name)}</strong><span>${cssEscape(status)}</span></div><small>${cssEscape(t.note)}</small><div class="maint-actions"><button class="maint-source-link" data-maint-source="${cssEscape(t.id)}">${cssEscape(t.source)}</button><button data-maint-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}">Als erledigt quittieren</button></div></div>`}).join("");
+    const rows=visible.map(({task:t,timing})=>{const status=t.days?(timing.due?"FÄLLIG":timing.nextLabel):timing.nextLabel;return `<div class="maint-item ${timing.due?"due":""}"><div class="maint-top"><strong>${cssEscape(t.name)}</strong><span>${cssEscape(status)}</span></div><small>${cssEscape(t.note)}</small><div class="maint-actions"><button class="maint-source-link" data-maint-source="${cssEscape(t.id)}" title="${cssEscape(t.source)}">${cssEscape(t.source)}</button><button data-maint-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}"><ha-icon icon="mdi:check-circle-outline"></ha-icon> Als erledigt quittieren</button></div></div>`}).join("");
     const upcomingHtml=upcoming.length?`<div class="maintenance-next"><strong>Nächste Wartungen</strong>${upcoming.map(({task,timing})=>`<div class="maintenance-next-row"><span>${cssEscape(task.name)}</span><span>${cssEscape(timing.nextLabel)}</span></div>`).join("")}</div>`:"";
-    const x2dNote=normalizedPrinterModel(printer.device)==="X2D"?`<div class="maintenance-note"><strong>Bambu-Lab-Intervalllogik:</strong> Die Gesamtbetriebsstunden dienen hier nur als Information und lösen keine Wartung aus. Die normalen X2D-Intervalle stammen aus Kapitel 11 des offiziellen Handbuchs. Bei dauerhaftem Druck mit Hochtemperatur-/Engineering-Filamenten oder bei durchschnittlich mehr als 8 Druckstunden pro Tag verlangt Bambu häufigere Wartung: 3-Monats-Arbeiten monatlich und Monats-Arbeiten wöchentlich. Zusätzlich kann der X2D mit aktueller Firmware eigene Wartungshinweise anhand von Aufgabe und Druckdauer ausgeben.</div>`:"";
-    const history=(state.history||[]).slice().reverse().map(h=>`<tr><td>${new Date(h.ts).toLocaleString("de-DE")}</td><td>${cssEscape(h.name)}</td></tr>`).join("");
-    const totalHtml=totalState?`<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit laut Bambu-Integration</strong><span>${this._formatDurationState(totalState)}</span></div><small>Entity: ${cssEscape(exactTotal?.entity_id||"")}${total.cached?` · zuletzt gemeldet ${new Date(total.ts).toLocaleString("de-DE")}`:""}</small></div>`:`<div class="notice">Keine total_usage_hours-Entity bzw. kein letzter Gesamtwert verfügbar. Die letzte Druckdauer wird ausdrücklich nicht als Gesamtlaufzeit verwendet.</div>`;
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Maintenance</div><div class="panel-title">Wartung · ${cssEscape(configuredPrinterName(this._config,printer))}</div></div></div><div class="maintenance">${totalHtml}${x2dNote}${rows||`<div class="notice">Aktuell ist keine Wartung fällig. Noch nicht fällige Arbeiten erscheinen automatisch wieder zum nächsten Herstellerintervall.</div>`}${upcomingHtml}<details class="maintenance-log"><summary>Wartungsbuch (${(state.history||[]).length})</summary>${history?`<table><thead><tr><th>Zeitpunkt</th><th>Wartung</th></tr></thead><tbody>${history}</tbody></table>`:`<div class="empty">Noch keine Wartung quittiert.</div>`}</details></div></section>`;
+    const x2dNote=normalizedPrinterModel(printer.device)==="X2D"?`<div class="maintenance-note"><strong>Bambu-Lab-Intervalllogik:</strong> Die Gesamtbetriebsstunden dienen hier nur als Information und lösen keine Wartung aus. Die normalen X2D-Intervalle stammen aus Kapitel 11 des offiziellen Handbuchs. Bei dauerhaftem Druck mit Hochtemperatur-/Engineering-Filamenten oder bei durchschnittlich mehr als 8 Druckstunden pro Tag verlangt Bambu häufigere Wartung: 3-Monats-Arbeiten monatlich und Monats-Arbeiten wöchentlich. Zusätzlich kann der X2D mit aktueller Firmware eigene Wartungshinweise anhand von Aufgabe und Druckdauer ausgeben. Die Dashboard-Termine sind Erinnerungen anhand der Bambu-Vorgaben; sichtbarer Verschleiß, Verschmutzung oder eine direkte Wartungsmeldung des Druckers haben Vorrang.</div>`:"";
+    const totalHtml=totalState?`<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit laut Bambu-Integration</strong><span>${this._formatDurationState(totalState)}</span></div><small>Entity: ${cssEscape(exactTotal?.entity_id||"")}${total.cached?` · zuletzt gemeldet ${new Date(total.ts).toLocaleString(uiLocale(this._hass))}`:""}</small></div>`:`<div class="notice">Keine total_usage_hours-Entity bzw. kein letzter Gesamtwert verfügbar. Die letzte Druckdauer wird ausdrücklich nicht als Gesamtlaufzeit verwendet.</div>`;
+    const toast=this._maintenanceToast?`<div class="maintenance-toast"><ha-icon icon="mdi:check-circle-outline"></ha-icon> ${cssEscape(this._maintenanceToast)}</div>`:"";
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Maintenance</div><div class="panel-title">Wartung · ${cssEscape(configuredPrinterName(this._config,printer))}</div></div></div><div class="maintenance">${toast}${totalHtml}${x2dNote}${rows||`<div class="notice">Aktuell ist keine Wartung fällig. Noch nicht fällige Arbeiten erscheinen automatisch wieder zum nächsten Herstellerintervall.</div>`}${upcomingHtml}${this._renderMaintenanceLog(printer,state,tasks)}</div></section>`;
   }
 
   _renderMaintenanceModal() {
     const t=this._maintenanceModalTask; if(!t) return "";
     const interval=t.days?`${t.days} Tage (normale Nutzung)`:"regelmäßig / nach Zustand";
     const intensive=t.intensiveDays?`<br><strong>Intensive Nutzung:</strong> ${t.intensiveDays} Tage laut verkürztem Bambu-Intervall`:"";
-    return `<div class="maintenance-modal-backdrop" data-close-maint-modal><div class="maintenance-modal" data-maint-modal-box><div class="maintenance-modal-head"><div><div class="eyebrow">Offizielle Wartungsanleitung</div><h3>${cssEscape(t.name)}</h3></div><button class="icon-btn" data-close-maint-modal title="Schließen"><ha-icon icon="mdi:close"></ha-icon></button></div><p>${cssEscape(t.note)}</p><p><strong>Intervall:</strong> ${cssEscape(interval)}${intensive}<br><strong>Quelle:</strong> ${cssEscape(t.source)}</p><div class="maintenance-modal-actions"><a href="${cssEscape(t.url)}" target="_blank" rel="noopener">Originalanleitung öffnen</a><button data-maint-modal-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}">Als erledigt quittieren</button></div></div></div>`;
+    return `<div class="maintenance-modal-backdrop" data-close-maint-modal><div class="maintenance-modal" data-maint-modal-box><div class="maintenance-modal-head"><div><div class="eyebrow">Offizielle Wartungsanleitung</div><h3>${cssEscape(t.name)}</h3></div><button class="icon-btn" data-close-maint-modal title="Schließen"><ha-icon icon="mdi:close"></ha-icon></button></div><p>${cssEscape(t.note)}</p><p><strong>Intervall:</strong> ${cssEscape(interval)}${intensive}<br><strong>Quelle:</strong> ${cssEscape(t.source)}</p><div class="maintenance-modal-actions"><a href="${cssEscape(t.url)}" target="_blank" rel="noopener">Originalanleitung öffnen</a><button data-maint-modal-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}"><ha-icon icon="mdi:check-circle-outline"></ha-icon> Als erledigt quittieren</button></div></div></div>`;
   }
 
   _formatStateWithUnit(st) {
@@ -1627,10 +1756,15 @@ class BambuLabDashboard extends HTMLElement {
     this.shadowRoot.querySelectorAll("[data-select-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setSelect(ev.currentTarget.dataset.selectEntity, ev.currentTarget.value)));
 
     this.shadowRoot.querySelectorAll("[data-smart-plug]").forEach(el=>el.addEventListener("click",async ev=>{ const id=ev.currentTarget.dataset.smartPlug; const running=this._selectedPrinter() && ["running","printing","prepare","preparing"].includes(normalize(this._val(this._selectedPrinter(),"status",""))); const st=this._hass.states[id]; if(running && normalize(st?.state)==="on" && !confirm("Der Drucker druckt gerade. Smart-Steckdose wirklich ausschalten?")) return; await this._callEntity({entity_id:id}); }));
-    this.shadowRoot.querySelectorAll("[data-maint-done]").forEach(el=>el.addEventListener("click",ev=>{ const printer=this._selectedPrinter(); if(!printer)return; const data=this._maintenanceState(printer.id); data.last=data.last||{}; data.history=data.history||[]; const ts=Date.now(); data.last[ev.currentTarget.dataset.maintDone]=ts; data.history.push({ts,name:ev.currentTarget.dataset.maintName}); this._saveMaintenanceState(printer.id,data); this._render(); }));
+    this.shadowRoot.querySelectorAll("[data-maint-done]").forEach(el=>el.addEventListener("click",ev=>{ const printer=this._selectedPrinter(); if(!printer)return; this._recordMaintenance(printer,ev.currentTarget.dataset.maintDone,ev.currentTarget.dataset.maintName); this._render(); }));
     this.shadowRoot.querySelectorAll("[data-maint-source]").forEach(el=>el.addEventListener("click",ev=>{const printer=this._selectedPrinter();if(!printer)return;this._maintenanceModalTask=this._officialMaintenanceTasks(printer).find(t=>t.id===ev.currentTarget.dataset.maintSource)||null;this._render();}));
     this.shadowRoot.querySelectorAll("[data-close-maint-modal]").forEach(el=>el.addEventListener("click",ev=>{if(ev.target.closest?.("[data-maint-modal-box]") && !ev.target.closest?.("[data-close-maint-modal]:not(.maintenance-modal-backdrop)")) return; this._maintenanceModalTask=null;this._render();}));
-    this.shadowRoot.querySelector("[data-maint-modal-done]")?.addEventListener("click",ev=>{const printer=this._selectedPrinter();if(!printer)return;const data=this._maintenanceState(printer.id);data.last=data.last||{};data.history=data.history||[];const ts=Date.now();data.last[ev.currentTarget.dataset.maintModalDone]=ts;data.history.push({ts,name:ev.currentTarget.dataset.maintName});this._saveMaintenanceState(printer.id,data);this._maintenanceModalTask=null;this._render();});
+    this.shadowRoot.querySelector("[data-maint-modal-done]")?.addEventListener("click",ev=>{const printer=this._selectedPrinter();if(!printer)return;this._recordMaintenance(printer,ev.currentTarget.dataset.maintModalDone,ev.currentTarget.dataset.maintName);this._maintenanceModalTask=null;this._render();});
+    this.shadowRoot.querySelector("[data-maint-log-filter]")?.addEventListener("change",ev=>{this._maintenanceLogFilter=ev.currentTarget.value||"all";this._maintenanceLogPage=1;this._render();});
+    this.shadowRoot.querySelector("[data-maint-log-recent]")?.addEventListener("change",ev=>{this._maintenanceLogRecentOnly=!!ev.currentTarget.checked;this._maintenanceLogPage=1;this._render();});
+    this.shadowRoot.querySelectorAll("[data-maint-log-page]").forEach(el=>el.addEventListener("click",ev=>{this._maintenanceLogPage=Math.max(1,(this._maintenanceLogPage||1)+(ev.currentTarget.dataset.maintLogPage==="next"?1:-1));this._render();}));
+    this.shadowRoot.querySelectorAll("[data-maint-log-delete]").forEach(el=>el.addEventListener("click",ev=>{const printer=this._selectedPrinter();if(!printer)return;if(!confirm(translateUiText("Diesen Wartungseintrag wirklich löschen?",this._hass)))return;const data=this._maintenanceState(printer.id);const idx=Number(ev.currentTarget.dataset.maintLogDelete);if(Number.isInteger(idx)&&idx>=0&&idx<data.history.length){data.history.splice(idx,1);this._saveMaintenanceState(printer.id,data);this._setMaintenanceToast("Wartungseintrag gelöscht.");this._render();}}));
+    this.shadowRoot.querySelector("[data-maint-log-clear]")?.addEventListener("click",()=>{const printer=this._selectedPrinter();if(!printer)return;if(!confirm(translateUiText("Das komplette Wartungsbuch dieses Druckers wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",this._hass)))return;const data=this._maintenanceState(printer.id);data.history=[];this._saveMaintenanceState(printer.id,data);this._maintenanceLogPage=1;this._setMaintenanceToast("Wartungsbuch wurde geleert.");this._render();});
     const select = this.shadowRoot.querySelector("[data-speed-select]");
     if (select) select.addEventListener("change", (ev) => this._setSpeed(ev.target.value));
   }
@@ -1803,6 +1937,7 @@ class BambuLabDashboardEditor extends HTMLElement {
         <details class="editor-sub" data-detail-key="entities-${cssEscape(p.id)}"><summary>Erweiterte Entity-Zuordnung</summary><div class="help">Nur verwenden, wenn ein automatisch erkannter Wert falsch ist. Damit lassen sich z. B. Fortschritt, Status oder Auftrag eines Druckers eindeutig auf eine bestimmte Home-Assistant-Entity festlegen.</div><div class="entity-override-grid">${overrideFields.map(([field,label])=>`<label>${label}<input type="text" list="all-entity-ids" data-field="${field}" value="${cssEscape(cfg[field] || "")}" placeholder="automatisch"></label>`).join("")}</div></details>
       </div>`;
     }).join("")}</div>`;
+    applyUiTranslations(this.shadowRoot,this._hass);
     this.shadowRoot.querySelector("[data-theme]")?.addEventListener("change", (ev) => { this._config.theme = ev.target.value; this._emit(); });
     this.shadowRoot.querySelector("[data-kwh-price]")?.addEventListener("change", (ev) => {
       const value = ev.target.value;

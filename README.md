@@ -110,6 +110,16 @@ Offizieller A2L Quick Start: https://csm.bblcdn.com/hub/4efdb4e04ab34111a8da112e
 
 Quittierte Wartungen werden mit Zeitstempel im Wartungsbuch gespeichert. Das Wartungsbuch liegt aktuell im Browser-`localStorage` und ist damit browser-/gerätebezogen.
 
+### Wartungsbuch ab v1.7.0
+
+Das Wartungsbuch zeigt 15 Einträge pro Seite. Es kann nach Wartungsart gefiltert werden; zusätzlich lässt sich die Ansicht auf die letzten 30 Tage begrenzen. Eine kleine Auswertung zeigt Gesamtzahl, Wartungen der letzten 30 Tage und die am häufigsten quittierte Aufgabe. Einzelne Einträge sowie das komplette Logbuch können nach Sicherheitsabfrage gelöscht werden. Das Löschen des Logbuchs ändert bewusst nicht die separat gespeicherten letzten Wartungszeitpunkte und damit auch nicht die nächsten Fälligkeiten.
+
+Nach dem Quittieren einer Wartung erscheint eine sichtbare Bestätigung. Die Wartungs- und Quellenbuttons besitzen Hover-, Active- und Tastatur-Fokuszustände, damit auf Desktop klar erkennbar ist, dass die Aktion ausgelöst werden kann.
+
+## Sprache / Language
+
+Die Dashboard-Oberfläche übernimmt automatisch die Sprache von Home Assistant. Deutsch wird als Deutsch dargestellt; Englisch sowie derzeit nicht separat übersetzte Home-Assistant-Sprachen verwenden Englisch als Fallback. Dazu gehören Navigation, Wartungsbereich, Logbuch, Hinweise und wesentliche Bedienelemente. Datumsangaben wechseln ebenfalls zwischen deutschem und englischem Format. Die Entity-Namen und bestimmte Zustände der Bambu-Integration selbst bleiben davon getrennt und richten sich nach Home Assistant bzw. der Integration.
+
 ## Smart-Steckdose / Energie
 
 Pro Drucker können im Karteneditor zugeordnet werden:

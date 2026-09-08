@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.7.0
+
+- Dashboard-Oberfläche automatisch zweisprachig: Deutsch bei deutscher Home-Assistant-Sprache, Englisch bei englischer bzw. sonstiger Sprache als Fallback. Datumsformat passt sich der Sprache an.
+- Wartungsbuttons mit deutlich sichtbarem Hover-/Active-/Focus-Feedback; nach Quittierung erscheint eine Bestätigung direkt im Wartungsbereich.
+- Wartungsbuch auf 15 Einträge pro Seite begrenzt und um Seitennavigation erweitert.
+- Filter nach Wartungsart und optional nur letzte 30 Tage.
+- Kleine Auswertung im Wartungsbuch: Gesamtzahl, Einträge der letzten 30 Tage und häufigste Wartung.
+- Einzelne Logbucheinträge können mit Sicherheitsabfrage gelöscht werden; komplettes Wartungsbuch kann ebenfalls geleert werden. Das Löschen des Logs setzt die separat gespeicherten nächsten Wartungstermine nicht zurück.
+- Wartungs-Hinweise erweitert: Dashboard-Termine sind Erinnerungen nach Bambu-Vorgaben; sichtbarer Verschleiß, Verschmutzung oder eine direkte Wartungsmeldung des Druckers haben Vorrang.
+- Alle Wartungsintervall-Korrekturen aus v1.6.3 sowie sämtliche vorherigen Änderungen bleiben enthalten.
+
 ## 1.6.3
 
 - Wartungslogik des X2D auf die offiziellen Zeitintervalle aus Kapitel 11 des Bambu-Lab-Handbuchs umgestellt; Gesamtbetriebsstunden lösen keine Wartung mehr aus.

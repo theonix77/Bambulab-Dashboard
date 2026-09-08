@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
 const code=fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url),"utf8");
-assert.match(code,/const VERSION = "1\.6\.3"/);
+assert.match(code,/const VERSION = "1\.7\.0"/);
 assert.match(code,/_isInCardPicker/);
 assert.match(code,/preview: true/);
 assert.match(code,/data-open-printer=/);
@@ -49,3 +49,11 @@ assert.match(code,/_maintenanceTiming/);
 assert.match(code,/durchschnittlich mehr als 8 Druckstunden pro Tag/);
 assert.match(code,/alwaysVisible:true/);
 assert.doesNotMatch(code,/!last\|\|now-last>=t\.days/);
+
+assert.match(code,/I18N_EN/);
+assert.match(code,/applyUiTranslations/);
+assert.match(code,/data-maint-log-filter/);
+assert.match(code,/data-maint-log-page/);
+assert.match(code,/data-maint-log-delete/);
+assert.match(code,/data-maint-log-clear/);
+assert.match(code,/maintenance-summary/);

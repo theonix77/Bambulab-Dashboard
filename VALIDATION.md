@@ -1,3 +1,7 @@
+# Validation v1.7.0
+
+`npm run validate` prüft Syntax, Discovery, Runtime, Feature-/Static-Checks und Custom-Element-Registrierung. v1.7.0 ergänzt statische Checks für Zweisprachigkeit sowie Wartungsbuch-Filter, Pagination, Einzellöschung und Logbuch-Löschung.
+
 # Validierung v1.6.1
 
 Statisch/automatisiert geprüft:
