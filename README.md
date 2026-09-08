@@ -34,7 +34,7 @@ Danach im Dashboard **Karte hinzufügen → Bambu Lab Dashboard** wählen oder m
 type: custom:bambu-lab-dashboard
 ```
 
-## Was v1.4.0 kann
+## Was v1.5.0 kann
 
 - mehrere Drucker automatisch erkennen und gleichzeitig in einer Übersicht anzeigen
 - Reihenfolge und Anzeigename pro Drucker ändern
@@ -101,7 +101,7 @@ Die Karte nutzt die von Home Assistant zugewiesene Section-Breite vollständig. 
 
 ## Mobil / Responsive
 
-Die Druckerbilder behalten ihre Proportionen. Auf kleinen Breiten werden Kennzahlen und Navigation angepasst, ohne das Bild zu verzerren. v1.4.0 bewahrt außerdem die Scrollposition bei Live-Updates, damit Fortschrittsänderungen nicht mehr bei jedem Home-Assistant-State-Update nach oben springen sollen.
+Die Druckerbilder behalten ihre Proportionen. Auf kleinen Breiten werden Kennzahlen und Navigation angepasst, ohne das Bild zu verzerren. v1.5.0 bewahrt außerdem die Scrollposition bei Live-Updates, damit Fortschrittsänderungen nicht mehr bei jedem Home-Assistant-State-Update nach oben springen sollen.
 
 ## Updates
 
@@ -126,3 +126,16 @@ Die mitgelieferten Tests prüfen Syntax, Custom-Element-Registrierung, Discovery
 ## Lizenz
 
 MIT. Bambu Lab ist eine Marke des jeweiligen Rechteinhabers. Dieses Community-Projekt ist nicht offiziell mit Bambu Lab verbunden.
+
+
+## Steuerung in v1.5.0
+
+Das Dashboard nutzt die von `greghesp/ha-bambulab` bereitgestellten steuerbaren Entitäten aus dem kompletten Gerätebaum des Druckers (inklusive Child Devices): Buttons für Pause/Fortsetzen/Stop, `select` für Druckgeschwindigkeit und Luftkanal-Modus, `number` für Solltemperaturen, `fan` für Lüfter, `light` und vorhandene Bambu-Schalter. Zusätzlich kann pro Drucker eine externe `switch.*`-Entity als Smart-Steckdose zugeordnet werden. Beim Ausschalten während eines laufenden Drucks erscheint eine Sicherheitsabfrage.
+
+## Wartungsbuch
+
+Für X2D sind die im offiziellen X2D User Manual genannten regelmäßigen Wartungen mit Kalenderintervallen hinterlegt. A2L zeigt die im offiziellen Quick Start genannten Wartungsbereiche; dort nennt Bambu im Quick Start keine festen Zeitintervalle, daher erfindet das Dashboard keine. Quittierte Wartungen verschwinden als fällig und werden im Wartungsbuch protokolliert. Das Wartungsbuch wird im Browser (`localStorage`) gespeichert; es ist deshalb browser-/gerätelokal.
+
+## Aktives Filament
+
+Wenn `active_tray` oder eine als aktiv markierte Tray-/External-Spool-Entity vorhanden ist, zeigt die Übersicht und Detailansicht das aktuell verwendete Filament samt Farbe an.

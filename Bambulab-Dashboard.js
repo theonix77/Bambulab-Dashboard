@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.4.0 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.5.0 | standalone HACS resource */
 
-const VERSION = "1.4.0";
+const VERSION = "1.5.0";
 const DOMAIN = "bambu_lab";
 
 
@@ -8,6 +8,9 @@ const DOMAIN = "bambu_lab";
 // which is also the source of the cards bundled with the Bambu Lab integration.
 // We reference the upstream PNGs rather than shipping copied artwork.
 const PRINTER_ART_BASE = "https://raw.githubusercontent.com/greghesp/ha-bambulab-cards/main/src/images";
+const OFFICIAL_MODEL_ART = Object.freeze({
+  "A2L": "https://storage.ghost.io/c/8d/d9/8dd9f85b-21c3-4782-bba8-8778cd8f2f93/content/images/size/w1200/2026/05/BBL-A2L-00-hero.jpg"
+});
 const PRINTER_ART_FILES = Object.freeze({
   "A1": "A1.png",
   "A1 MINI": "A1Mini.png",
@@ -37,7 +40,8 @@ function printerArtworkUrl(device) {
   let filename = PRINTER_ART_FILES[model] || PRINTER_ART_FILES[compact] || null;
   if (!filename && /^X1/.test(model)) filename = "X1C.png";
   if (!filename && /^A1\s*MINI/.test(model)) filename = "A1Mini.png";
-  return filename ? `${PRINTER_ART_BASE}/${filename}` : null;
+  if (filename) return `${PRINTER_ART_BASE}/${filename}`;
+  return OFFICIAL_MODEL_ART[model] || OFFICIAL_MODEL_ART[compact] || null;
 }
 
 const ENTITY_KEYS = {
@@ -94,6 +98,10 @@ const ENTITY_KEYS = {
   buzzerSilence: ["buzzer_silence"],
   buzzerFire: ["buzzer_fire_alarm"],
   buzzerBeep: ["buzzer_beeping"],
+  cameraSwitch: ["camera"],
+  imageCameraSwitch: ["imagecamera"],
+  promptSound: ["prompt_sound"],
+  activeTray: ["active_tray"],
 };
 
 const ENTITY_OVERRIDE_FIELDS = Object.freeze({
@@ -121,7 +129,8 @@ const ENTITY_OVERRIDE_FIELDS = Object.freeze({
   auxFanControl: "aux_fan_control_entity",
   chamberFanControl: "chamber_fan_control_entity",
   secondaryAuxFanControl: "secondary_aux_fan_control_entity",
-  airductMode: "airduct_mode_entity"
+  airductMode: "airduct_mode_entity",
+  smartPlug: "smart_plug_entity"
 });
 
 const STATUS_TRANSLATIONS = {
@@ -435,7 +444,7 @@ const styles = `
   .spool-dialog-backdrop { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; padding:18px; background:rgba(0,0,0,.62); backdrop-filter:blur(5px); }
   .ams-slot-detail { margin:14px 17px 17px; padding:15px; border:1px solid rgba(80,217,38,.28); border-radius:16px; background:var(--bd-panel-2); }
   :host,.shell { overflow-anchor:none; }
-  @container (max-width:560px) { .fleet-card { padding:13px; } .fleet-main { gap:12px; } .fleet-visual { width:100%; height:180px; } .fleet-visual img { width:100%; height:100%; object-fit:contain; object-position:center; } .fleet-content { min-width:0; } .fleet-task { white-space:normal; overflow-wrap:anywhere; } }
+  @container (max-width:560px) { .fleet-card { padding:13px; } .fleet-main { gap:12px; } .fleet-visual { width:100%; height:180px; } .fleet-visual img { width:100%; height:100%; object-fit:contain; object-position:center; object-position:center; } .fleet-content { min-width:0; } .fleet-task { white-space:normal; overflow-wrap:anywhere; } }
   .spool-dialog { width:min(560px,100%); max-height:min(78vh,720px); overflow:auto; border-radius:20px; padding:18px; color:var(--bd-text); background:var(--bd-panel); border:1px solid rgba(80,217,38,.35); box-shadow:0 25px 80px rgba(0,0,0,.45); }
   .spool-dialog-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
   .spool-dialog-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:14px; }
@@ -552,6 +561,12 @@ const styles = `
   .row-label { display:flex; align-items:center; gap:9px; min-width:0; color:var(--bd-muted); font-size:12px; }
   .row-label ha-icon { color:var(--bd-accent); --mdc-icon-size:18px; }
   .row-value { font-size:13px; font-weight:800; text-align:right; }
+  .active-filament{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--bd-muted);font-size:12px}.active-filament strong{color:var(--bd-text)}.filament-dot{--filament:#8e9a92;width:14px;height:14px;border-radius:50%;background:var(--filament);border:2px solid rgba(255,255,255,.25);box-shadow:0 0 10px color-mix(in srgb,var(--filament) 45%,transparent);flex:0 0 auto}.active-filament.muted{opacity:.7}
+  .number-set-row{display:grid;grid-template-columns:1fr auto;gap:7px}.number-set-row button,.maint-actions button{border:1px solid var(--bd-green-dim);background:rgba(80,217,38,.08);color:var(--bd-text);border-radius:9px;padding:8px 10px;cursor:pointer}.toggle-row{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bd-border);background:var(--bd-card);color:var(--bd-text);border-radius:11px;padding:10px;cursor:pointer}.toggle-row.on strong,.plug-state.on{color:var(--bd-green)}
+  .smart-plug{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--bd-border);border-radius:13px;padding:12px;margin-bottom:12px}.smart-plug small,.smart-plug strong,.smart-plug span{display:block}.plug-state{margin-top:4px;font-size:11px;font-weight:800;color:var(--bd-muted)}
+  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}
+  .shell.theme-light .active-filament strong,.shell.theme-light .toggle-row,.shell.theme-light .number-set-row button,.shell.theme-light .maint-actions button{color:#102017!important}.shell.theme-light .toggle-row,.shell.theme-light .smart-plug{background:#fff!important;border-color:#c9d8cd!important}
+
   .camera-wrap { position:relative; aspect-ratio:16/9; margin:14px 17px 17px; border-radius:15px; overflow:hidden; background:#030504; border:1px solid rgba(255,255,255,.05); display:grid; place-items:center; }
   .camera-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
   .camera-empty { text-align:center; color:var(--bd-muted); padding:20px; font-size:12px; }
@@ -763,7 +778,7 @@ const styles = `
   @container (max-width:620px) {
     .fleet-main { grid-template-columns:88px minmax(0,1fr); gap:11px; align-items:center; }
     .fleet-visual { height:104px; min-height:104px; }
-    .fleet-visual img { width:100%; height:100%; object-fit:contain; object-position:center; }
+    .fleet-visual img { width:100%; height:100%; object-fit:contain; object-position:center; object-position:center; }
     .fleet-fallback ha-icon { --mdc-icon-size:54px; }
     .fleet-progress-number { font-size:30px; }
     .fleet-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -884,11 +899,11 @@ class BambuLabDashboard extends HTMLElement {
   _entityEntries(printer) {
     if (!printer) return [];
     const merged = new Map();
-    for (const e of (printer.entries || [])) if (e?.entity_id) merged.set(e.entity_id, e);
-    // Home Assistant's frontend entity registry is often newer/more complete than the WS snapshot,
-    // especially for CONFIG entities (buttons, numbers, fans, selects). Merge both sources.
+    for (const e of [...(printer.entries || []), ...(printer.childEntries || [])]) if (e?.entity_id) merged.set(e.entity_id, e);
+    // Controls and nozzle/toolhead entities can live on child devices. Merge the complete printer tree.
+    const allowedDeviceIds = new Set([printer.id, ...(printer.descendants || [])]);
     for (const e of Object.values(this._hass?.entities || {})) {
-      if (!e?.entity_id || e.device_id !== printer.id) continue;
+      if (!e?.entity_id || !allowedDeviceIds.has(e.device_id)) continue;
       const prev = merged.get(e.entity_id) || {};
       merged.set(e.entity_id, { ...prev, ...e });
     }
@@ -969,10 +984,13 @@ class BambuLabDashboard extends HTMLElement {
   _cameraUrl(printer) {
     const st = this._st(printer, "camera");
     if (!st) return null;
+    const entityId = st.entity_id;
+    const token = st.attributes?.access_token;
+    // X2D and other RTSP cameras should be consumed through HA's stream proxy.
+    if (entityId && token) return `/api/camera_proxy_stream/${entityId}?token=${encodeURIComponent(token)}&v=${this._cameraBust}`;
     const picture = st.attributes?.entity_picture;
     if (picture) return `${picture}${picture.includes("?") ? "&" : "?"}v=${this._cameraBust}`;
-    const token = st.attributes?.access_token;
-    if (st.entity_id && token) return `/api/camera_proxy/${st.entity_id}?token=${encodeURIComponent(token)}&v=${this._cameraBust}`;
+    if (entityId) return `/api/camera_proxy/${entityId}?v=${this._cameraBust}`;
     return null;
   }
 
@@ -986,7 +1004,7 @@ class BambuLabDashboard extends HTMLElement {
 
   _printerArtworkUrl(printer) {
     // Use the same model-art source as the Bambu cards bundled with greghesp/ha-bambulab.
-    // Never substitute a different model. If upstream has no exact asset, the neutral fallback is used.
+    // Prefer exact upstream model art; A2L falls back to an official Bambu A2L product image because the cards repo currently has no dedicated A2L PNG.
     return printerArtworkUrl(printer?.device);
   }
 
@@ -1068,7 +1086,7 @@ class BambuLabDashboard extends HTMLElement {
         <div><span>Restzeit</span><strong>${!isPrinting || remaining === null ? "–" : formatDurationMinutes(remaining)}</strong></div>
         <div><span>Düse</span><strong>${this._formatStateWithUnit(nozzle)}</strong></div>
         <div><span>Bett</span><strong>${this._formatStateWithUnit(bed)}</strong></div>
-        <div><span>AMS</span><strong>${amsCount || "–"}</strong></div>
+        <div><span>AMS</span><strong>${amsCount || "–"}</strong></div><div><span>Laufzeit</span><strong>${this._formatDurationState(this._st(printer,"totalUsage"))}</strong></div>
       </div>
       <button class="fleet-detail" data-open-printer="${cssEscape(printer.id)}">Details öffnen <ha-icon icon="mdi:arrow-right"></ha-icon></button>
     </article>`;
@@ -1340,42 +1358,65 @@ class BambuLabDashboard extends HTMLElement {
     this.dispatchEvent(new CustomEvent("hass-more-info", { detail:{ entityId }, bubbles:true, composed:true }));
   }
 
+  _activeFilament(printer) {
+    const active = this._st(printer, "activeTray");
+    if (active && hasMeaningfulValue(active)) {
+      const a = active.attributes || {};
+      return {
+        name: a.name || a.filament_name || a.tray_type || active.state || "Filament",
+        type: a.type || a.tray_type || a.filament_type || "",
+        color: colorFromAttributes(a) || "#8e9a92",
+        source: "active_tray"
+      };
+    }
+    // Fallback: look for a tray/external-spool entity that explicitly reports active=true.
+    for (const e of [...this._entityEntries(printer), ...(printer.childEntries || [])]) {
+      const st = e?.entity_id ? this._hass.states[e.entity_id] : null;
+      if (!st || st.attributes?.active !== true) continue;
+      const a=st.attributes||{};
+      return { name:a.name||a.filament_name||a.tray_type||st.state||"Filament", type:a.type||a.tray_type||"", color:colorFromAttributes(a)||"#8e9a92", source:e.entity_id };
+    }
+    return null;
+  }
+
+  _renderActiveFilament(printer) {
+    const f=this._activeFilament(printer);
+    if (!f) return `<div class="active-filament muted"><span class="filament-dot"></span><span>Aktives Filament nicht gemeldet</span></div>`;
+    return `<div class="active-filament"><span class="filament-dot" style="--filament:${cssEscape(f.color)}"></span><span><strong>${cssEscape(f.name)}</strong>${f.type && f.type!==f.name ? ` · ${cssEscape(f.type)}` : ""}</span></div>`;
+  }
+
   _renderControls(printer) {
-    const byKey = (key) => this._entry(printer, key);
-    const stateExists = (reg) => !!(reg?.entity_id && this._hass.states[reg.entity_id]);
+    const byKey=(key)=>this._entry(printer,key);
+    const usable=(reg)=>!!reg?.entity_id;
+    const state=(reg)=>reg?.entity_id ? this._hass.states[reg.entity_id] : null;
+    const domain=(reg)=>reg?.entity_id?.split(".")[0] || "";
+
     const buttons = [
-      [byKey("pause"), "mdi:pause", "Pause", false],
-      [byKey("resume"), "mdi:play", "Fortsetzen", false],
-      [byKey("stop"), "mdi:stop", "Stop", true],
-      [byKey("chamberLight"), "mdi:lightbulb", "Licht", false],
-      [byKey("buzzerSilence"), "mdi:alarm-light-off-outline", "Alarm aus", false],
-      [byKey("buzzerBeep"), "mdi:alarm-light-outline", "Signalton", false],
-    ].filter(([reg]) => stateExists(reg));
+      [byKey("pause"),"mdi:pause","Pause",false], [byKey("resume"),"mdi:play","Fortsetzen",false], [byKey("stop"),"mdi:stop","Stop",true],
+      [byKey("chamberLight"),"mdi:lightbulb","Licht",false], [byKey("buzzerSilence"),"mdi:alarm-light-off-outline","Alarm aus",false], [byKey("buzzerBeep"),"mdi:alarm-light-outline","Signalton",false]
+    ].filter(([r])=>usable(r));
+    const switches=[
+      [byKey("cameraSwitch"),"Kamera aktiv"], [byKey("imageCameraSwitch"),"Kamera Einzelbilder"], [byKey("promptSound"),"Hinweistöne"]
+    ].filter(([r])=>usable(r) && domain(r)==="switch");
+    const numbers=[
+      [byKey("targetNozzleControl"),"Düse Soll"],[byKey("targetBedControl"),"Bett Soll"],[byKey("targetChamberControl"),"Kammer Soll"]
+    ].filter(([r])=>usable(r));
+    const fans=[
+      [byKey("coolingFanControl"),"Bauteillüfter"],[byKey("auxFanControl"),"Aux-Lüfter"],[byKey("chamberFanControl"),"Kammerlüfter"],[byKey("secondaryAuxFanControl"),"Aux-Lüfter 2"]
+    ].filter(([r])=>usable(r));
+    const selects=[];
+    const speedOverride=this._configuredEntityId(printer,"speed");
+    const speed=speedOverride?{entity_id:speedOverride}:byKey("speed");
+    if (usable(speed) && domain(speed)==="select") selects.push([speed,"Druckgeschwindigkeit"]);
+    const airduct=byKey("airductMode"); if(usable(airduct) && domain(airduct)==="select") selects.push([airduct,"Luftkanal-Modus"]);
 
-    const numberDefs = [
-      [byKey("targetNozzleControl"), "Düse Soll"],
-      [byKey("targetBedControl"), "Bett Soll"],
-      [byKey("targetChamberControl"), "Kammer Soll"],
-    ].filter(([reg])=>stateExists(reg));
-    const fanDefs = [
-      [byKey("coolingFanControl"), "Bauteillüfter"],
-      [byKey("auxFanControl"), "Aux-Lüfter"],
-      [byKey("chamberFanControl"), "Kammerlüfter"],
-      [byKey("secondaryAuxFanControl"), "Aux-Lüfter 2"],
-    ].filter(([reg])=>stateExists(reg));
-    const selectDefs = [];
-    const speedOverride = this._configuredEntityId(printer, "speed");
-    const speed = speedOverride ? { entity_id:speedOverride } : byKey("speed");
-    if (stateExists(speed)) selectDefs.push([speed,"Druckgeschwindigkeit"]);
-    const airduct = byKey("airductMode");
-    if (stateExists(airduct)) selectDefs.push([airduct,"Luftkanal-Modus"]);
-
-    const buttonHtml = buttons.length ? `<div class="control-group"><div class="control-group-title">Druck & Gerät</div><div class="controls">${buttons.map(([reg,icon,label,danger])=>`<button class="control-btn ${danger?"danger":""}" data-entity-action="${cssEscape(reg.entity_id)}"><ha-icon icon="${icon}"></ha-icon>${label}</button>`).join("")}</div></div>` : "";
-    const numberHtml = numberDefs.length ? `<div class="control-group"><div class="control-group-title">Temperaturen</div><div class="control-grid">${numberDefs.map(([reg,label])=>{ const st=this._hass.states[reg.entity_id]; return `<div class="control-field"><label>${label}</label><input type="number" data-number-entity="${cssEscape(reg.entity_id)}" value="${cssEscape(st.state)}" min="${cssEscape(st.attributes?.min ?? 0)}" max="${cssEscape(st.attributes?.max ?? 350)}" step="${cssEscape(st.attributes?.step ?? 1)}"></div>`; }).join("")}</div></div>` : "";
-    const fanHtml = fanDefs.length ? `<div class="control-group"><div class="control-group-title">Lüfter</div><div class="control-grid">${fanDefs.map(([reg,label])=>{ const st=this._hass.states[reg.entity_id]; const pct=Number(st.attributes?.percentage ?? st.state ?? 0); return `<div class="control-field"><label>${label}</label><div class="fan-control-row"><input type="range" min="0" max="100" step="10" value="${Number.isFinite(pct)?pct:0}" data-fan-entity="${cssEscape(reg.entity_id)}"><strong>${Number.isFinite(pct)?Math.round(pct):0}%</strong></div></div>`; }).join("")}</div></div>` : "";
-    const selectHtml = selectDefs.length ? `<div class="control-group"><div class="control-group-title">Modi</div><div class="control-grid">${selectDefs.map(([reg,label])=>{ const st=this._hass.states[reg.entity_id]; const opts=st.attributes?.options || []; return `<div class="control-field"><label>${label}</label><select data-select-entity="${cssEscape(reg.entity_id)}">${opts.map((o)=>`<option value="${cssEscape(o)}" ${st.state===o?"selected":""}>${cssEscape(o)}</option>`).join("")}</select></div>`; }).join("")}</div></div>` : "";
-    const any = buttonHtml || numberHtml || fanHtml || selectHtml;
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Quick Controls</div><div class="panel-title">Steuerung</div></div></div>${any ? `<div class="control-groups">${buttonHtml}${numberHtml}${fanHtml}${selectHtml}</div>` : `<div class="empty">Die Bambu-Integration stellt für diesen Drucker aktuell keine steuerbaren Entitäten bereit. Bei Firmware mit MQTT-Signatur oder blockiertem Hybrid-Modus kann die Integration Schreibzugriffe absichtlich sperren.</div>`}</section>`;
+    const buttonHtml=buttons.length?`<div class="control-group"><div class="control-group-title">Druck & Gerät</div><div class="controls">${buttons.map(([r,i,l,d])=>`<button class="control-btn ${d?"danger":""}" data-entity-action="${cssEscape(r.entity_id)}"><ha-icon icon="${i}"></ha-icon>${l}</button>`).join("")}</div></div>`:"";
+    const switchHtml=switches.length?`<div class="control-group"><div class="control-group-title">Schalter</div><div class="control-grid">${switches.map(([r,l])=>{const st=state(r);const on=normalize(st?.state)==="on";return `<button class="toggle-row ${on?"on":""}" data-entity-action="${cssEscape(r.entity_id)}"><span>${l}</span><strong>${on?"EIN":"AUS"}</strong></button>`}).join("")}</div></div>`:"";
+    const numberHtml=numbers.length?`<div class="control-group"><div class="control-group-title">Temperaturen</div><div class="control-grid">${numbers.map(([r,l])=>{const st=state(r); const cur=st?.state??""; return `<div class="control-field"><label>${l}</label><div class="number-set-row"><input type="number" data-number-input="${cssEscape(r.entity_id)}" value="${cssEscape(cur)}" min="${cssEscape(st?.attributes?.min??0)}" max="${cssEscape(st?.attributes?.max??350)}" step="${cssEscape(st?.attributes?.step??1)}"><button data-number-set="${cssEscape(r.entity_id)}">Setzen</button></div></div>`}).join("")}</div></div>`:"";
+    const fanHtml=fans.length?`<div class="control-group"><div class="control-group-title">Lüfter</div><div class="control-grid">${fans.map(([r,l])=>{const st=state(r); const pct=Number(st?.attributes?.percentage ?? 0); return `<div class="control-field"><label>${l}</label><div class="fan-control-row"><input type="range" min="0" max="100" step="5" value="${Number.isFinite(pct)?pct:0}" data-fan-entity="${cssEscape(r.entity_id)}"><strong data-fan-value>${Number.isFinite(pct)?Math.round(pct):0}%</strong></div></div>`}).join("")}</div></div>`:"";
+    const selectHtml=selects.length?`<div class="control-group"><div class="control-group-title">Modi</div><div class="control-grid">${selects.map(([r,l])=>{const st=state(r); const opts=st?.attributes?.options||[]; return `<div class="control-field"><label>${l}</label><select data-select-entity="${cssEscape(r.entity_id)}" ${opts.length?"":"disabled"}>${opts.map(o=>`<option value="${cssEscape(o)}" ${st?.state===o?"selected":""}>${cssEscape(o)}</option>`).join("")}</select>${opts.length?"":`<small>Entity vorhanden, aber aktuell keine Optionen verfügbar.</small>`}</div>`}).join("")}</div></div>`:"";
+    const any=buttonHtml||switchHtml||numberHtml||fanHtml||selectHtml;
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Quick Controls</div><div class="panel-title">Steuerung</div></div></div>${any?`<div class="control-groups">${buttonHtml}${switchHtml}${numberHtml}${fanHtml}${selectHtml}</div>`:`<div class="empty">Keine steuerbaren Bambu-Entities gefunden. Prüfe in Home Assistant, ob die jeweiligen CONFIG-Entities aktiviert und verfügbar sind bzw. ob Firmware/Hybrid-Modus Schreibzugriffe blockieren.</div>`}</section>`;
   }
 
   _controlButton(action, icon, label, danger = false) {
@@ -1383,18 +1424,17 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _renderEnergy(printer) {
-    const cfg = resolveConfiguredPrinter(this._config, printer.id);
-    const powerState = cfg.power_entity ? this._hass.states[cfg.power_entity] : null;
-    const energyState = cfg.energy_entity ? this._hass.states[cfg.energy_entity] : null;
-    if (!cfg.power_entity && !cfg.energy_entity) {
-      return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Energy</div><div class="panel-title">Stromverbrauch</div></div></div><div class="empty"><ha-icon icon="mdi:flash-off"></ha-icon>Kein externer Stromsensor zugeordnet. Öffne den visuellen Karteneditor und ordne diesem Drucker optional Leistungs- und Energie-Sensoren zu. Es werden keine Werte erfunden.</div></section>`;
-    }
-    const power = powerState && hasMeaningfulValue(powerState) ? Number(powerState.state) : null;
-    const energy = energyState && hasMeaningfulValue(energyState) ? Number(energyState.state) : null;
-    const price = Number(this._config.kwh_price);
-    const cost = Number.isFinite(energy) && Number.isFinite(price) ? energy * price : null;
-    const samples = this._powerSamples.get(printer.id) || [];
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Energy</div><div class="panel-title">Stromverbrauch</div></div></div><div class="energy-body"><div class="energy-stats"><div class="energy-stat"><small>Leistung</small><strong>${Number.isFinite(power) ? formatWatt(this._convertPowerToW(powerState, power)) : "–"}</strong></div><div class="energy-stat"><small>Energie</small><strong>${Number.isFinite(energy) ? formatKwh(this._convertEnergyToKwh(energyState, energy)) : "–"}</strong></div><div class="energy-stat"><small>Kosten</small><strong>${cost === null ? "–" : `${formatNumber(this._convertEnergyToKwh(energyState, energy) * price, 2)} €`}</strong></div></div>${samples.length > 1 ? this._sparkline(samples) : `<div class="notice" style="margin-top:12px">Die Leistungskurve wird aus echten Live-Werten während der geöffneten Dashboard-Sitzung aufgebaut. Historische Messwerte werden nicht simuliert.</div>`}</div></section>`;
+    const cfg=resolveConfiguredPrinter(this._config,printer.id);
+    const plugId=String(cfg.smart_plug_entity||"").trim();
+    const plugState=plugId?this._hass.states[plugId]:null;
+    const powerState=cfg.power_entity?this._hass.states[cfg.power_entity]:null;
+    const energyState=cfg.energy_entity?this._hass.states[cfg.energy_entity]:null;
+    if(!plugId && !cfg.power_entity && !cfg.energy_entity) return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Energy</div><div class="panel-title">Strom & Steckdose</div></div></div><div class="empty"><ha-icon icon="mdi:power-plug-off"></ha-icon>Keine Smart-Steckdose bzw. Messsensoren zugeordnet. Im Karteneditor kannst du eine switch.*-Entity sowie Leistung und Energie wählen.</div></section>`;
+    const power=powerState&&hasMeaningfulValue(powerState)?Number(powerState.state):null; const energy=energyState&&hasMeaningfulValue(energyState)?Number(energyState.state):null;
+    const price=Number(this._config.kwh_price); const cost=Number.isFinite(energy)&&Number.isFinite(price)?this._convertEnergyToKwh(energyState,energy)*price:null;
+    const samples=this._powerSamples.get(printer.id)||[]; const on=normalize(plugState?.state)==="on";
+    const plug=`${plugId?`<div class="smart-plug"><div><small>Smart-Steckdose</small><strong>${cssEscape(plugState?.attributes?.friendly_name||plugId)}</strong><span class="plug-state ${on?"on":""}">${on?"EIN":"AUS"}</span></div><button class="control-btn ${on?"danger":""}" data-smart-plug="${cssEscape(plugId)}">${on?"Ausschalten":"Einschalten"}</button></div>`:""}`;
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Energy</div><div class="panel-title">Strom & Steckdose</div></div></div><div class="energy-body">${plug}<div class="energy-stats"><div class="energy-stat"><small>Leistung</small><strong>${Number.isFinite(power)?formatWatt(this._convertPowerToW(powerState,power)):"–"}</strong></div><div class="energy-stat"><small>Energie</small><strong>${Number.isFinite(energy)?formatKwh(this._convertEnergyToKwh(energyState,energy)):"–"}</strong></div><div class="energy-stat"><small>Kosten</small><strong>${cost===null?"–":`${formatNumber(cost,2)} €`}</strong></div></div>${samples.length>1?this._sparkline(samples):""}</div></section>`;
   }
 
   _convertPowerToW(st, value) {
@@ -1419,28 +1459,37 @@ class BambuLabDashboard extends HTMLElement {
     return `<svg class="spark" viewBox="0 0 100 76" preserveAspectRatio="none" aria-label="Live-Leistung"><line x1="0" y1="18" x2="100" y2="18"></line><line x1="0" y1="42" x2="100" y2="42"></line><line x1="0" y1="66" x2="100" y2="66"></line><polyline points="${pts}"></polyline></svg>`;
   }
 
+  _maintenanceKey(printerId){ return `bambu-dashboard-maint-v1:${printerId}`; }
+  _maintenanceState(printerId){ try{return JSON.parse(localStorage.getItem(this._maintenanceKey(printerId))||'{"history":[],"last":{}}')}catch{return {history:[],last:{}}} }
+  _saveMaintenanceState(printerId,data){ try{localStorage.setItem(this._maintenanceKey(printerId),JSON.stringify(data))}catch{} }
+  _officialMaintenanceTasks(printer){
+    const model=normalizedPrinterModel(printer.device);
+    if(model==="X2D") return [
+      {id:"build_plate",name:"Build Plate reinigen",days:7,source:"X2D User Manual · Kap. 11",note:"Mit warmem Wasser und Spülmittel reinigen."},
+      {id:"live_camera",name:"Live-View-Kamera reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Linse mit geeignetem Tuch und Alkohol reinigen."},
+      {id:"chamber",name:"Druckraum / Boden reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Filamentreste und Ablagerungen entfernen."},
+      {id:"xy_axes",name:"X-/Y-Achsen reinigen & schmieren",days:30,source:"X2D User Manual · Kap. 11",note:"Linearführungen reinigen; vorgesehenes Öl verwenden."},
+      {id:"z_axis",name:"Z-Achse reinigen & schmieren",days:90,source:"X2D User Manual · Kap. 11",note:"Linear rods mit Öl, Lead Screws mit Fett; nicht verwechseln."},
+      {id:"air_filter",name:"Luftfilter prüfen / reinigen",days:90,source:"X2D User Manual · Kap. 11",note:"Filterabdeckung reinigen; Aktivkohlefilter bei Verschmutzung/Sättigung ersetzen."},
+      {id:"toolhead_camera",name:"Toolhead-Kamera reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Linse vorsichtig reinigen."},
+      {id:"extruder",name:"Extruder reinigen & schmieren",days:30,source:"X2D User Manual · Kap. 11",note:"Ablagerungen entfernen und vorgesehene Zahnräder schmieren."},
+      {id:"hotend",name:"Hotend prüfen / reinigen",days:30,source:"X2D User Manual · Kap. 11",note:"Bei Bedarf Cold Pull; Verschleißteile prüfen."}
+    ];
+    if(model==="A2L") return [
+      {id:"moving_parts",name:"Schienen / Führungen / Rollen / Lead Screws schmieren",days:null,source:"A2L Quick Start · Regular Maintenance",note:"X/Y und Umlenkrollen mit Öl; Lead Screws und Extruder-Zahnräder mit Fett. Hersteller nennt im Quick Start kein fixes Zeitintervall."},
+      {id:"consumables",name:"Filament-Cutter, Wiper und PTFE prüfen",days:null,source:"A2L Quick Start · Regular Maintenance",note:"Auf Alterung, Verformung und Verschleiß prüfen; bei Bedarf ersetzen."},
+      {id:"camera_fans",name:"Kamera, Lüfter und Filamentsensor reinigen",days:null,source:"A2L Quick Start · Regular Maintenance",note:"Staub/Schmutz entfernen; Kamera vorsichtig mit IPA/Alkohol reinigen."}
+    ];
+    return [];
+  }
   _renderMaintenance(printer) {
-    // Total usage is intentionally strict: never fall back to another vaguely named duration sensor.
-    // greghesp/ha-bambulab exposes translation_key=total_usage_hours with unit h.
-    const totalOverride = this._configuredEntityId(printer, "totalUsage");
-    const exactTotal = totalOverride ? { entity_id: totalOverride } : this._entityEntries(printer).find((e) => normalize(e.translation_key) === "total_usage_hours");
-    const totalState = exactTotal?.entity_id ? this._hass?.states?.[exactTotal.entity_id] || null : null;
-    const total = this._durationToHours(totalState);
-    const cfg = resolveConfiguredPrinter(this._config, printer.id);
-    const items = Array.isArray(cfg.maintenance) ? cfg.maintenance : [];
-    let content = "";
-    if (total !== null) content += `<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit</strong><span>${this._formatDurationState(totalState)}</span></div></div>`;
-    for (const item of items) {
-      const interval = Number(item.interval_hours);
-      const last = Number(item.last_service_hours || 0);
-      if (!Number.isFinite(interval) || interval <= 0 || total === null) continue;
-      const used = Math.max(0, total - last);
-      const pct = Math.min(100, (used / interval) * 100);
-      const remaining = Math.max(0, interval - used);
-      content += `<div class="maint-item"><div class="maint-top"><strong>${cssEscape(item.name || "Wartung")}</strong><span>${formatNumber(remaining, 0)} h verbleibend</span></div><div class="bar"><span style="width:${pct}%"></span></div></div>`;
-    }
-    if (!content) content = `<div class="empty">Keine Wartungsintervalle konfiguriert. Es werden bewusst keine Herstellerintervalle erfunden.</div>`;
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Maintenance</div><div class="panel-title">Wartung</div></div></div><div class="maintenance">${content}</div></section>`;
+    const totalOverride=this._configuredEntityId(printer,"totalUsage");
+    const exactTotal=totalOverride?{entity_id:totalOverride}:this._entityEntries(printer).find(e=>normalize(e.translation_key)==="total_usage_hours");
+    const totalState=exactTotal?.entity_id?this._hass?.states?.[exactTotal.entity_id]||null:null;
+    const state=this._maintenanceState(printer.id); const now=Date.now(); const tasks=this._officialMaintenanceTasks(printer);
+    const rows=tasks.map(t=>{const last=state.last?.[t.id]||null; const due=t.days?(!last || now-last>=t.days*86400000):false; const next=t.days?(last?new Date(last+t.days*86400000).toLocaleDateString("de-DE"):"jetzt prüfen"):"regelmäßig / nach Zustand"; return `<div class="maint-item ${due?"due":""}"><div class="maint-top"><strong>${cssEscape(t.name)}</strong><span>${due?"FÄLLIG":cssEscape(next)}</span></div><small>${cssEscape(t.note)}</small><div class="maint-actions"><span>${cssEscape(t.source)}</span><button data-maint-done="${cssEscape(t.id)}" data-maint-name="${cssEscape(t.name)}">Als erledigt quittieren</button></div></div>`}).join("");
+    const history=(state.history||[]).slice(-12).reverse().map(h=>`<tr><td>${new Date(h.ts).toLocaleString("de-DE")}</td><td>${cssEscape(h.name)}</td></tr>`).join("");
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Maintenance</div><div class="panel-title">Wartung · ${cssEscape(configuredPrinterName(this._config,printer))}</div></div></div><div class="maintenance">${totalState?`<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit laut Bambu-Integration</strong><span>${this._formatDurationState(totalState)}</span></div><small>Entity: ${cssEscape(exactTotal.entity_id)}</small></div>`:`<div class="notice">Keine total_usage_hours-Entity gefunden. Dieser Wert wird nicht aus der letzten Druckdauer abgeleitet.</div>`}${rows||`<div class="notice">Für dieses Modell ist noch kein belastbarer Hersteller-Wartungsplan hinterlegt.</div>`}<details class="maintenance-log"><summary>Wartungsbuch (${(state.history||[]).length})</summary>${history?`<table><thead><tr><th>Zeitpunkt</th><th>Wartung</th></tr></thead><tbody>${history}</tbody></table>`:`<div class="empty">Noch keine Wartung quittiert.</div>`}</details></div></section>`;
   }
 
   _formatStateWithUnit(st) {
@@ -1468,9 +1517,12 @@ class BambuLabDashboard extends HTMLElement {
     this.shadowRoot.querySelector("[data-close-spool-inline]")?.addEventListener("click", ()=>{ this._selectedSpoolEntityId=null; this._render(); });
     this.shadowRoot.querySelectorAll("[data-more-info]").forEach((el)=>el.addEventListener("click", (ev)=>this._showMoreInfo(ev.currentTarget.dataset.moreInfo)));
     this.shadowRoot.querySelectorAll("[data-entity-action]").forEach((el)=>el.addEventListener("click", (ev)=>this._callEntity({entity_id:ev.currentTarget.dataset.entityAction})));
-    this.shadowRoot.querySelectorAll("[data-number-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setNumber(ev.currentTarget.dataset.numberEntity, ev.currentTarget.value)));
-    this.shadowRoot.querySelectorAll("[data-fan-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setFan(ev.currentTarget.dataset.fanEntity, ev.currentTarget.value)));
+    this.shadowRoot.querySelectorAll("[data-number-set]").forEach((el)=>el.addEventListener("click", (ev)=>{ const id=ev.currentTarget.dataset.numberSet; const input=this.shadowRoot.querySelector(`[data-number-input="${CSS.escape(id)}"]`); if(input)this._setNumber(id,input.value); }));
+    this.shadowRoot.querySelectorAll("[data-fan-entity]").forEach((el)=>{ el.addEventListener("input",(ev)=>{const v=ev.currentTarget.parentElement?.querySelector("[data-fan-value]");if(v)v.textContent=`${ev.currentTarget.value}%`;}); el.addEventListener("change", (ev)=>this._setFan(ev.currentTarget.dataset.fanEntity, ev.currentTarget.value)); });
     this.shadowRoot.querySelectorAll("[data-select-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setSelect(ev.currentTarget.dataset.selectEntity, ev.currentTarget.value)));
+
+    this.shadowRoot.querySelectorAll("[data-smart-plug]").forEach(el=>el.addEventListener("click",async ev=>{ const id=ev.currentTarget.dataset.smartPlug; const running=this._selectedPrinter() && ["running","printing","prepare","preparing"].includes(normalize(this._val(this._selectedPrinter(),"status",""))); const st=this._hass.states[id]; if(running && normalize(st?.state)==="on" && !confirm("Der Drucker druckt gerade. Smart-Steckdose wirklich ausschalten?")) return; await this._callEntity({entity_id:id}); }));
+    this.shadowRoot.querySelectorAll("[data-maint-done]").forEach(el=>el.addEventListener("click",ev=>{ const printer=this._selectedPrinter(); if(!printer)return; const data=this._maintenanceState(printer.id); data.last=data.last||{}; data.history=data.history||[]; const ts=Date.now(); data.last[ev.currentTarget.dataset.maintDone]=ts; data.history.push({ts,name:ev.currentTarget.dataset.maintName}); this._saveMaintenanceState(printer.id,data); this._render(); }));
     const select = this.shadowRoot.querySelector("[data-speed-select]");
     if (select) select.addEventListener("change", (ev) => this._setSpeed(ev.target.value));
   }
@@ -1579,6 +1631,7 @@ class BambuLabDashboardEditor extends HTMLElement {
     if (!this.shadowRoot) return;
     const allEntities = Object.values(this._hass?.states || {}).filter((st) => !!st.entity_id).sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
     const allSensorEntities = allEntities.filter((st) => st.entity_id?.startsWith("sensor."));
+    const allSwitchEntities = allEntities.filter((st)=>st.entity_id?.startsWith("switch.") || st.entity_id?.startsWith("input_boolean."));
     const unitOf = (st) => String(st.attributes?.unit_of_measurement || "").trim().toLowerCase();
     const searchable = (st) => `${st.entity_id} ${st.attributes?.friendly_name || ""}`.toLowerCase();
     const scorePower = (st) => (st.attributes?.device_class === "power" ? 100 : 0) + (["w","kw","mw"].includes(unitOf(st)) ? 50 : 0) + (/(^|[._ -])(power|leistung)([._ -]|$)/.test(searchable(st)) ? 20 : 0);
@@ -1611,6 +1664,7 @@ class BambuLabDashboardEditor extends HTMLElement {
         return `<option value="${cssEscape(st.entity_id)}" ${selected===st.entity_id?"selected":""}>${devName?`${cssEscape(devName)} — `:""}${cssEscape(label)} · ${cssEscape(st.entity_id)}${u?` [${cssEscape(u)}]`:""}</option>`;
       }).join("");
     };
+    const switchOptionHtml=(selected)=>`<option value="">Nicht zugeordnet</option>`+allSwitchEntities.map(st=>{const reg=registryByEntity.get(st.entity_id);const dev=reg?.device_id?deviceById.get(reg.device_id):null;const dn=dev?(dev.name_by_user||dev.name||dev.model||""):"";return `<option value="${cssEscape(st.entity_id)}" ${selected===st.entity_id?"selected":""}>${dn?`${cssEscape(dn)} — `:""}${cssEscape(st.attributes?.friendly_name||st.entity_id)} · ${cssEscape(st.entity_id)}</option>`}).join("");
     this.shadowRoot.innerHTML = `<style>${styles}</style><datalist id="all-entity-ids">${entityOptions}</datalist><datalist id="sensor-entity-ids">${sensorOptions}</datalist><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Druckerdaten. Hier kannst du Reihenfolge, Namen, AMS, Energie, Theme und bei Bedarf auch die automatisch erkannten Kern-Entitäten pro Drucker überschreiben. Die Drucker-Modellbilder werden automatisch aus derselben Upstream-Bildquelle wie die Bambu-Karten bezogen und sind nicht manuell konfigurierbar.<br><br><strong>Breite:</strong> Die Karte nutzt immer die komplette Breite, die Home Assistant ihrer Section gibt. Für mehr als eine normale Section-Breite musst du die <strong>Section selbst breiter</strong> machen (2–3 Sections) oder eine <strong>Panel-View</strong> verwenden. Eine Custom Card kann die Breite ihrer übergeordneten Section technisch nicht verändern.</div><div class="editor-section"><div class="editor-row"><div><label>Design</label><select data-theme><option value="auto" ${(this._config.theme||"auto")==="auto"?"selected":""}>Automatisch (Home Assistant)</option><option value="dark" ${this._config.theme==="dark"?"selected":""}>Dunkel</option><option value="light" ${this._config.theme==="light"?"selected":""}>Hell</option></select></div><div><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div></div></div>${sortedPrinters.map((p,idx) => {
       const cfg = resolveConfiguredPrinter(this._config, p.id);
       const selectedAms = new Set(Array.isArray(cfg.ams_device_ids) ? cfg.ams_device_ids : []);
@@ -1630,10 +1684,11 @@ class BambuLabDashboardEditor extends HTMLElement {
           <div><label>Anzeigename</label><input type="text" data-field="name" value="${cssEscape(cfg.name || "")}" placeholder="${cssEscape(displayName(p.device))}"></div>
           <div><label>Reihenfolge</label><input type="number" data-field="order" value="${cssEscape(cfg.order ?? idx+1)}" min="1" step="1"></div>
         </div>
-        <div class="editor-sub"><label>Strommessung</label><div class="editor-row">
+        <div class="editor-sub"><label>Strom & Smart-Steckdose</label><div class="editor-row">
+          <div class="entity-picker-wrap"><label>Smart-Steckdose (switch)</label><select data-field="smart_plug_entity">${switchOptionHtml(cfg.smart_plug_entity||"")}</select></div>
           <div class="entity-picker-wrap"><label>Leistungssensor</label><select data-field="power_entity">${measurementOptionHtml(cfg.power_entity || "", scorePower)}</select></div>
           <div class="entity-picker-wrap"><label>Energiesensor</label><select data-field="energy_entity">${measurementOptionHtml(cfg.energy_entity || "", scoreEnergy)}</select></div>
-        </div><div class="custom-image-hint">Hier sind jetzt <strong>alle sensor.*-Entitäten</strong> zugelassen. Dadurch werden Smart-Steckdosen-Sensoren nicht mehr durch einen zu engen Filter ausgeblendet.</div></div>
+        </div><div class="custom-image-hint">Für die Steckdose werden alle <strong>switch.*</strong>-Entities angeboten; für Messwerte alle <strong>sensor.*</strong>-Entities. Dadurch werden Smart-Steckdosen-Sensoren nicht mehr durch einen zu engen Filter ausgeblendet.</div></div>
         <div class="editor-sub"><label>Bereiche im Detail</label><div class="editor-checks">${[["ams","AMS"],["camera","Kamera"],["energy","Energie"],["maintenance","Wartung"]].map(([key,label])=>`<label class="check"><input type="checkbox" data-field="show_${key}" ${cfg[`show_${key}`] !== false ? "checked" : ""}> ${label}</label>`).join("")}</div></div>
         <div class="editor-sub"><label>AMS-Zuordnung</label><div class="help">Leer lassen = automatische Zuordnung über die Home-Assistant-Gerätehierarchie. Nur echte AMS-Geräte werden angeboten; ExternalSpool-/Tray-/Cache-Hilfsgeräte sind hier ausgefiltert.</div><div class="ams-editor">${amsCandidates.length ? amsCandidates.map((d)=>`<label class="check ams-option"><input type="checkbox" data-ams-device="${cssEscape(d.id)}" ${(selectedAms.size ? selectedAms.has(d.id) : false) ? "checked" : ""}> ${cssEscape(d.name_by_user || d.name || d.model || "AMS")}${autoAms.has(d.id) ? " <small>(automatisch erkannt)</small>" : ""}</label>`).join("") : `<span class="help">Keine echten AMS-Geräte in der Bambu-Integration gefunden.</span>`}</div></div>
         <details class="editor-sub" data-detail-key="entities-${cssEscape(p.id)}"><summary>Erweiterte Entity-Zuordnung</summary><div class="help">Nur verwenden, wenn ein automatisch erkannter Wert falsch ist. Damit lassen sich z. B. Fortschritt, Status oder Auftrag eines Druckers eindeutig auf eine bestimmte Home-Assistant-Entity festlegen.</div><div class="entity-override-grid">${overrideFields.map(([field,label])=>`<label>${label}<input type="text" list="all-entity-ids" data-field="${field}" value="${cssEscape(cfg[field] || "")}" placeholder="automatisch"></label>`).join("")}</div></details>

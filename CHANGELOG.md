@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.5.0
+
+- Steuer-Entity-Erkennung auf kompletten Printer-Gerätebaum erweitert.
+- Druckgeschwindigkeit, Solltemperaturen, Lüfter, Kamera-/Sound-Schalter und Druckbuttons als echte Controls.
+- Externe Smart-Steckdose (`switch.*`) pro Drucker inklusive Status, Schalten und Sicherheitsabfrage.
+- X2D-Kamera nutzt bevorzugt Home-Assistant Stream-Proxy.
+- Aktives Filament mit Farbe im Druckstatus.
+- Druckerbilder strikt proportional (`object-fit: contain`); A2L nutzt offiziellen Bambu-A2L-Fallback statt falschem A1-Bild.
+- Strikte `total_usage_hours`-Anzeige; keine Verwechslung mit letzter Druckdauer.
+- Modellbezogene Wartung, Fälligkeitsanzeige, Quittierung und lokales Wartungsbuch.
+- Weitere Light-Theme-Kontrastkorrekturen.
+
 ## 1.4.0
 
 - Merge von WebSocket Entity Registry und `hass.entities` für robustere Erkennung von Buttons, Numbers, Fans und Selects.

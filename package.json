@@ -1,6 +1,6 @@
 {
   "name": "bambulab-dashboard",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "description": "Multi-printer Bambu Lab Home Assistant control center with robust entity discovery, AMS slot details, energy mapping, responsive layout and light/dark themes",
