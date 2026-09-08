@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.1
+
+- Home-Assistant-Sections: Karte ist wieder zwischen 6 und 12 Spalten skalierbar; `columns: full` wurde entfernt.
+- Drucker-Schalter oben/seitlich öffnen jetzt direkt die Detailansicht des gewählten Druckers.
+- Fleet-Karten auf schmalen Breiten robuster: kein Überdecken von Bild, Fortschritt oder Kennzahlen.
+- A2L zeigt nun das vom Upstream-Projekt derzeit ebenfalls verwendete A1-Modellbild als Übergang, bis ein eigenes A2L-Bild verfügbar ist.
+- Offline/idle Geräte mit altem 100%-Fortschrittswert werden nicht mehr als aktiver Druck gezählt.
+- Leistung/Energie im Editor erkennen zusätzlich Einheiten und übliche Namen, nicht nur `device_class`.
+- Live-Vorschau im Karten-Picker deaktiviert, damit dort nicht das komplette Control Center gequetscht gerendert wird.
+- README-Links korrigiert und Hinweise zu Breite, Pflicht-Integration und optionalen Karten präzisiert.
+
 ## 1.1.0
 
 - neue Fleet-Übersicht: alle Drucker gleichzeitig sichtbar

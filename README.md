@@ -6,9 +6,9 @@ Ein eigenständiges **Bambu Lab Control Center für Home Assistant**. Es zeigt a
 
 > **Wichtig:** Dieses Projekt ist nur die Benutzeroberfläche. Die Verbindung zu Bambu Cloud/LAN und zum Drucker übernimmt weiterhin die Home-Assistant-Integration **`greghesp/ha-bambulab`**. Die zusätzlichen Bambu-Lovelace-Karten sind **nicht erforderlich**.
 
-## Was ist neu in v1.1.0?
+## Was ist neu in v1.1.1?
 
-v1.1.0 ändert die Bedienlogik grundlegend:
+v1.1.1 behebt die in realen Home-Assistant-Sections aufgefallenen Layout- und Bedienprobleme. Die Mehrdrucker-Architektur aus v1.1.0 bleibt erhalten:
 
 - **Übersicht zeigt alle Drucker gleichzeitig** statt nur den gerade ausgewählten Drucker.
 - Jeder Drucker hat eine kompakte Statuskarte mit Modell, Druckstatus, Fortschritt, Auftrag, Restzeit, Düse, Bett und AMS-Anzahl.
@@ -59,7 +59,7 @@ Benötigt werden:
 
 Projekt der benötigten Integration:
 
-`https://github.com/greghesp/ha-bambulab`
+[greghesp/ha-bambulab auf GitHub](https://github.com/greghesp/ha-bambulab)
 
 ### Nicht erforderlich
 
@@ -69,7 +69,7 @@ Folgende Karten sind **keine Abhängigkeit** dieses Dashboards:
 - Bambu Lab Print Control Card
 - Bambu Lab Print Status Card
 - Bambu Lab Spool Card
-- separate Installation von `ha-bambulab-cards`
+- separate Installation von [greghesp/ha-bambulab-cards](https://github.com/greghesp/ha-bambulab-cards)
 
 ## Installation
 
@@ -84,7 +84,7 @@ Wenn du mehrere Drucker hast, müssen alle dort eingerichtet sein. AMS und Kamer
 1. **HACS → Dashboard** öffnen.
 2. Oben rechts **⋮ → Benutzerdefinierte Repositories**.
 3. Repository eintragen:
-   `https://github.com/theonix77/Bambulab-Dashboard`
+   [https://github.com/theonix77/Bambulab-Dashboard](https://github.com/theonix77/Bambulab-Dashboard)
 4. Typ **Dashboard** auswählen.
 5. Repository hinzufügen und **Bambu Lab Dashboard** installieren.
 6. Browser anschließend mit **Strg + F5** neu laden.
@@ -123,6 +123,12 @@ Ein Gerät wird nur als Drucker akzeptiert, wenn:
 Dadurch werden HACS-Update-Geräte oder andere Geräte, deren Name zufällig „Bambu“ enthält, nicht mehr als Drucker behandelt.
 
 Die Zuordnung der Sensoren verwendet nach Möglichkeit die stabilen Daten der Integration (`unique_id` und `translation_key`) und ist dadurch unabhängig davon, wie du eine Entity in Home Assistant umbenannt hast.
+
+## Breite in Home-Assistant-Sections
+
+Die Karte unterstützt in einer Sections-Ansicht **6 bis 12 Spalten** und kann mit dem normalen Home-Assistant-Resize-Handle angepasst werden. Standard sind 12 Spalten.
+
+Wichtig: Eine Karte kann nicht breiter werden als der **Abschnitt**, in dem sie liegt. Wenn der gesamte Abschnitt selbst nur schmal ist, muss zuerst die Abschnitts-/Dashboard-Anordnung in Home Assistant breiter angelegt werden.
 
 ## Bedienung
 
@@ -193,7 +199,7 @@ Optional lässt sich ein globaler Strompreis in €/kWh eintragen. Ohne Sensorzu
 
 Das Druckermodell wird aus der Home-Assistant-Geräteregistrierung gelesen. Für bekannte Modelle verwendet die Karte vorhandene Modellgrafiken aus dem öffentlichen Projekt `greghesp/ha-bambulab-cards`.
 
-`ha-bambulab-cards` muss dafür **nicht installiert** sein. Gibt es für ein Modell keine eindeutige Grafik oder kann sie nicht geladen werden, wird ein neutrales Druckersymbol gezeigt.
+`ha-bambulab-cards` muss dafür **nicht installiert** sein. Für A2L verwendet das Upstream-Kartenprojekt derzeit selbst noch das A1-Bild als Übergang. Dieses Verhalten übernimmt das Dashboard, bis dort ein eigenes A2L-Modellbild vorhanden ist. Gibt es für ein anderes Modell keine eindeutige Grafik oder kann sie nicht geladen werden, wird ein neutrales Druckersymbol gezeigt.
 
 ## Updates
 

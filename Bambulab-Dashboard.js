@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.1.0 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.1.1 | standalone HACS resource */
 
-const VERSION = "1.1.0";
+const VERSION = "1.1.1";
 const DOMAIN = "bambu_lab";
 
 
@@ -12,6 +12,7 @@ const PRINTER_ART_FILES = Object.freeze({
   "A1": "A1.png",
   "A1 MINI": "A1Mini.png",
   "A1MINI": "A1Mini.png",
+  "A2L": "A1.png", // upstream ha-bambulab-cards currently uses A1 artwork for A2L
   "H2C": "H2C.png",
   "H2D": "H2D.png",
   "H2D PRO": "H2DPRO.png",
@@ -612,7 +613,7 @@ const styles = `
   .fleet-summary p { margin:0; color:var(--bd-muted); }
   .fleet-summary-badges { display:flex; gap:8px; flex-wrap:wrap; }
   .fleet-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px; }
-  .fleet-card { min-width:0; border:1px solid var(--bd-border); border-radius:18px; background:linear-gradient(180deg,rgba(17,26,22,.96),rgba(8,13,11,.98)); padding:16px; box-shadow:inset 0 1px 0 rgba(255,255,255,.025); cursor:pointer; transition:.18s ease; }
+  .fleet-card { min-width:0; overflow:hidden; border:1px solid var(--bd-border); border-radius:18px; background:linear-gradient(180deg,rgba(17,26,22,.96),rgba(8,13,11,.98)); padding:16px; box-shadow:inset 0 1px 0 rgba(255,255,255,.025); cursor:pointer; transition:.18s ease; }
   .fleet-card:hover { border-color:rgba(80,217,38,.46); transform:translateY(-1px); }
   .fleet-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
   .fleet-name { font-size:20px; font-weight:800; margin-top:2px; }
@@ -620,11 +621,13 @@ const styles = `
   .fleet-visual { height:128px; display:grid; place-items:center; position:relative; border-radius:14px; background:rgba(0,0,0,.2); overflow:hidden; }
   .fleet-visual img { max-width:94%; max-height:118px; object-fit:contain; }
   .fleet-visual .printer-product-fallback { position:absolute; inset:0; place-items:center; display:none; font-size:48px; color:var(--bd-accent); }
+  .fleet-progress { min-width:0; }
   .fleet-progress-number { font-size:38px; line-height:1; font-weight:900; letter-spacing:-.03em; }
   .fleet-progress-number span { font-size:18px; color:var(--bd-muted); margin-left:2px; }
   .fleet-bar { height:8px; border-radius:999px; overflow:hidden; margin:10px 0; background:#17231d; }
   .fleet-bar span { display:block; height:100%; background:linear-gradient(90deg,var(--bd-accent),var(--bd-accent-2)); border-radius:inherit; }
-  .fleet-task { font-size:13px; color:var(--bd-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fleet-task { font-size:13px; color:var(--bd-muted); line-height:1.35; overflow-wrap:anywhere; }
+  .fleet-idle-mark { font-size:34px !important; color:var(--bd-muted) !important; margin:0 !important; }
   .fleet-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
   .fleet-metrics > div { min-width:0; padding:9px; border:1px solid var(--bd-border); border-radius:11px; background:rgba(255,255,255,.018); }
   .fleet-metrics span { display:block; font-size:9px; text-transform:uppercase; letter-spacing:.1em; color:var(--bd-muted); margin-bottom:4px; }
@@ -635,7 +638,8 @@ const styles = `
   .detail-main,.detail-side { display:grid; gap:14px; min-width:0; }
   @container (max-width:1050px) { .detail-layout { grid-template-columns:1fr; } }
   @container (max-width:760px) { .fleet-grid { grid-template-columns:1fr; } .fleet-summary { align-items:flex-start; flex-direction:column; } }
-  @container (max-width:460px) { .fleet-main { grid-template-columns:96px minmax(0,1fr); } .fleet-visual { height:96px; } .fleet-visual img { max-height:90px; } .fleet-metrics { grid-template-columns:1fr 1fr; } }
+  @container (max-width:560px) { .fleet-main { grid-template-columns:1fr; } .fleet-visual { height:150px; } .fleet-visual img { max-height:142px; max-width:88%; } .fleet-metrics { grid-template-columns:1fr 1fr; } }
+  @container (max-width:380px) { .fleet-metrics { grid-template-columns:1fr; } }
 
   .editor-title-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .editor-sub { margin-top:13px; padding-top:11px; border-top:1px solid var(--divider-color); }
@@ -693,7 +697,9 @@ class BambuLabDashboard extends HTMLElement {
 
   getCardSize() { return 12; }
   getGridOptions() {
-    return { columns: "full", min_columns: 6 };
+    // 12 columns by default, but keep the card resizable in Home Assistant Sections.
+    // "full" locks the width and hides the normal resize behaviour.
+    return { columns: 12, min_columns: 6, max_columns: 12 };
   }
 
   connectedCallback() {
@@ -748,6 +754,22 @@ class BambuLabDashboard extends HTMLElement {
   _st(printer, key) { return findState(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || []); }
   _val(printer, key, fallback = null) { return stateValue(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || [], fallback); }
   _num(printer, key, fallback = null) { return numericState(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || [], fallback); }
+
+  _isPrinterOnline(printer) {
+    if (!printer) return false;
+    const online = this._st(printer, "online");
+    if (online && hasMeaningfulValue(online)) return ["on","online","true","1","connected"].includes(normalize(online.state));
+    return !this._entityEntries(printer).every((e) => isUnavailableState(this._hass?.states?.[e.entity_id]));
+  }
+
+  _isPrinterActive(printer) {
+    if (!this._isPrinterOnline(printer)) return false;
+    const status = normalize(this._val(printer, "status", ""));
+    if (["running","printing","prepare","preparing","pause","paused"].includes(status)) return true;
+    const progress = safePercent(this._num(printer, "progress", 0));
+    // Fallback only for integrations/firmware that temporarily report an unknown state.
+    return (!status || status === "unknown") && progress > 0 && progress < 100;
+  }
 
   _samplePower() {
     const printer = this._selectedPrinter();
@@ -812,7 +834,7 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _renderPrinterOverviewCard(printer) {
-    const progress = safePercent(this._num(printer, "progress", 0));
+    const rawProgress = safePercent(this._num(printer, "progress", 0));
     const statusRaw = this._val(printer, "status", "unknown");
     const taskRaw = this._val(printer, "taskName", null);
     const remaining = this._num(printer, "remainingTime", null);
@@ -820,17 +842,18 @@ class BambuLabDashboard extends HTMLElement {
     const bed = this._st(printer, "bedTemp");
     const product = this._printerArtworkUrl(printer);
     const amsCount = this._collectAmsGroups(printer).length;
-    const isPrinting = ["running","printing","prepare","preparing","pause","paused"].includes(normalize(statusRaw)) || progress > 0;
-    const task = taskRaw || (isPrinting ? "Aktiver Druckauftrag" : "Kein aktiver Druckauftrag");
+    const isPrinting = this._isPrinterActive(printer);
+    const progress = isPrinting ? rawProgress : 0;
+    const task = isPrinting ? (taskRaw || "Aktiver Druckauftrag") : "Kein aktiver Druckauftrag";
     const name = configuredPrinterName(this._config, printer);
     return `<article class="fleet-card" data-open-printer="${cssEscape(printer.id)}">
       <div class="fleet-top"><div><div class="eyebrow">${cssEscape(printer.device?.model || "Bambu Lab")}</div><div class="fleet-name">${cssEscape(name)}</div></div><div class="status-badge ${statusClass(statusRaw)}"><span class="dot"></span>${cssEscape(translateStatus(statusRaw))}</div></div>
       <div class="fleet-main">
         <div class="fleet-visual">${product ? `<img data-printer-image src="${cssEscape(product)}" alt="${cssEscape(printer.device?.model || name)}"><div class="printer-product-fallback"><ha-icon icon="mdi:printer-3d"></ha-icon></div>` : `<div class="printer-product-fallback" style="display:grid"><ha-icon icon="mdi:printer-3d"></ha-icon></div>`}</div>
-        <div class="fleet-progress"><div class="fleet-progress-number">${formatNumber(progress)}<span>%</span></div><div class="fleet-bar"><span style="width:${progress}%"></span></div><div class="fleet-task">${cssEscape(task)}</div></div>
+        <div class="fleet-progress"><div class="fleet-progress-number">${isPrinting ? `${formatNumber(progress)}<span>%</span>` : `<span class="fleet-idle-mark">–</span>`}</div><div class="fleet-bar"><span style="width:${isPrinting ? progress : 0}%"></span></div><div class="fleet-task">${cssEscape(task)}</div></div>
       </div>
       <div class="fleet-metrics">
-        <div><span>Restzeit</span><strong>${remaining === null ? "–" : formatDurationMinutes(remaining)}</strong></div>
+        <div><span>Restzeit</span><strong>${!isPrinting || remaining === null ? "–" : formatDurationMinutes(remaining)}</strong></div>
         <div><span>Düse</span><strong>${this._formatStateWithUnit(nozzle)}</strong></div>
         <div><span>Bett</span><strong>${this._formatStateWithUnit(bed)}</strong></div>
         <div><span>AMS</span><strong>${amsCount || "–"}</strong></div>
@@ -841,7 +864,7 @@ class BambuLabDashboard extends HTMLElement {
 
   _renderFleetOverview() {
     const printers = this._visiblePrinters();
-    const printing = printers.filter((p) => { const st=this._val(p,"status",""); return ["running","printing","prepare","preparing","pause","paused"].includes(normalize(st)) || safePercent(this._num(p,"progress",0)) > 0; }).length;
+    const printing = printers.filter((p) => this._isPrinterActive(p)).length;
     return `<div class="fleet-page"><section class="fleet-summary"><div><div class="eyebrow">Control Center</div><h2>Alle Drucker</h2><p>${printers.length} ${printers.length === 1 ? "Drucker" : "Drucker"} erkannt · ${printing} aktiv</p></div><div class="fleet-summary-badges"><span class="pill ok"><span class="dot"></span>${printing} druckt</span><span class="pill">${printers.length} gesamt</span></div></section><div class="fleet-grid">${printers.map((p) => this._renderPrinterOverviewCard(p)).join("")}</div></div>`;
   }
 
@@ -863,8 +886,7 @@ class BambuLabDashboard extends HTMLElement {
 
     const printer = this._selectedPrinter();
     if (!this._selectedPrinterId || !visiblePrinters.some((p)=>p.id===this._selectedPrinterId)) this._selectedPrinterId = printer?.id || null;
-    const online = printer ? this._st(printer, "online") : null;
-    const isOnline = printer ? (online ? String(online.state).toLowerCase() === "on" : !this._entityEntries(printer).every((e) => isUnavailableState(this._hass.states[e.entity_id]))) : false;
+    const isOnline = this._isPrinterOnline(printer);
     const viewLabel = this._navItems().find((x) => x[0] === this._activeView)?.[2] || "Übersicht";
     const printers = visiblePrinters.map((p) => `<button class="tab ${p.id === printer?.id ? "active" : ""}" data-printer="${cssEscape(p.id)}"><ha-icon icon="mdi:printer-3d"></ha-icon><span>${cssEscape(configuredPrinterName(this._config,p))}</span></button>`).join("");
 
@@ -1112,6 +1134,7 @@ class BambuLabDashboard extends HTMLElement {
     }, { once: true }));
     this.shadowRoot.querySelectorAll("[data-printer]").forEach((btn) => btn.addEventListener("click", () => {
       this._selectedPrinterId = btn.dataset.printer;
+      this._activeView = "detail";
       this._render();
     }));
     this.shadowRoot.querySelectorAll("[data-open-printer]").forEach((el) => el.addEventListener("click", (ev) => {
@@ -1186,8 +1209,13 @@ class BambuLabDashboardEditor extends HTMLElement {
   }
   _render() {
     if (!this.shadowRoot) return;
-    const powerEntities = Object.values(this._hass?.states || {}).filter((s) => s.attributes?.device_class === "power");
-    const energyEntities = Object.values(this._hass?.states || {}).filter((s) => s.attributes?.device_class === "energy");
+    const allSensorEntities = Object.values(this._hass?.states || {}).filter((st) => st.entity_id?.startsWith("sensor."));
+    const unitOf = (st) => String(st.attributes?.unit_of_measurement || "").trim().toLowerCase();
+    const searchable = (st) => `${st.entity_id} ${st.attributes?.friendly_name || ""}`.toLowerCase();
+    const powerEntities = allSensorEntities.filter((st) => st.attributes?.device_class === "power" || ["w","kw","mw"].includes(unitOf(st)) || /(^|[._ -])(power|leistung)([._ -]|$)/.test(searchable(st)));
+    const energyEntities = allSensorEntities.filter((st) => st.attributes?.device_class === "energy" || ["wh","kwh","mwh"].includes(unitOf(st)) || /(^|[._ -])(energy|energie|verbrauch|consumption)([._ -]|$)/.test(searchable(st)));
+    powerEntities.sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
+    energyEntities.sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
     const bambuEntries = this._entities.filter(isBambuRegistryEntry);
     const amsCandidates = this._devices.filter((d) => {
       const entries = bambuEntries.filter((e)=>e.device_id===d.id);
@@ -1195,7 +1223,7 @@ class BambuLabDashboardEditor extends HTMLElement {
       return /ams|tray[_ -]?\d/i.test(text) && !this._printers.some((p)=>p.id===d.id);
     });
     const sortedPrinters = [...this._printers].sort((a,b)=>configuredPrinterOrder(this._config,a,this._printers.indexOf(a))-configuredPrinterOrder(this._config,b,this._printers.indexOf(b)));
-    this.shadowRoot.innerHTML = `<style>${styles}</style><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Daten. Hier legst du Darstellung, Reihenfolge und optionale Zuordnungen fest. Ohne manuelle AMS-Zuordnung wird die Gerätehierarchie von Home Assistant verwendet.</div><div class="editor-section"><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div>${sortedPrinters.map((p,idx) => {
+    this.shadowRoot.innerHTML = `<style>${styles}</style><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Daten. Hier legst du Darstellung, Reihenfolge und optionale Zuordnungen fest. Ohne manuelle AMS-Zuordnung wird die Gerätehierarchie von Home Assistant verwendet.<br><br><strong>Breite:</strong> In einer Sections-Ansicht ist die Karte jetzt zwischen 6 und 12 Spalten frei skalierbar. Die maximale Breite bleibt durch die Breite des Home-Assistant-Abschnitts begrenzt.</div><div class="editor-section"><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div>${sortedPrinters.map((p,idx) => {
       const cfg = resolveConfiguredPrinter(this._config, p.id);
       const selectedAms = new Set(Array.isArray(cfg.ams_device_ids) ? cfg.ams_device_ids : []);
       const autoAms = new Set((p.childDevices || []).map((d)=>d.id));
@@ -1237,6 +1265,6 @@ if (!customElements.get("bambu-lab-dashboard")) customElements.define("bambu-lab
 if (!customElements.get("bambu-lab-dashboard-editor")) customElements.define("bambu-lab-dashboard-editor", BambuLabDashboardEditor);
 window.customCards = window.customCards || [];
 if (!window.customCards.some((c) => c.type === "bambu-lab-dashboard")) {
-  window.customCards.push({ type: "bambu-lab-dashboard", name: "Bambu Lab Dashboard", description: "Auto-discovering Bambu Lab control center with AMS, camera, controls, energy and maintenance.", documentationURL: "https://github.com/theonix77/Bambulab-Dashboard#installation", preview: true });
+  window.customCards.push({ type: "bambu-lab-dashboard", name: "Bambu Lab Dashboard", description: "Auto-discovering Bambu Lab control center with AMS, camera, controls, energy and maintenance.", documentationURL: "https://github.com/theonix77/Bambulab-Dashboard#installation", preview: false });
 }
 console.info(`%c Bambu Lab Dashboard %c v${VERSION} `, "background:#50d926;color:#050907;font-weight:800;padding:3px 6px;border-radius:4px 0 0 4px", "background:#101713;color:#f4f7f5;padding:3px 6px;border-radius:0 4px 4px 0");
