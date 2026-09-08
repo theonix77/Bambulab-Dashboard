@@ -14,7 +14,7 @@ Eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt 
 Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 
 
-### Modellabhängige Wartung ab v1.8.0
+### Modellabhängige Wartung ab v1.8.1
 
 Das Dashboard übernimmt das von `ha-bambulab` gemeldete Druckermodell und wählt automatisch das dazugehörige Bambu-Lab-Wartungsprofil. Unterstützt werden die aktuell von der Integration gelisteten Modelle **A1, A1 mini, A2L, P1P, P1S, P2S, H2C, H2D, H2D Pro, H2S, X1, X1C, X1E und X2D**.
 
@@ -33,7 +33,7 @@ Die Gesamtlaufzeit ist nur Information und löst keine Wartung aus. Hersteller-/
 type: custom:bambu-lab-dashboard
 ```
 
-## Funktionen in v1.6.3
+## Funktionen in v1.8.1
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
@@ -57,7 +57,7 @@ type: custom:bambu-lab-dashboard
 
 ## Steuerung: genaue Zuordnung zum offiziellen Plugin
 
-v1.6.3 ordnet Steuerungen nicht mehr anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
+v1.8.1 ordnet Steuerungen nicht anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
 
 | Funktion | `ha-bambulab` Entity |
 |---|---|
@@ -98,7 +98,7 @@ Für Modelle ohne veröffentlichtes festes Kalenderintervall zeigt das Dashboard
 
 Offizielle Bambu-Lab-Wartungsübersicht: https://bambulab.com/en/support/maintenance
 
-### Wartungsbuch ab v1.8.0
+### Wartungsbuch ab v1.8.1
 
 Das Wartungsbuch zeigt 15 Einträge pro Seite. Es kann nach Wartungsart gefiltert werden; zusätzlich lässt sich die Ansicht auf die letzten 30 Tage begrenzen. Eine kleine Auswertung zeigt Gesamtzahl, Wartungen der letzten 30 Tage und die am häufigsten quittierte Aufgabe. Einzelne Einträge sowie das komplette Logbuch können nach Sicherheitsabfrage gelöscht werden. Das Löschen des Logbuchs ändert bewusst nicht die separat gespeicherten letzten Wartungszeitpunkte und damit auch nicht die nächsten Fälligkeiten.
 

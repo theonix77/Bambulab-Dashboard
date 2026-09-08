@@ -1,3 +1,10 @@
+## 1.8.1
+
+- Light theme: maintenance and AMS detail popups now inherit the selected/automatic dashboard theme.
+- Added explicit light-theme styling for popup surfaces, text, buttons, borders, links and backdrops.
+- Added a defined `--bd-card` surface variable used by popup/control elements.
+- No printer-specific behavior changed.
+
 # Changelog
 
 ## 1.8.0
