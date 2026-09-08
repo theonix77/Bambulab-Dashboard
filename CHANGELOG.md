@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.3
+
+- Wartungslogik des X2D auf die offiziellen Zeitintervalle aus Kapitel 11 des Bambu-Lab-Handbuchs umgestellt; Gesamtbetriebsstunden lösen keine Wartung mehr aus.
+- Neue Installation/noch nie quittierte Wartung wird nicht mehr sofort als fällig markiert. Der lokale Wartungszyklus startet beim ersten Laden der neuen Logik.
+- Build Plate und Druckraum bleiben als laufende Pflege sichtbar. Längerfristige Wartungen werden nach Quittierung ausgeblendet und erscheinen automatisch zum nächsten Termin wieder.
+- Neue kompakte Übersicht „Nächste Wartungen“ für ausgeblendete, noch nicht fällige Aufgaben.
+- Hinweise zu Bambu-Labs verkürzten Intervallen bei Hochtemperatur-/Engineering-Filamenten oder durchschnittlich mehr als 8 Druckstunden pro Tag ergänzt.
+- Wartungs-Infotexte und Quellen/Seitenverweise für X2D präzisiert; A2L erhält weiterhin keine erfundenen Zeitintervalle, wenn Bambu selbst keine nennt.
+
 ## 1.6.2
 
 - README um einen verkleinerten, zentrierten Dashboard-Screenshot ergänzt (`docs/images/dashboard-overview.png`, 1000 px Darstellungsbreite).

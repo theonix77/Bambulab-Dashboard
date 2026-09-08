@@ -13,6 +13,13 @@ Eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt 
 
 Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 
+
+### Wartungslogik ab v1.6.3
+
+Die X2D-Wartungsintervalle orientieren sich an Kapitel 11 des offiziellen Bambu-Lab-X2D-Handbuchs. Die Gesamtlaufzeit wird nur angezeigt und löst keine Wartung aus. Build Plate und Druckraum bleiben als laufende Pflege sichtbar; längerfristige Arbeiten werden nach dem Quittieren ausgeblendet und erscheinen automatisch wieder, wenn ihr nächstes Herstellerintervall erreicht ist. Eine kompakte Liste „Nächste Wartungen“ zeigt die kommenden Termine.
+
+Beim ersten Start der neuen Logik beginnt für noch nie quittierte Arbeiten ein neuer lokaler Intervallzyklus, statt sie sofort als fällig zu markieren. Bereits im Wartungsbuch quittierte Arbeiten behalten ihr vorhandenes Datum. Für den X2D gelten bei normaler Nutzung u. a. 1 Woche für die Build Plate, 1 Monat für Kameras, Druckraumboden, X/Y, Extruder und Hotend sowie 3 Monate für Z-Achse und Luftfilter. Bei dauerhaftem Einsatz von Hochtemperatur-/Engineering-Filamenten oder durchschnittlich mehr als 8 Druckstunden pro Tag schreibt Bambu kürzere Intervalle vor.
+
 ## Installation
 
 1. HACS → Dashboard → Benutzerdefinierte Repositories.
@@ -24,7 +31,7 @@ Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 type: custom:bambu-lab-dashboard
 ```
 
-## Funktionen in v1.6.2
+## Funktionen in v1.6.3
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
@@ -48,7 +55,7 @@ type: custom:bambu-lab-dashboard
 
 ## Steuerung: genaue Zuordnung zum offiziellen Plugin
 
-v1.6.2 ordnet Steuerungen nicht mehr anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
+v1.6.3 ordnet Steuerungen nicht mehr anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
 
 | Funktion | `ha-bambulab` Entity |
 |---|---|

@@ -14,3 +14,5 @@ Statisch/automatisiert geprüft:
 - ZIP-Integrität
 
 Eine vollständige Ende-zu-Ende-Prüfung aller Serviceaufrufe ist nur in einer realen Home-Assistant-Instanz mit den konkreten Druckern/Entities möglich.
+
+- X2D-Wartungslogik: Herstellerintervalle, Wiederholung, Ausblenden nicht fälliger Aufgaben und Vorschau geprüft.

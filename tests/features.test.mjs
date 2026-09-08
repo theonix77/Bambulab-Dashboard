@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
 const code=fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url),"utf8");
-assert.match(code,/const VERSION = "1\.6\.2"/);
+assert.match(code,/const VERSION = "1\.6\.3"/);
 assert.match(code,/_isInCardPicker/);
 assert.match(code,/preview: true/);
 assert.match(code,/data-open-printer=/);
@@ -43,3 +43,9 @@ assert.match(code,/_mobileTouchActive/);
 assert.match(code,/spool-modal-backdrop/);
 assert.match(code,/data-close-spool-backdrop/);
 assert.match(code,/touch-action:pan-x/);
+
+assert.match(code,/Nächste Wartungen/);
+assert.match(code,/_maintenanceTiming/);
+assert.match(code,/durchschnittlich mehr als 8 Druckstunden pro Tag/);
+assert.match(code,/alwaysVisible:true/);
+assert.doesNotMatch(code,/!last\|\|now-last>=t\.days/);
