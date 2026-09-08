@@ -1,22 +1,7 @@
-# Validation v1.7.0
+# Validation v1.8.0
 
-`npm run validate` prüft Syntax, Discovery, Runtime, Feature-/Static-Checks und Custom-Element-Registrierung. v1.7.0 ergänzt statische Checks für Zweisprachigkeit sowie Wartungsbuch-Filter, Pagination, Einzellöschung und Logbuch-Löschung.
+`npm run validate` prüft Syntax, Discovery, Runtime, Features und Custom-Element-Registrierung.
 
-# Validierung v1.6.1
+Zusätzlich wird für die Wartung statisch geprüft, dass alle aktuell von `ha-bambulab` gelisteten Druckermodelle im Modellrouting berücksichtigt werden und ein sicherer Fallback für unbekannte Modelle vorhanden ist.
 
-Statisch/automatisiert geprüft:
-
-- JavaScript-Syntax (`node --check`)
-- Custom-Element-Registrierung
-- Discovery-Tests
-- Controls im kompletten Printer-Gerätebaum
-- Smart-Plug-Konfiguration und Service-Pfad
-- X2D-Kamera Stream-Proxy-Fallback
-- AMS-Tray/aktive-Filament-Logik
-- `total_usage_hours` wird strikt verwendet
-- Wartungsmodell, Quittierung und Wartungsbuch-Codepfad
-- ZIP-Integrität
-
-Eine vollständige Ende-zu-Ende-Prüfung aller Serviceaufrufe ist nur in einer realen Home-Assistant-Instanz mit den konkreten Druckern/Entities möglich.
-
-- X2D-Wartungslogik: Herstellerintervalle, Wiederholung, Ausblenden nicht fälliger Aufgaben und Vorschau geprüft.
+Grundsatz: Wartungsintervalle werden nicht von einem Modell auf ein anderes übertragen. Kalenderfristen werden nur dort berechnet, wo im Profil ein verifiziertes Bambu-Lab-Intervall hinterlegt ist; andernfalls bleibt die Aufgabe regelmäßig/zustandsabhängig.

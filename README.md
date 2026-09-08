@@ -14,11 +14,13 @@ Eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt 
 Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 
 
-### Wartungslogik ab v1.6.3
+### Modellabhängige Wartung ab v1.8.0
 
-Die X2D-Wartungsintervalle orientieren sich an Kapitel 11 des offiziellen Bambu-Lab-X2D-Handbuchs. Die Gesamtlaufzeit wird nur angezeigt und löst keine Wartung aus. Build Plate und Druckraum bleiben als laufende Pflege sichtbar; längerfristige Arbeiten werden nach dem Quittieren ausgeblendet und erscheinen automatisch wieder, wenn ihr nächstes Herstellerintervall erreicht ist. Eine kompakte Liste „Nächste Wartungen“ zeigt die kommenden Termine.
+Das Dashboard übernimmt das von `ha-bambulab` gemeldete Druckermodell und wählt automatisch das dazugehörige Bambu-Lab-Wartungsprofil. Unterstützt werden die aktuell von der Integration gelisteten Modelle **A1, A1 mini, A2L, P1P, P1S, P2S, H2C, H2D, H2D Pro, H2S, X1, X1C, X1E und X2D**.
 
-Beim ersten Start der neuen Logik beginnt für noch nie quittierte Arbeiten ein neuer lokaler Intervallzyklus, statt sie sofort als fällig zu markieren. Bereits im Wartungsbuch quittierte Arbeiten behalten ihr vorhandenes Datum. Für den X2D gelten bei normaler Nutzung u. a. 1 Woche für die Build Plate, 1 Monat für Kameras, Druckraumboden, X/Y, Extruder und Hotend sowie 3 Monate für Z-Achse und Luftfilter. Bei dauerhaftem Einsatz von Hochtemperatur-/Engineering-Filamenten oder durchschnittlich mehr als 8 Druckstunden pro Tag schreibt Bambu kürzere Intervalle vor.
+Wartungsintervalle werden **nicht zwischen Modellen übertragen**. Ein Kalendertermin wird nur berechnet, wenn für das erkannte Modell ein verifiziertes Herstellerintervall hinterlegt ist. Gibt Bambu für eine Aufgabe nur „regelmäßig“, „nach Zustand“ oder eine firmwareseitige/HMS-Erinnerung vor, erfindet das Dashboard keine Tageszahl. Neue oder unbekannte Modelle erhalten einen sicheren allgemeinen Fallback, bis ein verifiziertes Herstellerprofil ergänzt wurde.
+
+Die Gesamtlaufzeit ist nur Information und löst keine Wartung aus. Hersteller-/HMS-Hinweise, sichtbare Verschmutzung und Verschleiß haben immer Vorrang.
 
 ## Installation
 
@@ -90,27 +92,13 @@ Die Gesamtlaufzeit wird ausschließlich aus der Bambu-Entity `total_usage_hours`
 
 ## Wartung
 
-Für den X2D basiert der Plan auf dem offiziellen **Bambu Lab X2D 3D Printing User Manual, Kapitel 11**. Dort sind u. a. folgende Intervalle angegeben:
+Die Wartungsseite ist modellabhängig. Das erkannte Modell bzw. die passende Modellfamilie bestimmt Aufgaben, Hinweise, Quellen und – soweit von Bambu eindeutig vorgegeben – Intervalle. Die Quellen verweisen auf offizielle Bambu-Lab-Wartungsunterlagen.
 
-- Build Plate: 1 Woche
-- Live-View-Kamera: 1 Monat
-- Kammerboden/Innenraum: 1 Monat
-- X-/Y-Achsen: 1 Monat
-- Z-Achse: 3 Monate
-- Luftfilter: 3 Monate
-- Toolhead-Kamera / Extruder / Hotend: 1 Monat
+Für Modelle ohne veröffentlichtes festes Kalenderintervall zeigt das Dashboard die Herstelleraufgabe als regelmäßige bzw. zustandsabhängige Wartung an, **ohne eine Frist zu erfinden**. Quittierte Aufgaben und das Wartungsbuch werden weiterhin pro Drucker getrennt gespeichert.
 
-Bei hoher Nutzung (>8 h/Tag im Mittel bzw. lange High-Temperature-/Engineering-Filament-Drucke) empfiehlt Bambu eine höhere Wartungsfrequenz.
+Offizielle Bambu-Lab-Wartungsübersicht: https://bambulab.com/en/support/maintenance
 
-Offizielles X2D-Handbuch: https://csm.bblcdn.com/hub/7c58718aaa2e40edab56efb87419a96a.pdf
-
-Für A2L werden nur die Wartungsbereiche angezeigt, die im offiziellen Quick Start genannt werden. Wo Bambu dort kein fixes Kalenderintervall angibt, erfindet das Dashboard keines.
-
-Offizieller A2L Quick Start: https://csm.bblcdn.com/hub/4efdb4e04ab34111a8da112e81028430.pdf
-
-Quittierte Wartungen werden mit Zeitstempel im Wartungsbuch gespeichert. Das Wartungsbuch liegt aktuell im Browser-`localStorage` und ist damit browser-/gerätebezogen.
-
-### Wartungsbuch ab v1.7.0
+### Wartungsbuch ab v1.8.0
 
 Das Wartungsbuch zeigt 15 Einträge pro Seite. Es kann nach Wartungsart gefiltert werden; zusätzlich lässt sich die Ansicht auf die letzten 30 Tage begrenzen. Eine kleine Auswertung zeigt Gesamtzahl, Wartungen der letzten 30 Tage und die am häufigsten quittierte Aufgabe. Einzelne Einträge sowie das komplette Logbuch können nach Sicherheitsabfrage gelöscht werden. Das Löschen des Logbuchs ändert bewusst nicht die separat gespeicherten letzten Wartungszeitpunkte und damit auch nicht die nächsten Fälligkeiten.
 

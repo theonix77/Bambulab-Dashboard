@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.7.0
+## 1.8.0
 
 - Dashboard-Oberfläche automatisch zweisprachig: Deutsch bei deutscher Home-Assistant-Sprache, Englisch bei englischer bzw. sonstiger Sprache als Fallback. Datumsformat passt sich der Sprache an.
 - Wartungsbuttons mit deutlich sichtbarem Hover-/Active-/Focus-Feedback; nach Quittierung erscheint eine Bestätigung direkt im Wartungsbereich.
@@ -83,3 +83,9 @@
 - Scrollposition wird bei Live-Updates gespeichert/restauriert, um Sprünge nach oben zu verhindern.
 - Kompakte Karten-Picker-Vorschau statt Full-Dashboard-Preview.
 - README/Installation/Hilfe neu geschrieben.
+## 1.8.0
+- Wartung vollständig modellabhängig: das Profil wird automatisch aus dem von `ha-bambulab` gemeldeten Druckermodell gewählt.
+- Abdeckung aller aktuell von `ha-bambulab` gelisteten Druckermodelle: A1, A1 mini, A2L, P1P, P1S, P2S, H2C, H2D, H2D Pro, H2S, X1, X1C, X1E und X2D.
+- Keine Übernahme von X2D-Intervallen auf andere Modelle. Kalendertermine werden nur berechnet, wenn ein verifiziertes Bambu-Intervall für genau dieses Modell/Profil hinterlegt ist.
+- Unbekannte zukünftige Modelle erhalten einen sicheren allgemeinen Fallback ohne erfundene Fristen.
+- Wartungsseite zeigt das automatisch gewählte Modell-/Familienprofil an.
