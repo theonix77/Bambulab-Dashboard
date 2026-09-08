@@ -6,7 +6,7 @@ HACS neu herunterladen, anschließend `Strg+F5`. Unter **Einstellungen → Dashb
 
 ## Smart-Steckdose fehlt
 
-v1.6.0 verwendet den Home-Assistant-Entity-Picker und erlaubt alle `sensor.*`-Entities. Suche nach dem Friendly Name oder der Entity-ID des Leistungs-/Energiesensors der Steckdose. Die Steckdose selbst als `switch.*` ist kein Leistungssensor; benötigt wird der zugehörige `sensor.*`-Messwert.
+Das Dashboard verwendet den Home-Assistant-Entity-Picker und erlaubt alle `sensor.*`-Entities. Suche nach dem Friendly Name oder der Entity-ID des Leistungs-/Energiesensors der Steckdose. Die Steckdose selbst als `switch.*` ist kein Leistungssensor; benötigt wird der zugehörige `sensor.*`-Messwert.
 
 ## Nur Licht steuerbar
 
@@ -18,8 +18,8 @@ Das Upstream-Projekt `greghesp/ha-bambulab-cards` besitzt derzeit kein eigenstä
 
 ## AMS-Slot öffnet keine Details
 
-Prüfe, ob das AMS `tray`-Entities besitzt. v1.6.0 erkennt sowohl ältere Unique-IDs wie `..._tray_1` als auch neuere `translation_key: tray` plus `slot`-Attribut.
+Prüfe, ob das AMS `tray`-Entities besitzt. Das Dashboard erkennt sowohl ältere Unique-IDs wie `..._tray_1` als auch neuere `translation_key: tray` plus `slot`-Attribut.
 
 ## Seite springt beim Drucken nach oben
 
-v1.6.0 speichert und restauriert Scrollpositionen um Live-Renderings herum. Falls eine spezielle Custom-View trotzdem springt, bitte Browser, HA-Version und View-Typ im Issue angeben.
+Das Dashboard speichert und restauriert Scrollpositionen um Live-Renderings herum. Falls eine spezielle Custom-View trotzdem springt, bitte Browser, HA-Version und View-Typ im Issue angeben.

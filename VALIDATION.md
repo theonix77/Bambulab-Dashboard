@@ -1,4 +1,4 @@
-# Validation v1.8.1
+# Validation v1.8.3
 
 `npm run validate` prüft Syntax, Discovery, Runtime, Features und Custom-Element-Registrierung.
 

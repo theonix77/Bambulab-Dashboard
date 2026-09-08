@@ -9,12 +9,12 @@ Eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt 
 
 ## Wichtig: Schreibzugriffe und „nur Licht geht“
 
-`greghesp/ha-bambulab` dokumentiert selbst eine Firmware-/Autorisierungsbeschränkung von Bambu Lab: Lesefunktionen bleiben erhalten, aber im Cloud-/Hybrid-Betrieb können die meisten Schreibfunktionen fehlen. Für ältere Hybrid-Firmwares nennt die Integration ausdrücklich den Fall, dass **nur das Licht steuerbar bleibt**. Für volle Schreibzugriffe verlangt die Integration LAN Mode plus Developer LAN Mode. Das Dashboard kann diese Sperre nicht umgehen und zeigt sie ab v1.6.0 direkt im Steuerbereich an.
+`greghesp/ha-bambulab` dokumentiert selbst eine Firmware-/Autorisierungsbeschränkung von Bambu Lab: Lesefunktionen bleiben erhalten, aber im Cloud-/Hybrid-Betrieb können die meisten Schreibfunktionen fehlen. Für ältere Hybrid-Firmwares nennt die Integration ausdrücklich den Fall, dass **nur das Licht steuerbar bleibt**. Für volle Schreibzugriffe verlangt die Integration LAN Mode plus Developer LAN Mode. Das Dashboard kann diese Sperre nicht umgehen und zeigt diese Einschränkung direkt im Steuerbereich an.
 
 Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 
 
-### Modellabhängige Wartung ab v1.8.1
+## Modellabhängige Wartung
 
 Das Dashboard übernimmt das von `ha-bambulab` gemeldete Druckermodell und wählt automatisch das dazugehörige Bambu-Lab-Wartungsprofil. Unterstützt werden die aktuell von der Integration gelisteten Modelle **A1, A1 mini, A2L, P1P, P1S, P2S, H2C, H2D, H2D Pro, H2S, X1, X1C, X1E und X2D**.
 
@@ -33,7 +33,7 @@ Die Gesamtlaufzeit ist nur Information und löst keine Wartung aus. Hersteller-/
 type: custom:bambu-lab-dashboard
 ```
 
-## Funktionen in v1.8.1
+## Funktionen in v1.8.3
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
@@ -57,7 +57,7 @@ type: custom:bambu-lab-dashboard
 
 ## Steuerung: genaue Zuordnung zum offiziellen Plugin
 
-v1.8.1 ordnet Steuerungen nicht anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
+Das Dashboard ordnet Steuerungen nicht anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
 
 | Funktion | `ha-bambulab` Entity |
 |---|---|
@@ -76,9 +76,9 @@ v1.8.1 ordnet Steuerungen nicht anhand beliebiger Namen zu, sondern nach **Domai
 
 Wenn diese Entities im Plugin wegen Firmware-/Hybrid-Beschränkung nicht erzeugt werden, kann das Dashboard sie nicht schalten. Stattdessen erscheint ein Diagnosehinweis mit `hybrid_mode_blocks_control`, `developer_lan_mode` und `mqtt_encryption`.
 
-## Kamera / X2D
+## Kamera
 
-Die X2D-Kamera wird von `ha-bambulab` als RTSP-fähige `camera.*`-Entity bereitgestellt. Das Dashboard verwendet den Home-Assistant-Kamera-Proxy und zeigt zusätzlich Entity, HA-Status und Tokenstatus an. Das **schwarze Bild mit rotem Ausrufezeichen** stammt aus der Integration selbst: `ha-bambulab` erzeugt dieses Platzhalterbild, wenn kein nutzbarer RTSP-Endpunkt aufgebaut werden kann. In diesem Fall ist nicht die Dashboard-Darstellung die Ursache. Über „In Home Assistant öffnen“ lässt sich dieselbe Kameraentity direkt prüfen.
+Das Dashboard verwendet die vom jeweiligen Drucker über `ha-bambulab` bereitgestellte `camera.*`-Entity. Bei RTSP-fähigen Modellen wird der Home-Assistant-Kamera-Proxy verwendet; bei anderen Modellen die von der Integration bereitgestellte Kameraquelle. Zusätzlich zeigt das Dashboard Entity, Home-Assistant-Status und Tokenstatus an. Wenn die Integration selbst kein nutzbares Kamerabild liefern kann, kann auch das Dashboard kein Livebild erzeugen. Über „In Home Assistant öffnen“ lässt sich dieselbe Kameraentity direkt prüfen.
 
 ## Druckerbilder
 
@@ -98,7 +98,7 @@ Für Modelle ohne veröffentlichtes festes Kalenderintervall zeigt das Dashboard
 
 Offizielle Bambu-Lab-Wartungsübersicht: https://bambulab.com/en/support/maintenance
 
-### Wartungsbuch ab v1.8.1
+## Wartungsbuch
 
 Das Wartungsbuch zeigt 15 Einträge pro Seite. Es kann nach Wartungsart gefiltert werden; zusätzlich lässt sich die Ansicht auf die letzten 30 Tage begrenzen. Eine kleine Auswertung zeigt Gesamtzahl, Wartungen der letzten 30 Tage und die am häufigsten quittierte Aufgabe. Einzelne Einträge sowie das komplette Logbuch können nach Sicherheitsabfrage gelöscht werden. Das Löschen des Logbuchs ändert bewusst nicht die separat gespeicherten letzten Wartungszeitpunkte und damit auch nicht die nächsten Fälligkeiten.
 
@@ -106,7 +106,7 @@ Nach dem Quittieren einer Wartung erscheint eine sichtbare Bestätigung. Die War
 
 ## Sprache / Language
 
-Die Dashboard-Oberfläche übernimmt automatisch die Sprache von Home Assistant. Deutsch wird als Deutsch dargestellt; Englisch sowie derzeit nicht separat übersetzte Home-Assistant-Sprachen verwenden Englisch als Fallback. Dazu gehören Navigation, Wartungsbereich, Logbuch, Hinweise und wesentliche Bedienelemente. Datumsangaben wechseln ebenfalls zwischen deutschem und englischem Format. Die Entity-Namen und bestimmte Zustände der Bambu-Integration selbst bleiben davon getrennt und richten sich nach Home Assistant bzw. der Integration.
+Die Dashboard-Oberfläche übernimmt automatisch die Sprache von Home Assistant. Deutsch wird als Deutsch dargestellt; Englisch sowie derzeit nicht separat übersetzte Home-Assistant-Sprachen verwenden Englisch als Fallback. Übersetzt werden Navigation, Übersicht, Druckerdetails, Steuerung, Kamera/AMS, Energie, Wartungsprofile und -hinweise, Wartungsbuch, Popups, Sicherheitsabfragen sowie der Karteneditor. Datumsangaben wechseln ebenfalls zwischen deutschem und englischem Format. Die Entity-Namen und bestimmte Zustände der Bambu-Integration selbst bleiben davon getrennt und richten sich nach Home Assistant bzw. der Integration. Ab v1.8.3 wird diese Abdeckung zusätzlich durch einen eigenen i18n-Test geprüft.
 
 ## Smart-Steckdose / Energie
 
@@ -130,6 +130,6 @@ Die Tests prüfen Syntax, Discovery, Entity-Zuordnung, Steuerungs-Rendering, Hyb
 
 MIT. Bambu Lab ist eine Marke des jeweiligen Rechteinhabers. Dieses Community-Projekt ist nicht offiziell mit Bambu Lab verbunden.
 
-### Mobile Bedienung
+## Mobile Bedienung
 
-Ab v1.6.1 werden laufende Home-Assistant-Statusupdates während eines aktiven Touch-/Scroll-Vorgangs kurz zurückgestellt, damit die Ansicht auf iPhone/Android nicht springt. Die AMS-Slot-Details öffnen auf Mobilgeräten als vollflächiges responsives Fenster und nicht mehr inline unter der AMS-Liste.
+Laufende Home-Assistant-Statusupdates werden während eines aktiven Touch-/Scroll-Vorgangs kurz zurückgestellt, damit die Ansicht auf iPhone/Android nicht springt. Die AMS-Slot-Details öffnen auf Mobilgeräten als vollflächiges responsives Fenster und nicht mehr inline unter der AMS-Liste.

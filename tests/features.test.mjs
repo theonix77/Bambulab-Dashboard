@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
 const code=fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url),"utf8");
-assert.match(code,/const VERSION = "1\.8\.1"/);
+assert.match(code,/const VERSION = "1\.8\.3"/);
 assert.match(code,/_isInCardPicker/);
 assert.match(code,/preview: true/);
 assert.match(code,/data-open-printer=/);
@@ -58,7 +58,7 @@ assert.match(code,/data-maint-log-delete/);
 assert.match(code,/data-maint-log-clear/);
 assert.match(code,/maintenance-summary/);
 
-// v1.8.1: maintenance must be selected by the detected model, never globally from X2D.
+// v1.8.3: maintenance must be selected by the detected model, never globally from X2D.
 for (const model of ["A1","A1MINI","A2L","P1P","P1S","P2S","H2C","H2D","H2DPRO","H2S","X1","X1C","X1E","X2D"]) {
   assert.ok(code.includes(`\"${model}\"`), `maintenance/model support missing: ${model}`);
 }

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
-  <title id="title">Bambu Lab Dashboard v1.5.0</title>
+  <title id="title">Bambu Lab Dashboard v1.8.3</title>
   <desc id="desc">Schematische Darstellung der Mehrdrucker-Übersicht mit linker Navigation und zwei Druckerkarten.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07100c"/><stop offset="1" stop-color="#030605"/></linearGradient>
@@ -17,7 +17,7 @@
   <text x="64" y="418" fill="#718078" font-family="Arial, sans-serif" font-size="11">DRUCKER</text>
   <rect x="58" y="438" width="94" height="42" rx="12" fill="#102016" stroke="#2c6e24"/><text x="88" y="465" fill="#f4f7f5" font-family="Arial" font-size="15" font-weight="700">A2L</text>
   <rect x="164" y="438" width="94" height="42" rx="12" fill="#102016" stroke="#50d926"/><text x="194" y="465" fill="#f4f7f5" font-family="Arial" font-size="15" font-weight="700">X2D</text>
-  <text x="64" y="690" fill="#718078" font-family="Arial" font-size="12">v1.5.0</text>
+  <text x="64" y="690" fill="#718078" font-family="Arial" font-size="12">v1.8.3</text>
 
   <text x="330" y="86" fill="#a8b0ac" font-family="Arial" font-size="13" font-weight="700" letter-spacing="2">CONTROL CENTER</text>
   <text x="330" y="124" fill="#f4f7f5" font-family="Arial" font-size="38" font-weight="800">Alle Drucker</text>
