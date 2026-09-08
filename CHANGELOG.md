@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.0
+
+- Merge von WebSocket Entity Registry und `hass.entities` für robustere Erkennung von Buttons, Numbers, Fans und Selects.
+- Editor verliert geöffnete Details/Scrollposition bei Live-Updates nicht mehr.
+- Energiezuordnung über sichtbare Listen aller Mess-Sensoren statt fehleranfälligem HA Entity Picker.
+- AMS-Slot-Detailansicht direkt im Dashboard.
+- Striktes `total_usage_hours`-Mapping für Gesamtlaufzeit; manueller Override ergänzt.
+- Helles Theme kontrastfest überarbeitet.
+- Proportionale Druckerbilder und mobile Stabilitätskorrekturen.
+- Kein falsches A1-Bild als A2L-Ersatz.
+
 ## 1.3.0
 
 - Dark/Light/Auto-Theme im visuellen Editor.

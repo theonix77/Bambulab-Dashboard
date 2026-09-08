@@ -12,21 +12,26 @@ const printer={id:"p",device:{model:"P1S",name:"P1S"},entries:[
  {entity_id:"sensor.p_status",unique_id:"S_print_status",translation_key:"print_status",platform:"bambu_lab"},
  {entity_id:"sensor.p_progress",unique_id:"S_print_progress",translation_key:"print_progress",platform:"bambu_lab"},
  {entity_id:"sensor.p_usage",unique_id:"S_total_usage_hours",translation_key:"total_usage_hours",platform:"bambu_lab"},
- {entity_id:"select.p_speed",unique_id:"S_Speed",translation_key:"printing_speed",platform:"bambu_lab"},
- {entity_id:"button.p_pause",unique_id:"S_pause",translation_key:"pause",platform:"bambu_lab"},
 ],childDevices:[]};
 card._config={}; card._printers=[printer]; card._selectedPrinterId='p'; card._devices=[]; card._entities=[];
-card._hass={themes:{darkMode:true},states:{
+card._hass={themes:{darkMode:true},entities:{
+ 'select.p_speed':{entity_id:'select.p_speed',device_id:'p',translation_key:'printing_speed',platform:'bambu_lab'},
+ 'button.p_pause':{entity_id:'button.p_pause',device_id:'p',translation_key:'pause',platform:'bambu_lab'},
+ 'number.p_nozzle':{entity_id:'number.p_nozzle',device_id:'p',translation_key:'target_nozzle_temperature',platform:'bambu_lab'},
+ 'fan.p_cooling':{entity_id:'fan.p_cooling',device_id:'p',translation_key:'cooling_fan',platform:'bambu_lab'},
+},states:{
  'sensor.p_status':{entity_id:'sensor.p_status',state:'running',attributes:{}},
  'sensor.p_progress':{entity_id:'sensor.p_progress',state:'42',attributes:{unit_of_measurement:'%'}},
  'sensor.p_usage':{entity_id:'sensor.p_usage',state:'90',attributes:{unit_of_measurement:'min'}},
  'select.p_speed':{entity_id:'select.p_speed',state:'Standard',attributes:{options:['Silent','Standard']}},
  'button.p_pause':{entity_id:'button.p_pause',state:'unknown',attributes:{}},
+ 'number.p_nozzle':{entity_id:'number.p_nozzle',state:'220',attributes:{min:0,max:320,step:1}},
+ 'fan.p_cooling':{entity_id:'fan.p_cooling',state:'on',attributes:{percentage:50}},
 }};
 assert.equal(card._isPrinterActive(printer),true);
 assert.equal(card._formatDurationState(card._hass.states['sensor.p_usage']),'1 h 30 min');
 assert.equal(card._themeClass(),'theme-dark');
 card._config.theme='light'; assert.equal(card._themeClass(),'theme-light');
 assert.match(card._renderPrinterOverviewCard(printer),/42<span>%<\/span>/);
-assert.match(card._renderControls(printer),/Pause/);
+const controls=card._renderControls(printer); assert.match(controls,/Pause/); assert.match(controls,/Düse Soll/); assert.match(controls,/Bauteillüfter/); assert.match(controls,/Druckgeschwindigkeit/);
 console.log('runtime tests: ok');

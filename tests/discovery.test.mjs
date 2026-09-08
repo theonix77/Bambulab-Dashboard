@@ -12,5 +12,5 @@ const entities=[{entity_id:'sensor.p_progress',platform:'bambu_lab',device_id:'p
 const models=buildPrinterModels(devices,entities); assert.equal(models.length,1); assert.equal(models[0].id,'p');
 assert.equal(entryMatchesAlias({translation_key:'printing_speed',unique_id:'S_Speed'},'printing_speed'),true);
 assert.ok(printerArtworkUrl(devices[0]).endsWith('/P1S.png'));
-assert.ok(printerArtworkUrl({...devices[0],model:'A2L'}).endsWith('/A2L.png'));
+assert.equal(printerArtworkUrl({...devices[0],model:'A2L'}),null);
 console.log('discovery tests: ok');

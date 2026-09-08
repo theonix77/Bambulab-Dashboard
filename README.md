@@ -34,7 +34,7 @@ Danach im Dashboard **Karte hinzufügen → Bambu Lab Dashboard** wählen oder m
 type: custom:bambu-lab-dashboard
 ```
 
-## Was v1.3.0 kann
+## Was v1.4.0 kann
 
 - mehrere Drucker automatisch erkennen und gleichzeitig in einer Übersicht anzeigen
 - Reihenfolge und Anzeigename pro Drucker ändern
@@ -80,7 +80,7 @@ Die Slots werden anhand der Bambu-`tray`-Entitäten und deren `slot`-Attribut er
 
 ## Energie / Smart-Steckdose
 
-Im Karteneditor werden **alle `sensor.*`-Entitäten** über den Home-Assistant-Entity-Picker angeboten. Damit kann auch eine Smart-Steckdose verwendet werden, deren Sensor nicht sauber als `device_class: power` oder `energy` klassifiziert ist.
+Im Karteneditor werden **alle `sensor.*`-Entitäten** in einer direkten Auswahlliste mit Gerätename, Friendly Name, Entity-ID und Einheit angeboten. Damit kann auch eine Smart-Steckdose verwendet werden, deren Sensor nicht sauber als `device_class: power` oder `energy` klassifiziert ist.
 
 Pro Drucker können zugeordnet werden:
 
@@ -101,7 +101,7 @@ Die Karte nutzt die von Home Assistant zugewiesene Section-Breite vollständig. 
 
 ## Mobil / Responsive
 
-Die Druckerbilder behalten ihre Proportionen. Auf kleinen Breiten werden Kennzahlen und Navigation angepasst, ohne das Bild zu verzerren. v1.3.0 bewahrt außerdem die Scrollposition bei Live-Updates, damit Fortschrittsänderungen nicht mehr bei jedem Home-Assistant-State-Update nach oben springen sollen.
+Die Druckerbilder behalten ihre Proportionen. Auf kleinen Breiten werden Kennzahlen und Navigation angepasst, ohne das Bild zu verzerren. v1.4.0 bewahrt außerdem die Scrollposition bei Live-Updates, damit Fortschrittsänderungen nicht mehr bei jedem Home-Assistant-State-Update nach oben springen sollen.
 
 ## Updates
 

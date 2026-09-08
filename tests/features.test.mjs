@@ -1,11 +1,12 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
 const code=fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url),"utf8");
-assert.match(code,/const VERSION = "1\.3\.0"/);
+assert.match(code,/const VERSION = "1\.4\.0"/);
 assert.match(code,/_isInCardPicker/);
 assert.match(code,/preview: true/);
 assert.match(code,/data-open-printer=/);
-assert.match(code,/ha-entity-picker/);
+assert.doesNotMatch(code,/<ha-entity-picker/);
+assert.match(code,/measurementOptionHtml/);
 assert.match(code,/data-spool-entity/);
 assert.match(code,/hass-more-info/);
 assert.match(code,/target_nozzle_temperature/);
@@ -20,3 +21,8 @@ assert.match(code,/total_usage_hours/);
 assert.doesNotMatch(code,/image_url/);
 assert.doesNotMatch(code,/"A2L"\s*:\s*"A1\.png"/);
 console.log("feature/static tests: ok");
+
+assert.match(code,/_openEditorDetails/);
+assert.match(code,/Object\.values\(this\._hass\?\.entities/);
+assert.match(code,/data-close-spool-inline/);
+assert.match(code,/total_usage_entity/);

@@ -1,4 +1,4 @@
-# Validation v1.3.0
+# Validation v1.4.0
 
 Statisch/automatisiert geprüft:
 
@@ -13,7 +13,7 @@ Statisch/automatisiert geprüft:
 - `printing_speed`-Select-Mapping vorhanden
 - großes Print-Cover vorhanden
 - Zeiteinheiten-Konvertierung für Gesamtlaufzeit vorhanden
-- Home-Assistant `ha-entity-picker` für Leistungs-/Energiesensoren vorhanden
+- Direkte Auswahl für Leistungs-/Energiesensoren vorhanden; Geräte-/Entity-Namen und Einheiten werden sichtbar angeboten
 - responsive Bilddarstellung mit `object-fit: contain`
 - Scroll-State-Preservation vorhanden
 - HACS-Metadaten und ZIP-Struktur
@@ -24,3 +24,12 @@ Nicht vollständig außerhalb einer realen Home-Assistant-Instanz prüfbar:
 - reale AMS-Attribute jedes AMS-Modells
 - Kamera-/Cover-Verfügbarkeit
 - Verhalten jeder HA-Frontend-Version und jedes View-Typs
+
+
+## v1.4.0 zusätzliche Prüfziele
+
+- Editor-Zustand bleibt über Config-Re-Renders erhalten.
+- Control-Discovery berücksichtigt `hass.entities`.
+- Energie-Auswahl ist nicht mehr vom `ha-entity-picker` abhängig.
+- A2L verweist nicht auf ein nicht existentes oder falsches Modellbild.
+- `total_usage_hours` wird strikt gemappt.
