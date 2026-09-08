@@ -1,0 +1,16 @@
+{
+  "name": "bambulab-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Auto-discovering Bambu Lab printer dashboard for Home Assistant",
+  "scripts": {
+    "check": "node --check Bambulab-Dashboard.js && node --check bambu-dashboard-card.js && node --check bambu-dashboard-utils.js && node --check bambu-dashboard-styles.js",
+    "test": "node tests/discovery.test.mjs",
+    "validate": "npm run check && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
