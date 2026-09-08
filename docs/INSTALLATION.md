@@ -1,44 +1,29 @@
 # Installation
 
-## Voraussetzung
+## 1. Bambu-Integration
 
-Installiert und eingerichtet sein muss [greghesp/ha-bambulab](https://github.com/greghesp/ha-bambulab). Dieses Dashboard ersetzt diese Integration nicht.
+Installiere zuerst [greghesp/ha-bambulab](https://github.com/greghesp/ha-bambulab) über HACS und richte deine Drucker unter **Einstellungen → Geräte & Dienste → Bambu Lab** ein.
 
-## HACS
+Prüfe dort, dass Status-/Temperatur-Entitäten vorhanden sind. AMS, Kamera und Steuerungen erscheinen nur, wenn Modell, Firmware und Verbindungsmodus sie bereitstellen.
 
-1. HACS öffnen.
-2. Bereich **Dashboard** öffnen.
-3. **Benutzerdefinierte Repositories** öffnen.
-4. [https://github.com/theonix77/Bambulab-Dashboard](https://github.com/theonix77/Bambulab-Dashboard) als Typ **Dashboard** hinzufügen.
-5. Bambu Lab Dashboard installieren.
-6. Browser mit **Strg + F5** neu laden.
+## 2. Dashboard-Repository
 
-## Karte
+HACS → Dashboard → ⋮ → Benutzerdefinierte Repositories → `https://github.com/theonix77/Bambulab-Dashboard` → Typ **Dashboard**.
+
+Danach installieren und Browser mit **Strg+F5** neu laden.
+
+## 3. Karte
 
 ```yaml
 type: custom:bambu-lab-dashboard
 ```
 
-## Breite
+Für die Druckererkennung sind keine Entity-IDs nötig.
 
-Bei einer Sections-View kann eine Karte ihre übergeordnete Section nicht selbst verbreitern. Für ein großes Control Center die Section im Section-Editor auf 2–3 Sections Breite stellen oder eine eigene **Panel-View** verwenden.
+## 4. Karteneditor
 
-Dokumentation:
+Im visuellen Editor können Theme, Reihenfolge, Name, AMS-Zuordnung, Leistungs-/Energiesensoren und optionale Entity-Overrides konfiguriert werden.
 
-- [Sections](https://www.home-assistant.io/dashboards/sections/)
-- [Dashboard Views / Panel](https://www.home-assistant.io/dashboards/views/)
-- [Custom Card Grid Options](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card/)
+## 5. Breite
 
-## Eigenes A2L-Bild
-
-Beispiel:
-
-```text
-/config/www/bambu/a2l.png
-```
-
-im Karteneditor als:
-
-```text
-/local/bambu/a2l.png
-```
+Die Karte nutzt 100 % ihrer von Home Assistant zugewiesenen Section-Breite. Soll sie breiter sein, muss die Section/View entsprechend breit eingestellt werden.

@@ -1,29 +1,25 @@
-# Hilfe und Fehlerbehebung
+# Hilfe / Fehlerbehebung
 
-## Karte erscheint nicht
+## Karte fehlt im Karten-Picker
 
-Unter **Einstellungen → Dashboards → Ressourcen** prüfen, ob `Bambulab-Dashboard.js` als JavaScript-Modul registriert ist. Danach HACS → Bambu Lab Dashboard → **Neu herunterladen** und **Strg + F5**.
-
-## Karte bleibt schmal
-
-Die Karte kann ihre Home-Assistant-Section nicht selbst verbreitern. Entweder die Section auf 2–3 Sections Breite stellen oder eine Panel-View verwenden.
-
-## Druckerbutton reagiert nicht
-
-Ab v1.2.0 verwenden Druckerkarten und Druckerumschalter dieselbe direkte Navigation zur Detailansicht. Wenn nach einem Update noch das alte Verhalten sichtbar ist, HACS neu herunterladen und den Browser-Cache hart aktualisieren.
-
-## Falscher Fortschritt / falscher Auftrag
-
-Im Karteneditor beim betroffenen Drucker **Erweiterte Entity-Zuordnung** öffnen und bei Bedarf `Status`, `Fortschritt` oder `Druckauftrag` auf die korrekte Home-Assistant-Entity legen.
-
-## A2L-Bild fehlt
-
-Es wird bewusst kein falsches A1-Bild mehr eingesetzt. Hinterlege im Karteneditor ein eigenes Bild, z. B. `/local/bambu/a2l.png`.
+HACS neu herunterladen, anschließend `Strg+F5`. Unter **Einstellungen → Dashboards → Ressourcen** muss `/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js` als JavaScript-Modul vorhanden sein.
 
 ## Smart-Steckdose fehlt
 
-Ab v1.2.0 werden alle `sensor.*`-Entities akzeptiert. Trage den Leistungssensor und Energiesensor direkt per Entity-ID ein, z. B. `sensor.steckdose_power` und `sensor.steckdose_energy`.
+v1.3.0 verwendet den Home-Assistant-Entity-Picker und erlaubt alle `sensor.*`-Entities. Suche nach dem Friendly Name oder der Entity-ID des Leistungs-/Energiesensors der Steckdose. Die Steckdose selbst als `switch.*` ist kein Leistungssensor; benötigt wird der zugehörige `sensor.*`-Messwert.
 
-## AMS fehlt oder ist falsch zugeordnet
+## Nur Licht steuerbar
 
-Im Karteneditor unter dem Drucker die AMS-Zuordnung prüfen. Ohne Haken wird automatisch über die Gerätehierarchie zugeordnet. Mit Haken wird die manuelle Zuordnung erzwungen.
+Prüfe beim Drucker unter **Einstellungen → Geräte & Dienste → Bambu Lab → Entitäten**, ob `button.pause`, `button.resume`, `button.stop`, `number.*`, `fan.*` bzw. `select.*` für diesen Drucker tatsächlich existieren. Bei MQTT-Signatur/gesperrtem Hybrid-Modus erzeugt die Integration bestimmte Schreib-Entitäten absichtlich nicht.
+
+## A2L ohne Modellbild
+
+Das Upstream-Projekt `greghesp/ha-bambulab-cards` besitzt derzeit kein eigenständiges korrektes A2L-Modellbild. Das Dashboard zeigt deshalb bewusst keinen falschen A1-Drucker.
+
+## AMS-Slot öffnet keine Details
+
+Prüfe, ob das AMS `tray`-Entities besitzt. v1.3.0 erkennt sowohl ältere Unique-IDs wie `..._tray_1` als auch neuere `translation_key: tray` plus `slot`-Attribut.
+
+## Seite springt beim Drucken nach oben
+
+v1.3.0 speichert und restauriert Scrollpositionen um Live-Renderings herum. Falls eine spezielle Custom-View trotzdem springt, bitte Browser, HA-Version und View-Typ im Issue angeben.

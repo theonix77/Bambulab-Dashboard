@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.2.0 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.3.0 | standalone HACS resource */
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const DOMAIN = "bambu_lab";
 
 
@@ -12,6 +12,7 @@ const PRINTER_ART_FILES = Object.freeze({
   "A1": "A1.png",
   "A1 MINI": "A1Mini.png",
   "A1MINI": "A1Mini.png",
+  "A2L": "A2L.png",
   "H2C": "H2C.png",
   "H2D": "H2D.png",
   "H2D PRO": "H2DPRO.png",
@@ -53,7 +54,7 @@ const ENTITY_KEYS = {
   printWeight: ["print_weight"],
   printLength: ["print_length"],
   bedType: ["print_bed_type", "bed_type"],
-  totalUsage: ["total_usage", "total_usage_hours"],
+  totalUsage: ["total_usage_hours", "total_usage"],
   nozzleTemp: ["nozzle_temp"],
   targetNozzleTemp: ["target_nozzle_temp"],
   leftNozzleTemp: ["left_nozzle_temp"],
@@ -74,14 +75,26 @@ const ENTITY_KEYS = {
   doorOpen: ["door_open"],
   mqttMode: ["mqtt_mode"],
   timelapse: ["timelapse"],
-  speed: ["Speed", "speed", "speed_profile"],
+  speed: ["printing_speed", "Speed", "speed", "speed_profile"],
   chamberLight: ["chamber_light", "camera_light", "light"],
   camera: ["camera"],
   coverImage: ["cover_image"],
+  jobImage: ["cover_image", "pick_image"],
   pause: ["pause"],
   resume: ["resume"],
   stop: ["stop"],
-  forceRefresh: ["force_refresh"],
+  forceRefresh: ["refresh", "force_refresh"],
+  targetNozzleControl: ["target_nozzle_temperature"],
+  targetBedControl: ["target_bed_temperature"],
+  targetChamberControl: ["target_chamber_temperature"],
+  coolingFanControl: ["cooling_fan"],
+  auxFanControl: ["aux_fan"],
+  chamberFanControl: ["chamber_fan"],
+  secondaryAuxFanControl: ["secondary_aux_fan"],
+  airductMode: ["airduct_mode"],
+  buzzerSilence: ["buzzer_silence"],
+  buzzerFire: ["buzzer_fire_alarm"],
+  buzzerBeep: ["buzzer_beeping"],
 };
 
 const ENTITY_OVERRIDE_FIELDS = Object.freeze({
@@ -382,6 +395,52 @@ const styles = `
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
+
+  .shell.theme-light {
+    --bd-bg:#f4f7f5; --bd-panel:#ffffff; --bd-panel-2:#eef4f0; --bd-border:#d5e0d9;
+    --bd-text:#132019; --bd-muted:#617067; --bd-danger:#b4232b; --bd-warn:#8a6500;
+    background:radial-gradient(circle at 18% 0%,rgba(80,217,38,.10),transparent 28%),linear-gradient(180deg,#fbfdfb 0%,#eef5f0 100%);
+    box-shadow:0 18px 55px rgba(28,55,36,.15),inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .shell.theme-light .panel,.shell.theme-light .fleet-card,.shell.theme-light .side-brand,.shell.theme-light .side-printers { background:rgba(255,255,255,.88); }
+  .shell.theme-light .printer-visual,.shell.theme-light .fleet-visual,.shell.theme-light .camera-wrap { background:rgba(223,234,226,.72); }
+  .shell.theme-light .select-wrap select,.shell.theme-light .control-field input,.shell.theme-light .control-field select { background:#fff;color:var(--bd-text); }
+  .spool { cursor:pointer; width:100%; color:inherit; font:inherit; }
+  .spool:hover { border-color:rgba(80,217,38,.42); background:rgba(80,217,38,.055); }
+  .spool:focus-visible { outline:2px solid var(--bd-accent); outline-offset:2px; }
+  .spool-dialog-backdrop { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; padding:18px; background:rgba(0,0,0,.62); backdrop-filter:blur(5px); }
+  .spool-dialog { width:min(560px,100%); max-height:min(78vh,720px); overflow:auto; border-radius:20px; padding:18px; color:var(--bd-text); background:var(--bd-panel); border:1px solid rgba(80,217,38,.35); box-shadow:0 25px 80px rgba(0,0,0,.45); }
+  .spool-dialog-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .spool-dialog-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:14px; }
+  .spool-detail-row { border:1px solid var(--bd-border); background:rgba(255,255,255,.025); border-radius:11px; padding:9px 10px; min-width:0; }
+  .spool-detail-row small { display:block; color:var(--bd-muted); font-size:9px; text-transform:uppercase; letter-spacing:.08em; }
+  .spool-detail-row strong { display:block; margin-top:4px; overflow-wrap:anywhere; font-size:12px; }
+  .dialog-close { border:1px solid var(--bd-border); background:transparent; color:inherit; width:34px; height:34px; border-radius:10px; cursor:pointer; }
+  .control-groups { padding:14px 17px 17px; display:grid; gap:14px; }
+  .control-group { display:grid; gap:8px; }
+  .control-group-title { color:var(--bd-muted); font-size:10px; letter-spacing:.1em; text-transform:uppercase; font-weight:800; }
+  .control-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .control-field { border:1px solid var(--bd-border); border-radius:12px; padding:10px; background:rgba(255,255,255,.02); }
+  .control-field label { display:block; color:var(--bd-muted); font-size:10px; margin-bottom:6px; }
+  .control-field input,.control-field select { width:100%; min-height:36px; border-radius:9px; border:1px solid var(--bd-border); background:#0b120e; color:var(--bd-text); padding:0 8px; }
+  .fan-control-row { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; }
+  .fan-control-row input[type=range] { padding:0; }
+  .job-art-panel { overflow:hidden; }
+  .job-art-body { display:grid; grid-template-columns:minmax(220px,1.2fr) minmax(220px,.8fr); gap:16px; padding:16px 17px 17px; align-items:stretch; }
+  .job-art-image { min-height:260px; border-radius:16px; display:grid; place-items:center; overflow:hidden; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.05); }
+  .job-art-image img { width:100%; height:100%; max-height:420px; object-fit:contain; object-position:center; }
+  .job-art-info { display:flex; flex-direction:column; justify-content:center; min-width:0; }
+  .job-art-info h3 { margin:0 0 8px; font-size:clamp(20px,2.2vw,30px); overflow-wrap:anywhere; }
+  .job-art-info p { margin:0; color:var(--bd-muted); line-height:1.5; }
+  .entity-picker-wrap ha-entity-picker { width:100%; display:block; }
+  @container (max-width:700px) { .job-art-body { grid-template-columns:1fr; } .job-art-image { min-height:210px; } .control-grid { grid-template-columns:1fr; } }
+  @container (max-width:430px) { .spool-dialog-grid { grid-template-columns:1fr; } }
+  .picker-preview { min-height:210px; border-radius:18px; padding:18px; display:grid; grid-template-columns:92px minmax(0,1fr); gap:16px; align-items:center; color:#f4f7f5; background:linear-gradient(145deg,#08120d,#0e2015); border:1px solid rgba(80,217,38,.24); overflow:hidden; }
+  .picker-preview-icon { width:92px; aspect-ratio:1; border-radius:20px; display:grid; place-items:center; background:rgba(80,217,38,.10); border:1px solid rgba(80,217,38,.28); }
+  .picker-preview-icon ha-icon { --mdc-icon-size:58px; color:var(--bd-accent); }
+  .picker-preview h3 { margin:0; font-size:20px; }
+  .picker-preview p { margin:7px 0 0; color:#a8b0ac; font-size:12px; line-height:1.4; }
+
   button, select, input { font: inherit; }
   button { color: inherit; }
   .shell {
@@ -665,7 +724,7 @@ const styles = `
   .ams-option small { color:var(--secondary-text-color); }
   @container (max-width:600px) { .ams-editor { grid-template-columns:1fr; } }
 
-  /* v1.2.0: robust overview card layout; intentionally uses separate fallback classes. */
+  /* v1.3.0: robust overview card layout; intentionally uses separate fallback classes. */
   .fleet-card { overflow:hidden; }
   .fleet-main { display:grid; grid-template-columns:minmax(110px,150px) minmax(0,1fr); gap:16px; align-items:center; margin:14px 0; }
   .fleet-visual { height:136px; min-height:136px; position:relative; overflow:hidden; }
@@ -676,15 +735,16 @@ const styles = `
   .fleet-task { display:block; min-height:36px; max-height:54px; overflow:hidden; overflow-wrap:anywhere; }
   .fleet-metrics { position:relative; z-index:2; }
   @container (max-width:620px) {
-    .fleet-main { grid-template-columns:96px minmax(0,1fr); gap:12px; }
+    .fleet-main { grid-template-columns:88px minmax(0,1fr); gap:11px; align-items:center; }
     .fleet-visual { height:104px; min-height:104px; }
-    .fleet-fallback ha-icon { --mdc-icon-size:56px; }
-    .fleet-progress-number { font-size:32px; }
+    .fleet-visual img { width:100%; height:100%; object-fit:contain; object-position:center; }
+    .fleet-fallback ha-icon { --mdc-icon-size:54px; }
+    .fleet-progress-number { font-size:30px; }
     .fleet-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
-  @container (max-width:390px) {
+  @container (max-width:350px) {
     .fleet-main { grid-template-columns:1fr; }
-    .fleet-visual { height:120px; }
+    .fleet-visual { height:128px; min-height:128px; }
     .fleet-metrics { grid-template-columns:1fr 1fr; }
   }
   .custom-image-hint { color:var(--secondary-text-color); font-size:11px; margin-top:4px; line-height:1.35; }
@@ -734,7 +794,7 @@ class BambuLabDashboard extends HTMLElement {
     if (!this._loaded && !this._loading) this._discover();
     if (this._loaded) {
       this._samplePower();
-      if (previous !== hass) this._render();
+      if (previous !== hass) this._scheduleRender();
     }
   }
 
@@ -878,17 +938,49 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _printerArtworkUrl(printer) {
-    const cfg = resolveConfiguredPrinter(this._config, printer?.id);
-    const custom = String(cfg?.image_url || "").trim();
-    if (custom) return custom;
+    // Use the same model-art source as the Bambu cards bundled with greghesp/ha-bambulab.
+    // Never substitute a different model. If upstream has no exact asset, the neutral fallback is used.
     return printerArtworkUrl(printer?.device);
+  }
+
+  _captureScrollState() {
+    const list = [];
+    const seen = new Set();
+    const add = (el) => { if (el && !seen.has(el)) { seen.add(el); list.push([el, el.scrollTop, el.scrollLeft]); } };
+    add(document.scrollingElement);
+    let node = this;
+    for (let i=0; node && i<16; i++) {
+      const root = node.getRootNode?.();
+      const parent = node.parentElement || (root && root.host) || null;
+      if (!parent || parent === node) break;
+      try {
+        const cs = getComputedStyle(parent);
+        if ((/(auto|scroll|overlay)/).test(cs.overflowY) && parent.scrollHeight > parent.clientHeight) add(parent);
+      } catch (_) {}
+      node = parent;
+    }
+    return list;
+  }
+
+  _restoreScrollState(state) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      for (const [el, top, left] of state || []) { try { el.scrollTop = top; el.scrollLeft = left; } catch (_) {} }
+    }));
+  }
+
+  _scheduleRender() {
+    if (this._renderPending) return;
+    this._renderPending = true;
+    requestAnimationFrame(() => { this._renderPending = false; this._render(); });
   }
 
   _render() {
     if (!this.shadowRoot) return;
+    const scrollState = this._captureScrollState();
     const body = this._renderBody();
     this.shadowRoot.innerHTML = `<style>${styles}</style>${body}`;
     this._bindEvents();
+    this._restoreScrollState(scrollState);
   }
 
   _navItems() {
@@ -944,10 +1036,30 @@ class BambuLabDashboard extends HTMLElement {
     if (!printer) return `<section class="panel"><div class="empty">Kein Drucker ausgewählt.</div></section>`;
     if (this._activeView === "energy") return `<div class="view-grid">${this._renderEnergy(printer)}</div>`;
     if (this._activeView === "maintenance") return `<div class="view-grid">${this._renderMaintenance(printer)}${this._renderInfo(printer)}</div>`;
-    return `<div class="detail-layout"><div class="detail-main">${this._renderHero(printer)}<div class="wide-grid">${this._renderTemperatures(printer)}${this._renderInfo(printer)}</div>${printerSectionEnabled(this._config, printer, "ams") ? this._renderAMS(printer) : ""}</div><div class="detail-side">${printerSectionEnabled(this._config, printer, "camera") ? this._renderCamera(printer) : ""}${this._renderControls(printer)}${printerSectionEnabled(this._config, printer, "energy") ? this._renderEnergy(printer) : ""}${printerSectionEnabled(this._config, printer, "maintenance") ? this._renderMaintenance(printer) : ""}</div></div>`;
+    return `<div class="detail-layout"><div class="detail-main">${this._renderHero(printer)}${this._renderCurrentPrint(printer)}<div class="wide-grid">${this._renderTemperatures(printer)}${this._renderInfo(printer)}</div>${printerSectionEnabled(this._config, printer, "ams") ? this._renderAMS(printer) : ""}</div><div class="detail-side">${printerSectionEnabled(this._config, printer, "camera") ? this._renderCamera(printer) : ""}${this._renderControls(printer)}${printerSectionEnabled(this._config, printer, "energy") ? this._renderEnergy(printer) : ""}${printerSectionEnabled(this._config, printer, "maintenance") ? this._renderMaintenance(printer) : ""}</div></div>`;
+  }
+
+  _themeClass() {
+    const configured = String(this._config.theme || "auto").toLowerCase();
+    if (configured === "light") return "theme-light";
+    if (configured === "dark") return "theme-dark";
+    return this._hass?.themes?.darkMode === false ? "theme-light" : "theme-dark";
+  }
+
+  _isInCardPicker() {
+    let node = this;
+    for (let i=0; node && i<18; i++) {
+      const tag = String(node.tagName || "").toLowerCase();
+      const cls = String(node.className || "").toLowerCase();
+      if (tag.includes("card-picker") || tag.includes("card-preview") || cls.includes("card-picker")) return true;
+      const root = node.getRootNode?.();
+      node = node.parentElement || (root && root.host) || null;
+    }
+    return false;
   }
 
   _renderBody() {
+    if (this._isInCardPicker()) return `<div class="picker-preview"><div class="picker-preview-icon"><ha-icon icon="mdi:printer-3d"></ha-icon></div><div><h3>Bambu Lab Dashboard</h3><p>Mehrdrucker-Control-Center mit AMS, Kamera, Steuerung, Energie und Wartung.</p></div></div>`;
     if (!this._hass || (this._loading && !this._loaded)) {
       return `<div class="shell"><div class="panel"><div class="empty"><ha-icon icon="mdi:printer-3d"></ha-icon>Bambu-Geräte werden automatisch erkannt …</div></div></div>`;
     }
@@ -961,7 +1073,8 @@ class BambuLabDashboard extends HTMLElement {
     const viewLabel = this._navItems().find((x) => x[0] === this._activeView)?.[2] || "Übersicht";
     const printers = visiblePrinters.map((p) => `<button class="tab ${p.id === printer?.id ? "active" : ""}" data-open-printer="${cssEscape(p.id)}"><ha-icon icon="mdi:printer-3d"></ha-icon><span>${cssEscape(configuredPrinterName(this._config,p))}</span></button>`).join("");
 
-    return `<div class="shell"><div class="app-grid">
+    const themeClass = this._themeClass();
+    return `<div class="shell ${themeClass}"><div class="app-grid">
       <aside class="sidebar">
         <div class="side-brand"><div class="side-brand-row"><div class="brand-mark"><ha-icon icon="mdi:printer-3d"></ha-icon></div><div><div class="side-title">BAMBU LAB</div><div class="side-sub">HA Control Center</div></div></div></div>
         ${this._renderNav(false)}
@@ -1009,6 +1122,37 @@ class BambuLabDashboard extends HTMLElement {
     </section>`;
   }
 
+  _renderCurrentPrint(printer) {
+    const image = this._imageUrl(printer);
+    if (!image) return "";
+    const task = this._val(printer, "taskName", "Aktueller Druck");
+    const progress = this._isPrinterActive(printer) ? safePercent(this._num(printer, "progress", 0)) : 0;
+    const currentLayer = this._num(printer, "currentLayer", null);
+    const totalLayers = this._num(printer, "totalLayers", null);
+    return `<section class="panel job-art-panel"><div class="panel-head"><div><div class="eyebrow">Aktueller Druck</div><div class="panel-title">Bauteil / Vorschau</div></div></div><div class="job-art-body"><div class="job-art-image"><img src="${cssEscape(image)}" alt="${cssEscape(task)}"></div><div class="job-art-info"><h3>${cssEscape(task)}</h3><p>${formatNumber(progress,0)} % abgeschlossen${currentLayer === null ? "" : ` · Layer ${formatNumber(currentLayer)}${totalLayers === null ? "" : ` / ${formatNumber(totalLayers)}`}`}</p></div></div></section>`;
+  }
+
+  _durationToHours(st) {
+    if (!st || !hasMeaningfulValue(st)) return null;
+    const n = Number(st.state);
+    if (!Number.isFinite(n)) return null;
+    const u = String(unit(st) || "h").toLowerCase();
+    if (["s","sec","second","seconds"].includes(u)) return n / 3600;
+    if (["min","minute","minutes"].includes(u)) return n / 60;
+    if (["d","day","days"].includes(u)) return n * 24;
+    if (["ms"].includes(u)) return n / 3600000;
+    return n;
+  }
+
+  _formatDurationState(st) {
+    const hours = this._durationToHours(st);
+    if (hours === null) return "–";
+    if (hours >= 100) return `${formatNumber(hours, 0)} h`;
+    const whole = Math.floor(hours);
+    const mins = Math.round((hours - whole) * 60);
+    return whole > 0 ? `${whole} h${mins ? ` ${mins} min` : ""}` : `${mins} min`;
+  }
+
   _renderTemperatures(printer) {
     const rows = [];
     const add = (label, icon, nowKey, targetKey) => {
@@ -1044,7 +1188,8 @@ class BambuLabDashboard extends HTMLElement {
     for (const [label, icon, key] of specs) {
       const st = this._st(printer, key);
       if (!st) continue;
-      rows.push(`<div class="info-row"><div class="row-label"><ha-icon icon="${icon}"></ha-icon>${label}</div><div class="row-value">${this._formatStateWithUnit(st)}</div></div>`);
+      const value = key === "totalUsage" ? this._formatDurationState(st) : this._formatStateWithUnit(st);
+      rows.push(`<div class="info-row"><div class="row-label"><ha-icon icon="${icon}"></ha-icon>${label}</div><div class="row-value">${value}</div></div>`);
     }
     const door = this._st(printer, "doorOpen");
     if (door) rows.push(`<div class="info-row"><div class="row-label"><ha-icon icon="mdi:door"></ha-icon>Tür</div><div class="row-value">${String(door.state).toLowerCase() === "on" ? "Offen" : "Geschlossen"}</div></div>`);
@@ -1086,49 +1231,98 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _extractTray(entries, n) {
-    const re = new RegExp(`tray[_ -]?${n}(?:$|[_-])`, "i");
-    const matches = entries.filter((e) => re.test(String(e.unique_id || "")));
+    const matches = entries.filter((e) => {
+      const uid = String(e.unique_id || "");
+      if (new RegExp(`tray[_ -]?${n}(?:$|[_-])`, "i").test(uid)) return true;
+      if (normalize(e.translation_key) === "tray") {
+        const st = this._hass.states[e.entity_id];
+        return String(st?.attributes?.slot ?? "") === String(n);
+      }
+      return normalize(e.translation_key) === `tray_${n}`;
+    });
     if (!matches.length) return null;
-    let primary = matches.find((e) => /^sensor\./.test(e.entity_id) && this._hass.states[e.entity_id]) || matches[0];
+    const primary = matches.find((e) => /^sensor\./.test(e.entity_id) && this._hass.states[e.entity_id]) || matches.find((e)=>this._hass.states[e.entity_id]) || matches[0];
     const st = this._hass.states[primary.entity_id];
     const attrs = { ...(st?.attributes || {}) };
     for (const e of matches) {
-      const s = this._hass.states[e.entity_id];
-      if (!s) continue;
-      Object.assign(attrs, s.attributes || {});
-      const uid = String(e.unique_id || "").toLowerCase();
-      if (uid.includes("remaining")) attrs.remaining_filament = s.state;
-      if (uid.includes("active")) attrs.active = String(s.state).toLowerCase() === "on";
+      const state = this._hass.states[e.entity_id];
+      if (!state) continue;
+      Object.assign(attrs, state.attributes || {});
+      const key = normalize(e.translation_key || e.unique_id);
+      if (key.includes("remaining")) attrs.remaining_filament = state.state;
+      if (key.includes("active")) attrs.active = String(state.state).toLowerCase() === "on";
     }
-    const remainingCandidates = [attrs.remaining_filament, attrs.remain, attrs.remaining, attrs.tray_weight];
-    const remaining = remainingCandidates.map(Number).find(Number.isFinite);
-    const name = attrs.name || attrs.filament_name || attrs.tray_sub_brands || attrs.tray_type || attrs.type || (st && !["unknown","unavailable"].includes(String(st.state).toLowerCase()) ? st.state : null);
+    const remaining = [attrs.remaining_filament, attrs.remain, attrs.remaining, attrs.tray_weight].map(Number).find(Number.isFinite);
+    const name = attrs.name || attrs.filament_name || attrs.tray_sub_brands || attrs.tray_type || attrs.type || (st && !["unknown","unavailable"].includes(normalize(st.state)) ? st.state : null);
     const type = attrs.type || attrs.tray_type || attrs.filament_type || null;
     const color = colorFromAttributes(attrs) || "#7b887f";
     const active = attrs.active === true || attrs.is_active === true || String(attrs.active).toLowerCase() === "true";
-    return { n, name: name || `Slot ${n}`, type, remaining, color, active };
+    return { n, name: name || `Slot ${n}`, type, remaining, color, active, entityId: primary.entity_id, attributes: attrs, state: st?.state };
   }
 
   _renderAmsUnit(group) {
     const name = displayName(group.device || { name: "AMS" });
-    return `<div class="ams-unit"><div class="ams-unit-head"><div class="ams-name">${cssEscape(name)}</div><span class="pill">${group.slots.length} Slots</span></div><div class="spools">${group.slots.map((s) => `<div class="spool ${s.active ? "active" : ""}"><div class="spool-disc" style="--filament:${cssEscape(s.color)}"></div><div class="spool-title">${cssEscape(s.name)}</div><div class="spool-meta">${s.type ? cssEscape(s.type) : `Slot ${s.n}`}${Number.isFinite(s.remaining) ? ` · ${formatNumber(s.remaining,0)}%` : ""}</div></div>`).join("")}</div></div>`;
+    return `<div class="ams-unit"><div class="ams-unit-head"><div class="ams-name">${cssEscape(name)}</div><span class="pill">${group.slots.length} Slots</span></div><div class="spools">${group.slots.map((s) => `<button class="spool ${s.active ? "active" : ""}" data-spool-entity="${cssEscape(s.entityId || "")}" data-spool-slot="${s.n}" title="Slot ${s.n} Details öffnen"><div class="spool-disc" style="--filament:${cssEscape(s.color)}"></div><div class="spool-title">${cssEscape(s.name)}</div><div class="spool-meta">${s.type ? cssEscape(s.type) : `Slot ${s.n}`}${Number.isFinite(s.remaining) ? ` · ${formatNumber(s.remaining,0)}%` : ""}</div></button>`).join("")}</div></div>`;
+  }
+
+  _showSpoolDetail(entityId) {
+    if (!entityId) return;
+    const st = this._hass?.states?.[entityId];
+    if (!st) return;
+    this.shadowRoot.querySelector(".spool-dialog-backdrop")?.remove();
+    const attrs = st.attributes || {};
+    const preferred = ["friendly_name","slot","tray_type","type","filament_type","tray_sub_brands","filament_name","tray_color","color","remaining_filament","remaining","tray_weight","nozzle_temp_min","nozzle_temp_max","tag_uid","tray_uuid"];
+    const keys = [...preferred.filter((k)=>attrs[k] !== undefined), ...Object.keys(attrs).filter((k)=>!preferred.includes(k) && k !== "icon")];
+    const rows = keys.map((k)=>`<div class="spool-detail-row"><small>${cssEscape(k.replaceAll("_"," "))}</small><strong>${cssEscape(Array.isArray(attrs[k]) ? attrs[k].join(", ") : typeof attrs[k] === "object" ? JSON.stringify(attrs[k]) : attrs[k])}</strong></div>`).join("");
+    const host = document.createElement("div");
+    host.className = "spool-dialog-backdrop";
+    host.innerHTML = `<div class="spool-dialog" role="dialog" aria-modal="true"><div class="spool-dialog-head"><div><div class="eyebrow">AMS Slot</div><div class="panel-title">${cssEscape(attrs.friendly_name || entityId)}</div></div><button class="dialog-close" data-close-spool aria-label="Schließen">×</button></div><div class="spool-dialog-grid"><div class="spool-detail-row"><small>Entity</small><strong>${cssEscape(entityId)}</strong></div><div class="spool-detail-row"><small>Status</small><strong>${cssEscape(st.state)}</strong></div>${rows}</div><button class="fleet-detail" data-more-info="${cssEscape(entityId)}">In Home Assistant öffnen <ha-icon icon="mdi:open-in-new"></ha-icon></button></div>`;
+    this.shadowRoot.appendChild(host);
+    host.addEventListener("click", (ev)=>{ if (ev.target === host || ev.target.closest("[data-close-spool]")) host.remove(); });
+    host.querySelector("[data-more-info]")?.addEventListener("click", (ev)=>this._showMoreInfo(ev.currentTarget.dataset.moreInfo));
+  }
+
+  _showMoreInfo(entityId) {
+    if (!entityId) return;
+    this.dispatchEvent(new CustomEvent("hass-more-info", { detail:{ entityId }, bubbles:true, composed:true }));
   }
 
   _renderControls(printer) {
-    const pause = findRegistryEntry(printer.entries, ENTITY_KEYS.pause);
-    const resume = findRegistryEntry(printer.entries, ENTITY_KEYS.resume);
-    const stop = findRegistryEntry(printer.entries, ENTITY_KEYS.stop);
-    const light = findRegistryEntry(printer.entries, ENTITY_KEYS.chamberLight);
+    const find = (aliases) => findRegistryEntry(printer.entries, aliases);
+    const stateExists = (reg) => !!(reg?.entity_id && this._hass.states[reg.entity_id]);
+    const buttons = [
+      [find(ENTITY_KEYS.pause), "mdi:pause", "Pause", false],
+      [find(ENTITY_KEYS.resume), "mdi:play", "Fortsetzen", false],
+      [find(ENTITY_KEYS.stop), "mdi:stop", "Stop", true],
+      [find(ENTITY_KEYS.chamberLight), "mdi:lightbulb", "Licht", false],
+      [find(ENTITY_KEYS.buzzerSilence), "mdi:alarm-light-off-outline", "Alarm aus", false],
+      [find(ENTITY_KEYS.buzzerBeep), "mdi:alarm-light-outline", "Signalton", false],
+    ].filter(([reg]) => stateExists(reg));
+
+    const numberDefs = [
+      [find(ENTITY_KEYS.targetNozzleControl), "Düse Soll"],
+      [find(ENTITY_KEYS.targetBedControl), "Bett Soll"],
+      [find(ENTITY_KEYS.targetChamberControl), "Kammer Soll"],
+    ].filter(([reg])=>stateExists(reg));
+    const fanDefs = [
+      [find(ENTITY_KEYS.coolingFanControl), "Bauteillüfter"],
+      [find(ENTITY_KEYS.auxFanControl), "Aux-Lüfter"],
+      [find(ENTITY_KEYS.chamberFanControl), "Kammerlüfter"],
+      [find(ENTITY_KEYS.secondaryAuxFanControl), "Aux-Lüfter 2"],
+    ].filter(([reg])=>stateExists(reg));
+    const selectDefs = [];
     const speedOverride = this._configuredEntityId(printer, "speed");
-    const speed = speedOverride ? { entity_id: speedOverride } : findRegistryEntry(printer.entries, ENTITY_KEYS.speed);
-    const controls = [];
-    if (pause) controls.push(this._controlButton("pause", "mdi:pause", "Pause"));
-    if (resume) controls.push(this._controlButton("resume", "mdi:play", "Fortsetzen"));
-    if (stop) controls.push(this._controlButton("stop", "mdi:stop", "Stop", true));
-    if (light) controls.push(this._controlButton("light", "mdi:lightbulb", "Licht"));
-    const speedState = speed ? this._hass.states[speed.entity_id] : null;
-    const options = speedState?.attributes?.options || [];
-    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Quick Controls</div><div class="panel-title">Steuerung</div></div></div>${controls.length ? `<div class="controls">${controls.join("")}</div>` : `<div class="empty">Keine steuerbaren Entitäten vorhanden. Das kann je nach Bambu-Firmware und Verbindungsmodus normal sein.</div>`}${speed && options.length ? `<div class="select-wrap"><select data-speed-select><option value="">Geschwindigkeit auswählen …</option>${options.map((o) => `<option value="${cssEscape(o)}" ${speedState.state === o ? "selected" : ""}>${cssEscape(o)}</option>`).join("")}</select></div>` : ""}</section>`;
+    const speed = speedOverride ? { entity_id:speedOverride } : find(ENTITY_KEYS.speed);
+    if (stateExists(speed)) selectDefs.push([speed,"Druckgeschwindigkeit"]);
+    const airduct = find(ENTITY_KEYS.airductMode);
+    if (stateExists(airduct)) selectDefs.push([airduct,"Luftkanal-Modus"]);
+
+    const buttonHtml = buttons.length ? `<div class="control-group"><div class="control-group-title">Druck & Gerät</div><div class="controls">${buttons.map(([reg,icon,label,danger])=>`<button class="control-btn ${danger?"danger":""}" data-entity-action="${cssEscape(reg.entity_id)}"><ha-icon icon="${icon}"></ha-icon>${label}</button>`).join("")}</div></div>` : "";
+    const numberHtml = numberDefs.length ? `<div class="control-group"><div class="control-group-title">Temperaturen</div><div class="control-grid">${numberDefs.map(([reg,label])=>{ const st=this._hass.states[reg.entity_id]; return `<div class="control-field"><label>${label}</label><input type="number" data-number-entity="${cssEscape(reg.entity_id)}" value="${cssEscape(st.state)}" min="${cssEscape(st.attributes?.min ?? 0)}" max="${cssEscape(st.attributes?.max ?? 350)}" step="${cssEscape(st.attributes?.step ?? 1)}"></div>`; }).join("")}</div></div>` : "";
+    const fanHtml = fanDefs.length ? `<div class="control-group"><div class="control-group-title">Lüfter</div><div class="control-grid">${fanDefs.map(([reg,label])=>{ const st=this._hass.states[reg.entity_id]; const pct=Number(st.attributes?.percentage ?? st.state ?? 0); return `<div class="control-field"><label>${label}</label><div class="fan-control-row"><input type="range" min="0" max="100" step="10" value="${Number.isFinite(pct)?pct:0}" data-fan-entity="${cssEscape(reg.entity_id)}"><strong>${Number.isFinite(pct)?Math.round(pct):0}%</strong></div></div>`; }).join("")}</div></div>` : "";
+    const selectHtml = selectDefs.length ? `<div class="control-group"><div class="control-group-title">Modi</div><div class="control-grid">${selectDefs.map(([reg,label])=>{ const st=this._hass.states[reg.entity_id]; const opts=st.attributes?.options || []; return `<div class="control-field"><label>${label}</label><select data-select-entity="${cssEscape(reg.entity_id)}">${opts.map((o)=>`<option value="${cssEscape(o)}" ${st.state===o?"selected":""}>${cssEscape(o)}</option>`).join("")}</select></div>`; }).join("")}</div></div>` : "";
+    const any = buttonHtml || numberHtml || fanHtml || selectHtml;
+    return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Quick Controls</div><div class="panel-title">Steuerung</div></div></div>${any ? `<div class="control-groups">${buttonHtml}${numberHtml}${fanHtml}${selectHtml}</div>` : `<div class="empty">Die Bambu-Integration stellt für diesen Drucker aktuell keine steuerbaren Entitäten bereit. Bei Firmware mit MQTT-Signatur oder blockiertem Hybrid-Modus kann die Integration Schreibzugriffe absichtlich sperren.</div>`}</section>`;
   }
 
   _controlButton(action, icon, label, danger = false) {
@@ -1173,11 +1367,12 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _renderMaintenance(printer) {
-    const total = this._num(printer, "totalUsage", null);
+    const totalState = this._st(printer, "totalUsage");
+    const total = this._durationToHours(totalState);
     const cfg = resolveConfiguredPrinter(this._config, printer.id);
     const items = Array.isArray(cfg.maintenance) ? cfg.maintenance : [];
     let content = "";
-    if (total !== null) content += `<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit</strong><span>${formatNumber(total, 1)} ${unit(this._st(printer, "totalUsage")) || "h"}</span></div></div>`;
+    if (total !== null) content += `<div class="maint-item"><div class="maint-top"><strong>Gesamtlaufzeit</strong><span>${this._formatDurationState(totalState)}</span></div></div>`;
     for (const item of items) {
       const interval = Number(item.interval_hours);
       const last = Number(item.last_service_hours || 0);
@@ -1212,6 +1407,11 @@ class BambuLabDashboard extends HTMLElement {
       this._render();
     }));
     this.shadowRoot.querySelectorAll("[data-action]").forEach((btn) => btn.addEventListener("click", (ev) => this._handleAction(ev.currentTarget.dataset.action)));
+    this.shadowRoot.querySelectorAll("[data-spool-entity]").forEach((el)=>el.addEventListener("click", (ev)=>this._showSpoolDetail(ev.currentTarget.dataset.spoolEntity)));
+    this.shadowRoot.querySelectorAll("[data-entity-action]").forEach((el)=>el.addEventListener("click", (ev)=>this._callEntity({entity_id:ev.currentTarget.dataset.entityAction})));
+    this.shadowRoot.querySelectorAll("[data-number-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setNumber(ev.currentTarget.dataset.numberEntity, ev.currentTarget.value)));
+    this.shadowRoot.querySelectorAll("[data-fan-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setFan(ev.currentTarget.dataset.fanEntity, ev.currentTarget.value)));
+    this.shadowRoot.querySelectorAll("[data-select-entity]").forEach((el)=>el.addEventListener("change", (ev)=>this._setSelect(ev.currentTarget.dataset.selectEntity, ev.currentTarget.value)));
     const select = this.shadowRoot.querySelector("[data-speed-select]");
     if (select) select.addEventListener("change", (ev) => this._setSpeed(ev.target.value));
   }
@@ -1237,9 +1437,27 @@ class BambuLabDashboard extends HTMLElement {
       if (domain === "button") return await this._hass.callService("button", "press", { entity_id: reg.entity_id });
       if (domain === "light") return await this._hass.callService("light", "toggle", { entity_id: reg.entity_id });
       if (domain === "switch") return await this._hass.callService("switch", "toggle", { entity_id: reg.entity_id });
+      if (domain === "input_button") return await this._hass.callService("input_button", "press", { entity_id: reg.entity_id });
     } catch (err) {
       console.error("[Bambu Lab Dashboard] Action failed", reg.entity_id, err);
     }
+  }
+
+
+  async _setNumber(entityId, value) {
+    const n = Number(value); if (!entityId || !Number.isFinite(n)) return;
+    try { await this._hass.callService("number", "set_value", { entity_id:entityId, value:n }); }
+    catch (err) { console.error("[Bambu Lab Dashboard] Number control failed", entityId, err); }
+  }
+  async _setFan(entityId, value) {
+    const n = Math.max(0, Math.min(100, Number(value))); if (!entityId || !Number.isFinite(n)) return;
+    try { await this._hass.callService("fan", "set_percentage", { entity_id:entityId, percentage:n }); }
+    catch (err) { console.error("[Bambu Lab Dashboard] Fan control failed", entityId, err); }
+  }
+  async _setSelect(entityId, option) {
+    if (!entityId || !option) return;
+    try { await this._hass.callService("select", "select_option", { entity_id:entityId, option }); }
+    catch (err) { console.error("[Bambu Lab Dashboard] Select control failed", entityId, err); }
   }
 
   async _setSpeed(option) {
@@ -1298,7 +1516,7 @@ class BambuLabDashboardEditor extends HTMLElement {
     const sortedPrinters = [...this._printers].sort((a,b)=>configuredPrinterOrder(this._config,a,this._printers.indexOf(a))-configuredPrinterOrder(this._config,b,this._printers.indexOf(b)));
     const entityOptions = allEntities.map((st)=>`<option value="${cssEscape(st.entity_id)}">${cssEscape(st.attributes?.friendly_name || st.entity_id)}</option>`).join("");
     const sensorOptions = allSensorEntities.map((st)=>`<option value="${cssEscape(st.entity_id)}">${cssEscape(st.attributes?.friendly_name || st.entity_id)}</option>`).join("");
-    this.shadowRoot.innerHTML = `<style>${styles}</style><datalist id="all-entity-ids">${entityOptions}</datalist><datalist id="sensor-entity-ids">${sensorOptions}</datalist><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Druckerdaten. Hier kannst du Reihenfolge, Namen, Bilder, AMS, Energie und bei Bedarf auch die automatisch erkannten Kern-Entitäten pro Drucker überschreiben.<br><br><strong>Breite:</strong> Die Karte nutzt immer die komplette Breite, die Home Assistant ihrer Section gibt. Für mehr als eine normale Section-Breite musst du die <strong>Section selbst breiter</strong> machen (2–3 Sections) oder eine <strong>Panel-View</strong> verwenden. Eine Custom Card kann die Breite ihrer übergeordneten Section technisch nicht verändern.</div><div class="editor-section"><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div>${sortedPrinters.map((p,idx) => {
+    this.shadowRoot.innerHTML = `<style>${styles}</style><datalist id="all-entity-ids">${entityOptions}</datalist><datalist id="sensor-entity-ids">${sensorOptions}</datalist><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Druckerdaten. Hier kannst du Reihenfolge, Namen, AMS, Energie, Theme und bei Bedarf auch die automatisch erkannten Kern-Entitäten pro Drucker überschreiben. Die Drucker-Modellbilder werden automatisch aus derselben Upstream-Bildquelle wie die Bambu-Karten bezogen und sind nicht manuell konfigurierbar.<br><br><strong>Breite:</strong> Die Karte nutzt immer die komplette Breite, die Home Assistant ihrer Section gibt. Für mehr als eine normale Section-Breite musst du die <strong>Section selbst breiter</strong> machen (2–3 Sections) oder eine <strong>Panel-View</strong> verwenden. Eine Custom Card kann die Breite ihrer übergeordneten Section technisch nicht verändern.</div><div class="editor-section"><div class="editor-row"><div><label>Design</label><select data-theme><option value="auto" ${(this._config.theme||"auto")==="auto"?"selected":""}>Automatisch (Home Assistant)</option><option value="dark" ${this._config.theme==="dark"?"selected":""}>Dunkel</option><option value="light" ${this._config.theme==="light"?"selected":""}>Hell</option></select></div><div><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div></div></div>${sortedPrinters.map((p,idx) => {
       const cfg = resolveConfiguredPrinter(this._config, p.id);
       const selectedAms = new Set(Array.isArray(cfg.ams_device_ids) ? cfg.ams_device_ids : []);
       const autoAms = new Set((p.childDevices || []).map((d)=>d.id));
@@ -1314,16 +1532,28 @@ class BambuLabDashboardEditor extends HTMLElement {
           <div><label>Anzeigename</label><input type="text" data-field="name" value="${cssEscape(cfg.name || "")}" placeholder="${cssEscape(displayName(p.device))}"></div>
           <div><label>Reihenfolge</label><input type="number" data-field="order" value="${cssEscape(cfg.order ?? idx+1)}" min="1" step="1"></div>
         </div>
-        <div class="editor-sub"><label>Eigenes Druckerbild</label><input type="text" data-field="image_url" value="${cssEscape(cfg.image_url || "")}" placeholder="z. B. /local/bambu/a2l.png"><div class="custom-image-hint">Leer = automatisches Modellbild. Für A2L wird bewusst kein falsches A1-Bild mehr verwendet. Eigene Dateien unter <code>/config/www/</code> sind in Home Assistant über <code>/local/</code> erreichbar.</div></div>
         <div class="editor-sub"><label>Strommessung</label><div class="editor-row">
-          <div><label>Leistungssensor</label><input type="text" list="sensor-entity-ids" data-field="power_entity" value="${cssEscape(cfg.power_entity || "")}" placeholder="sensor..."></div>
-          <div><label>Energiesensor</label><input type="text" list="sensor-entity-ids" data-field="energy_entity" value="${cssEscape(cfg.energy_entity || "")}" placeholder="sensor..."></div>
+          <div class="entity-picker-wrap"><label>Leistungssensor</label><ha-entity-picker data-entity-picker data-field="power_entity"></ha-entity-picker></div>
+          <div class="entity-picker-wrap"><label>Energiesensor</label><ha-entity-picker data-entity-picker data-field="energy_entity"></ha-entity-picker></div>
         </div><div class="custom-image-hint">Hier sind jetzt <strong>alle sensor.*-Entitäten</strong> zugelassen. Dadurch werden Smart-Steckdosen-Sensoren nicht mehr durch einen zu engen Filter ausgeblendet.</div></div>
         <div class="editor-sub"><label>Bereiche im Detail</label><div class="editor-checks">${[["ams","AMS"],["camera","Kamera"],["energy","Energie"],["maintenance","Wartung"]].map(([key,label])=>`<label class="check"><input type="checkbox" data-field="show_${key}" ${cfg[`show_${key}`] !== false ? "checked" : ""}> ${label}</label>`).join("")}</div></div>
         <div class="editor-sub"><label>AMS-Zuordnung</label><div class="help">Leer lassen = automatische Zuordnung über die Home-Assistant-Gerätehierarchie. Nur echte AMS-Geräte werden angeboten; ExternalSpool-/Tray-/Cache-Hilfsgeräte sind hier ausgefiltert.</div><div class="ams-editor">${amsCandidates.length ? amsCandidates.map((d)=>`<label class="check ams-option"><input type="checkbox" data-ams-device="${cssEscape(d.id)}" ${(selectedAms.size ? selectedAms.has(d.id) : false) ? "checked" : ""}> ${cssEscape(d.name_by_user || d.name || d.model || "AMS")}${autoAms.has(d.id) ? " <small>(automatisch erkannt)</small>" : ""}</label>`).join("") : `<span class="help">Keine echten AMS-Geräte in der Bambu-Integration gefunden.</span>`}</div></div>
         <details class="editor-sub"><summary>Erweiterte Entity-Zuordnung</summary><div class="help">Nur verwenden, wenn ein automatisch erkannter Wert falsch ist. Damit lassen sich z. B. Fortschritt, Status oder Auftrag eines Druckers eindeutig auf eine bestimmte Home-Assistant-Entity festlegen.</div><div class="entity-override-grid">${overrideFields.map(([field,label])=>`<label>${label}<input type="text" list="all-entity-ids" data-field="${field}" value="${cssEscape(cfg[field] || "")}" placeholder="automatisch"></label>`).join("")}</div></details>
       </div>`;
     }).join("")}</div>`;
+    this.shadowRoot.querySelector("[data-theme]")?.addEventListener("change", (ev) => { this._config.theme = ev.target.value; this._emit(); });
+    this.shadowRoot.querySelectorAll("[data-entity-picker]").forEach((picker) => {
+      const root = picker.closest("[data-editor-printer]");
+      const cfg = resolveConfiguredPrinter(this._config, root?.dataset?.editorPrinter);
+      picker.hass = this._hass;
+      picker.value = cfg?.[picker.dataset.field] || "";
+      picker.includeDomains = ["sensor"];
+      picker.allowCustomEntity = true;
+      picker.addEventListener("value-changed", (ev) => {
+        const target = { type:"text", value: ev.detail?.value || "" };
+        updateField(root, picker.dataset.field, target);
+      });
+    });
     this.shadowRoot.querySelector("[data-kwh-price]")?.addEventListener("change", (ev) => {
       const value = ev.target.value;
       if (value === "") delete this._config.kwh_price; else this._config.kwh_price = Number(value);
@@ -1360,6 +1590,6 @@ if (!customElements.get("bambu-lab-dashboard")) customElements.define("bambu-lab
 if (!customElements.get("bambu-lab-dashboard-editor")) customElements.define("bambu-lab-dashboard-editor", BambuLabDashboardEditor);
 window.customCards = window.customCards || [];
 if (!window.customCards.some((c) => c.type === "bambu-lab-dashboard")) {
-  window.customCards.push({ type: "bambu-lab-dashboard", name: "Bambu Lab Dashboard", description: "Auto-discovering Bambu Lab control center with AMS, camera, controls, energy and maintenance.", documentationURL: "https://github.com/theonix77/Bambulab-Dashboard#installation", preview: false });
+  window.customCards.push({ type: "bambu-lab-dashboard", name: "Bambu Lab Dashboard", description: "Auto-discovering Bambu Lab control center with AMS, camera, controls, energy and maintenance.", documentationURL: "https://github.com/theonix77/Bambulab-Dashboard#installation", preview: true });
 }
 console.info(`%c Bambu Lab Dashboard %c v${VERSION} `, "background:#50d926;color:#050907;font-weight:800;padding:3px 6px;border-radius:4px 0 0 4px", "background:#101713;color:#f4f7f5;padding:3px 6px;border-radius:0 4px 4px 0");
