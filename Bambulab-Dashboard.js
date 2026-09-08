@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.1.1 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.2.0 | standalone HACS resource */
 
-const VERSION = "1.1.1";
+const VERSION = "1.2.0";
 const DOMAIN = "bambu_lab";
 
 
@@ -12,7 +12,6 @@ const PRINTER_ART_FILES = Object.freeze({
   "A1": "A1.png",
   "A1 MINI": "A1Mini.png",
   "A1MINI": "A1Mini.png",
-  "A2L": "A1.png", // upstream ha-bambulab-cards currently uses A1 artwork for A2L
   "H2C": "H2C.png",
   "H2D": "H2D.png",
   "H2D PRO": "H2DPRO.png",
@@ -84,6 +83,21 @@ const ENTITY_KEYS = {
   stop: ["stop"],
   forceRefresh: ["force_refresh"],
 };
+
+const ENTITY_OVERRIDE_FIELDS = Object.freeze({
+  progress: "progress_entity",
+  status: "status_entity",
+  taskName: "task_entity",
+  remainingTime: "remaining_time_entity",
+  nozzleTemp: "nozzle_temp_entity",
+  bedTemp: "bed_temp_entity",
+  online: "online_entity",
+  camera: "camera_entity",
+  coverImage: "cover_image_entity",
+  currentLayer: "current_layer_entity",
+  totalLayers: "total_layers_entity",
+  speed: "speed_entity"
+});
 
 const STATUS_TRANSLATIONS = {
   RUNNING: "Druckt",
@@ -573,7 +587,7 @@ const styles = `
   .wide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
   .mobile-nav { display:none; }
   .hero-body { grid-template-columns:minmax(180px,.85fr) minmax(175px,.7fr) minmax(240px,1.2fr); }
-  .shell { max-width:1600px; margin:0 auto; }
+  .shell { width:100%; max-width:none; margin:0; }
   @container (max-width: 1050px) {
     .app-grid { grid-template-columns:170px minmax(0,1fr); gap:12px; }
     .overview-grid { grid-template-columns:1fr; }
@@ -651,6 +665,35 @@ const styles = `
   .ams-option small { color:var(--secondary-text-color); }
   @container (max-width:600px) { .ams-editor { grid-template-columns:1fr; } }
 
+  /* v1.2.0: robust overview card layout; intentionally uses separate fallback classes. */
+  .fleet-card { overflow:hidden; }
+  .fleet-main { display:grid; grid-template-columns:minmax(110px,150px) minmax(0,1fr); gap:16px; align-items:center; margin:14px 0; }
+  .fleet-visual { height:136px; min-height:136px; position:relative; overflow:hidden; }
+  .fleet-visual img { width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; display:block; }
+  .fleet-fallback { width:100%; height:100%; display:grid; place-items:center; color:rgba(80,217,38,.62); }
+  .fleet-fallback ha-icon { --mdc-icon-size:72px; }
+  .fleet-progress { align-self:center; min-width:0; overflow:hidden; }
+  .fleet-task { display:block; min-height:36px; max-height:54px; overflow:hidden; overflow-wrap:anywhere; }
+  .fleet-metrics { position:relative; z-index:2; }
+  @container (max-width:620px) {
+    .fleet-main { grid-template-columns:96px minmax(0,1fr); gap:12px; }
+    .fleet-visual { height:104px; min-height:104px; }
+    .fleet-fallback ha-icon { --mdc-icon-size:56px; }
+    .fleet-progress-number { font-size:32px; }
+    .fleet-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @container (max-width:390px) {
+    .fleet-main { grid-template-columns:1fr; }
+    .fleet-visual { height:120px; }
+    .fleet-metrics { grid-template-columns:1fr 1fr; }
+  }
+  .custom-image-hint { color:var(--secondary-text-color); font-size:11px; margin-top:4px; line-height:1.35; }
+  .entity-override-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:8px; }
+  .entity-override-grid label { min-width:0; }
+  .entity-override-grid input { width:100%; }
+  details.editor-sub summary { cursor:pointer; font-weight:700; }
+  @container (max-width:620px) { .entity-override-grid { grid-template-columns:1fr; } }
+
 `;
 
 
@@ -697,8 +740,8 @@ class BambuLabDashboard extends HTMLElement {
 
   getCardSize() { return 12; }
   getGridOptions() {
-    // 12 columns by default, but keep the card resizable in Home Assistant Sections.
-    // "full" locks the width and hides the normal resize behaviour.
+    // Full width means the full width of the current Home Assistant section.
+    // A wider dashboard requires a wider section or a Panel view; a card cannot resize its parent section.
     return { columns: 12, min_columns: 6, max_columns: 12 };
   }
 
@@ -751,14 +794,39 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _entityEntries(printer) { return printer?.entries || []; }
-  _st(printer, key) { return findState(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || []); }
-  _val(printer, key, fallback = null) { return stateValue(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || [], fallback); }
-  _num(printer, key, fallback = null) { return numericState(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || [], fallback); }
+  _configuredEntityId(printer, key) {
+    const field = ENTITY_OVERRIDE_FIELDS[key];
+    if (!field) return null;
+    const cfg = resolveConfiguredPrinter(this._config, printer?.id);
+    return String(cfg?.[field] || "").trim() || null;
+  }
+  _st(printer, key) {
+    const override = this._configuredEntityId(printer, key);
+    if (override) return this._hass?.states?.[override] || null;
+    return findState(this._hass, this._entityEntries(printer), ENTITY_KEYS[key] || []);
+  }
+  _val(printer, key, fallback = null) {
+    const st = this._st(printer, key);
+    if (!st || isUnavailableState(st)) return fallback;
+    return st.state;
+  }
+  _num(printer, key, fallback = null) {
+    const v = this._val(printer, key, null);
+    if (v === null) return fallback;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
 
   _isPrinterOnline(printer) {
     if (!printer) return false;
+    const status = normalize(this._val(printer, "status", ""));
+    if (["offline","unavailable","disconnected"].includes(status)) return false;
     const online = this._st(printer, "online");
-    if (online && hasMeaningfulValue(online)) return ["on","online","true","1","connected"].includes(normalize(online.state));
+    if (online && hasMeaningfulValue(online)) {
+      const v = normalize(online.state);
+      if (["off","offline","false","0","disconnected"].includes(v)) return false;
+      if (["on","online","true","1","connected"].includes(v)) return true;
+    }
     return !this._entityEntries(printer).every((e) => isUnavailableState(this._hass?.states?.[e.entity_id]));
   }
 
@@ -810,6 +878,9 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _printerArtworkUrl(printer) {
+    const cfg = resolveConfiguredPrinter(this._config, printer?.id);
+    const custom = String(cfg?.image_url || "").trim();
+    if (custom) return custom;
     return printerArtworkUrl(printer?.device);
   }
 
@@ -849,7 +920,7 @@ class BambuLabDashboard extends HTMLElement {
     return `<article class="fleet-card" data-open-printer="${cssEscape(printer.id)}">
       <div class="fleet-top"><div><div class="eyebrow">${cssEscape(printer.device?.model || "Bambu Lab")}</div><div class="fleet-name">${cssEscape(name)}</div></div><div class="status-badge ${statusClass(statusRaw)}"><span class="dot"></span>${cssEscape(translateStatus(statusRaw))}</div></div>
       <div class="fleet-main">
-        <div class="fleet-visual">${product ? `<img data-printer-image src="${cssEscape(product)}" alt="${cssEscape(printer.device?.model || name)}"><div class="printer-product-fallback"><ha-icon icon="mdi:printer-3d"></ha-icon></div>` : `<div class="printer-product-fallback" style="display:grid"><ha-icon icon="mdi:printer-3d"></ha-icon></div>`}</div>
+        <div class="fleet-visual">${product ? `<img data-printer-image src="${cssEscape(product)}" alt="${cssEscape(printer.device?.model || name)}"><div class="fleet-fallback" style="display:none"><ha-icon icon="mdi:printer-3d"></ha-icon></div>` : `<div class="fleet-fallback"><ha-icon icon="mdi:printer-3d"></ha-icon></div>`}</div>
         <div class="fleet-progress"><div class="fleet-progress-number">${isPrinting ? `${formatNumber(progress)}<span>%</span>` : `<span class="fleet-idle-mark">–</span>`}</div><div class="fleet-bar"><span style="width:${isPrinting ? progress : 0}%"></span></div><div class="fleet-task">${cssEscape(task)}</div></div>
       </div>
       <div class="fleet-metrics">
@@ -888,7 +959,7 @@ class BambuLabDashboard extends HTMLElement {
     if (!this._selectedPrinterId || !visiblePrinters.some((p)=>p.id===this._selectedPrinterId)) this._selectedPrinterId = printer?.id || null;
     const isOnline = this._isPrinterOnline(printer);
     const viewLabel = this._navItems().find((x) => x[0] === this._activeView)?.[2] || "Übersicht";
-    const printers = visiblePrinters.map((p) => `<button class="tab ${p.id === printer?.id ? "active" : ""}" data-printer="${cssEscape(p.id)}"><ha-icon icon="mdi:printer-3d"></ha-icon><span>${cssEscape(configuredPrinterName(this._config,p))}</span></button>`).join("");
+    const printers = visiblePrinters.map((p) => `<button class="tab ${p.id === printer?.id ? "active" : ""}" data-open-printer="${cssEscape(p.id)}"><ha-icon icon="mdi:printer-3d"></ha-icon><span>${cssEscape(configuredPrinterName(this._config,p))}</span></button>`).join("");
 
     return `<div class="shell"><div class="app-grid">
       <aside class="sidebar">
@@ -906,11 +977,12 @@ class BambuLabDashboard extends HTMLElement {
   }
 
   _renderHero(printer) {
-    const progress = safePercent(this._num(printer, "progress", 0));
     const statusRaw = this._val(printer, "status", "unknown");
     const status = translateStatus(statusRaw);
-    const task = this._val(printer, "taskName", "Kein aktiver Druckauftrag");
-    const remaining = this._num(printer, "remainingTime", null);
+    const active = this._isPrinterActive(printer);
+    const progress = active ? safePercent(this._num(printer, "progress", 0)) : 0;
+    const task = active ? this._val(printer, "taskName", "Aktiver Druckauftrag") : (this._isPrinterOnline(printer) ? "Kein aktiver Druckauftrag" : "Drucker offline");
+    const remaining = active ? this._num(printer, "remainingTime", null) : null;
     const currentLayer = this._num(printer, "currentLayer", null);
     const totalLayers = this._num(printer, "totalLayers", null);
     const speed = this._val(printer, "speed", null);
@@ -1047,7 +1119,8 @@ class BambuLabDashboard extends HTMLElement {
     const resume = findRegistryEntry(printer.entries, ENTITY_KEYS.resume);
     const stop = findRegistryEntry(printer.entries, ENTITY_KEYS.stop);
     const light = findRegistryEntry(printer.entries, ENTITY_KEYS.chamberLight);
-    const speed = findRegistryEntry(printer.entries, ENTITY_KEYS.speed);
+    const speedOverride = this._configuredEntityId(printer, "speed");
+    const speed = speedOverride ? { entity_id: speedOverride } : findRegistryEntry(printer.entries, ENTITY_KEYS.speed);
     const controls = [];
     if (pause) controls.push(this._controlButton("pause", "mdi:pause", "Pause"));
     if (resume) controls.push(this._controlButton("resume", "mdi:play", "Fortsetzen"));
@@ -1132,11 +1205,6 @@ class BambuLabDashboard extends HTMLElement {
       img.style.display = "none";
       if (img.nextElementSibling) img.nextElementSibling.style.display = "grid";
     }, { once: true }));
-    this.shadowRoot.querySelectorAll("[data-printer]").forEach((btn) => btn.addEventListener("click", () => {
-      this._selectedPrinterId = btn.dataset.printer;
-      this._activeView = "detail";
-      this._render();
-    }));
     this.shadowRoot.querySelectorAll("[data-open-printer]").forEach((el) => el.addEventListener("click", (ev) => {
       ev.stopPropagation();
       this._selectedPrinterId = el.dataset.openPrinter;
@@ -1177,7 +1245,8 @@ class BambuLabDashboard extends HTMLElement {
   async _setSpeed(option) {
     if (!option) return;
     const printer = this._selectedPrinter();
-    const reg = findRegistryEntry(printer.entries, ENTITY_KEYS.speed);
+    const override = this._configuredEntityId(printer, "speed");
+    const reg = override ? { entity_id: override } : findRegistryEntry(printer.entries, ENTITY_KEYS.speed);
     if (!reg) return;
     try { await this._hass.callService("select", "select_option", { entity_id: reg.entity_id, option }); }
     catch (err) { console.error("[Bambu Lab Dashboard] Speed change failed", err); }
@@ -1209,25 +1278,51 @@ class BambuLabDashboardEditor extends HTMLElement {
   }
   _render() {
     if (!this.shadowRoot) return;
-    const allSensorEntities = Object.values(this._hass?.states || {}).filter((st) => st.entity_id?.startsWith("sensor."));
+    const allEntities = Object.values(this._hass?.states || {}).filter((st) => !!st.entity_id).sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
+    const allSensorEntities = allEntities.filter((st) => st.entity_id?.startsWith("sensor."));
     const unitOf = (st) => String(st.attributes?.unit_of_measurement || "").trim().toLowerCase();
     const searchable = (st) => `${st.entity_id} ${st.attributes?.friendly_name || ""}`.toLowerCase();
-    const powerEntities = allSensorEntities.filter((st) => st.attributes?.device_class === "power" || ["w","kw","mw"].includes(unitOf(st)) || /(^|[._ -])(power|leistung)([._ -]|$)/.test(searchable(st)));
-    const energyEntities = allSensorEntities.filter((st) => st.attributes?.device_class === "energy" || ["wh","kwh","mwh"].includes(unitOf(st)) || /(^|[._ -])(energy|energie|verbrauch|consumption)([._ -]|$)/.test(searchable(st)));
-    powerEntities.sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
-    energyEntities.sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
+    const scorePower = (st) => (st.attributes?.device_class === "power" ? 100 : 0) + (["w","kw","mw"].includes(unitOf(st)) ? 50 : 0) + (/(^|[._ -])(power|leistung)([._ -]|$)/.test(searchable(st)) ? 20 : 0);
+    const scoreEnergy = (st) => (st.attributes?.device_class === "energy" ? 100 : 0) + (["wh","kwh","mwh"].includes(unitOf(st)) ? 50 : 0) + (/(^|[._ -])(energy|energie|verbrauch|consumption)([._ -]|$)/.test(searchable(st)) ? 20 : 0);
+    // Deliberately include every sensor. Recommended matches are sorted first, but no smart-plug sensor is hidden anymore.
+    const powerEntities = [...allSensorEntities].sort((a,b)=>scorePower(b)-scorePower(a) || (a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
+    const energyEntities = [...allSensorEntities].sort((a,b)=>scoreEnergy(b)-scoreEnergy(a) || (a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
     const bambuEntries = this._entities.filter(isBambuRegistryEntry);
     const amsCandidates = this._devices.filter((d) => {
       const entries = bambuEntries.filter((e)=>e.device_id===d.id);
       const text = `${d.name_by_user || ""} ${d.name || ""} ${d.model || ""} ${entries.map((e)=>`${e.unique_id||""} ${e.translation_key||""}`).join(" ")}`;
-      return /ams|tray[_ -]?\d/i.test(text) && !this._printers.some((p)=>p.id===d.id);
+      const looksLikeAms = /(^|\s|[_-])ams(\s|[_-]|$)|ams\s*2|ams\s*lite|ams\s*ht/i.test(text);
+      const excluded = /external\s*spool|externalspool|cache[-_ ]?gerät|tray[_ -]?\d/i.test(text);
+      return looksLikeAms && !excluded && !this._printers.some((p)=>p.id===d.id);
     });
     const sortedPrinters = [...this._printers].sort((a,b)=>configuredPrinterOrder(this._config,a,this._printers.indexOf(a))-configuredPrinterOrder(this._config,b,this._printers.indexOf(b)));
-    this.shadowRoot.innerHTML = `<style>${styles}</style><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Daten. Hier legst du Darstellung, Reihenfolge und optionale Zuordnungen fest. Ohne manuelle AMS-Zuordnung wird die Gerätehierarchie von Home Assistant verwendet.<br><br><strong>Breite:</strong> In einer Sections-Ansicht ist die Karte jetzt zwischen 6 und 12 Spalten frei skalierbar. Die maximale Breite bleibt durch die Breite des Home-Assistant-Abschnitts begrenzt.</div><div class="editor-section"><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div>${sortedPrinters.map((p,idx) => {
+    const entityOptions = allEntities.map((st)=>`<option value="${cssEscape(st.entity_id)}">${cssEscape(st.attributes?.friendly_name || st.entity_id)}</option>`).join("");
+    const sensorOptions = allSensorEntities.map((st)=>`<option value="${cssEscape(st.entity_id)}">${cssEscape(st.attributes?.friendly_name || st.entity_id)}</option>`).join("");
+    this.shadowRoot.innerHTML = `<style>${styles}</style><datalist id="all-entity-ids">${entityOptions}</datalist><datalist id="sensor-entity-ids">${sensorOptions}</datalist><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Druckerdaten. Hier kannst du Reihenfolge, Namen, Bilder, AMS, Energie und bei Bedarf auch die automatisch erkannten Kern-Entitäten pro Drucker überschreiben.<br><br><strong>Breite:</strong> Die Karte nutzt immer die komplette Breite, die Home Assistant ihrer Section gibt. Für mehr als eine normale Section-Breite musst du die <strong>Section selbst breiter</strong> machen (2–3 Sections) oder eine <strong>Panel-View</strong> verwenden. Eine Custom Card kann die Breite ihrer übergeordneten Section technisch nicht verändern.</div><div class="editor-section"><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div>${sortedPrinters.map((p,idx) => {
       const cfg = resolveConfiguredPrinter(this._config, p.id);
       const selectedAms = new Set(Array.isArray(cfg.ams_device_ids) ? cfg.ams_device_ids : []);
       const autoAms = new Set((p.childDevices || []).map((d)=>d.id));
-      return `<div class="editor-section" data-editor-printer="${cssEscape(p.id)}"><div class="editor-title-row"><strong>${cssEscape(displayName(p.device))}</strong><label class="check"><input type="checkbox" data-field="visible" ${cfg.visible !== false ? "checked" : ""}> anzeigen</label></div><div class="editor-row"><div><label>Anzeigename</label><input type="text" data-field="name" value="${cssEscape(cfg.name || "")}" placeholder="${cssEscape(displayName(p.device))}"></div><div><label>Reihenfolge</label><input type="number" data-field="order" value="${cssEscape(cfg.order ?? idx+1)}" min="1" step="1"></div><div><label>Leistungssensor</label><select data-field="power_entity"><option value="">Nicht zugeordnet</option>${powerEntities.map((st) => `<option value="${cssEscape(st.entity_id)}" ${cfg.power_entity === st.entity_id ? "selected" : ""}>${cssEscape(st.attributes.friendly_name || st.entity_id)}</option>`).join("")}</select></div><div><label>Energiesensor</label><select data-field="energy_entity"><option value="">Nicht zugeordnet</option>${energyEntities.map((st) => `<option value="${cssEscape(st.entity_id)}" ${cfg.energy_entity === st.entity_id ? "selected" : ""}>${cssEscape(st.attributes.friendly_name || st.entity_id)}</option>`).join("")}</select></div></div><div class="editor-sub"><label>Bereiche im Detail</label><div class="editor-checks">${[["ams","AMS"],["camera","Kamera"],["energy","Energie"],["maintenance","Wartung"]].map(([key,label])=>`<label class="check"><input type="checkbox" data-field="show_${key}" ${cfg[`show_${key}`] !== false ? "checked" : ""}> ${label}</label>`).join("")}</div></div><div class="editor-sub"><label>AMS-Zuordnung</label><div class="help">Leer lassen = automatisch. Hake nur dann Einheiten an, wenn du die Zuordnung manuell erzwingen willst.</div><div class="ams-editor">${amsCandidates.length ? amsCandidates.map((d)=>`<label class="check ams-option"><input type="checkbox" data-ams-device="${cssEscape(d.id)}" ${(selectedAms.size ? selectedAms.has(d.id) : false) ? "checked" : ""}> ${cssEscape(d.name_by_user || d.name || d.model || "AMS")}${autoAms.has(d.id) ? " <small>(automatisch erkannt)</small>" : ""}</label>`).join("") : `<span class="help">Keine AMS-Geräte in der Bambu-Integration gefunden.</span>`}</div></div></div>`;
+      const overrideFields = [
+        ["status_entity","Status"], ["progress_entity","Fortschritt"], ["task_entity","Druckauftrag"],
+        ["remaining_time_entity","Restzeit"], ["nozzle_temp_entity","Düsentemperatur"], ["bed_temp_entity","Betttemperatur"],
+        ["online_entity","Online-Status"], ["camera_entity","Kamera"], ["cover_image_entity","Druckbild / Cover"],
+        ["current_layer_entity","Aktueller Layer"], ["total_layers_entity","Layer gesamt"], ["speed_entity","Geschwindigkeit"]
+      ];
+      return `<div class="editor-section" data-editor-printer="${cssEscape(p.id)}">
+        <div class="editor-title-row"><strong>${cssEscape(displayName(p.device))}</strong><label class="check"><input type="checkbox" data-field="visible" ${cfg.visible !== false ? "checked" : ""}> anzeigen</label></div>
+        <div class="editor-row">
+          <div><label>Anzeigename</label><input type="text" data-field="name" value="${cssEscape(cfg.name || "")}" placeholder="${cssEscape(displayName(p.device))}"></div>
+          <div><label>Reihenfolge</label><input type="number" data-field="order" value="${cssEscape(cfg.order ?? idx+1)}" min="1" step="1"></div>
+        </div>
+        <div class="editor-sub"><label>Eigenes Druckerbild</label><input type="text" data-field="image_url" value="${cssEscape(cfg.image_url || "")}" placeholder="z. B. /local/bambu/a2l.png"><div class="custom-image-hint">Leer = automatisches Modellbild. Für A2L wird bewusst kein falsches A1-Bild mehr verwendet. Eigene Dateien unter <code>/config/www/</code> sind in Home Assistant über <code>/local/</code> erreichbar.</div></div>
+        <div class="editor-sub"><label>Strommessung</label><div class="editor-row">
+          <div><label>Leistungssensor</label><input type="text" list="sensor-entity-ids" data-field="power_entity" value="${cssEscape(cfg.power_entity || "")}" placeholder="sensor..."></div>
+          <div><label>Energiesensor</label><input type="text" list="sensor-entity-ids" data-field="energy_entity" value="${cssEscape(cfg.energy_entity || "")}" placeholder="sensor..."></div>
+        </div><div class="custom-image-hint">Hier sind jetzt <strong>alle sensor.*-Entitäten</strong> zugelassen. Dadurch werden Smart-Steckdosen-Sensoren nicht mehr durch einen zu engen Filter ausgeblendet.</div></div>
+        <div class="editor-sub"><label>Bereiche im Detail</label><div class="editor-checks">${[["ams","AMS"],["camera","Kamera"],["energy","Energie"],["maintenance","Wartung"]].map(([key,label])=>`<label class="check"><input type="checkbox" data-field="show_${key}" ${cfg[`show_${key}`] !== false ? "checked" : ""}> ${label}</label>`).join("")}</div></div>
+        <div class="editor-sub"><label>AMS-Zuordnung</label><div class="help">Leer lassen = automatische Zuordnung über die Home-Assistant-Gerätehierarchie. Nur echte AMS-Geräte werden angeboten; ExternalSpool-/Tray-/Cache-Hilfsgeräte sind hier ausgefiltert.</div><div class="ams-editor">${amsCandidates.length ? amsCandidates.map((d)=>`<label class="check ams-option"><input type="checkbox" data-ams-device="${cssEscape(d.id)}" ${(selectedAms.size ? selectedAms.has(d.id) : false) ? "checked" : ""}> ${cssEscape(d.name_by_user || d.name || d.model || "AMS")}${autoAms.has(d.id) ? " <small>(automatisch erkannt)</small>" : ""}</label>`).join("") : `<span class="help">Keine echten AMS-Geräte in der Bambu-Integration gefunden.</span>`}</div></div>
+        <details class="editor-sub"><summary>Erweiterte Entity-Zuordnung</summary><div class="help">Nur verwenden, wenn ein automatisch erkannter Wert falsch ist. Damit lassen sich z. B. Fortschritt, Status oder Auftrag eines Druckers eindeutig auf eine bestimmte Home-Assistant-Entity festlegen.</div><div class="entity-override-grid">${overrideFields.map(([field,label])=>`<label>${label}<input type="text" list="all-entity-ids" data-field="${field}" value="${cssEscape(cfg[field] || "")}" placeholder="automatisch"></label>`).join("")}</div></details>
+      </div>`;
     }).join("")}</div>`;
     this.shadowRoot.querySelector("[data-kwh-price]")?.addEventListener("change", (ev) => {
       const value = ev.target.value;

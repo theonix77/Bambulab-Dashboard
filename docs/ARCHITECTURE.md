@@ -1,44 +1,23 @@
 # Architektur
 
-## Datenquelle
+Das Projekt besteht zur Laufzeit aus einer einzigen HACS-Ressource: `Bambulab-Dashboard.js`.
 
-Das Dashboard besitzt keine eigene Bambu-Cloud-, MQTT- oder LAN-Verbindung. Sämtliche Daten kommen aus Home Assistant und werden von `greghesp/ha-bambulab` bereitgestellt.
+Die Karte liest Home Assistants Device Registry und Entity Registry per WebSocket und verwendet nur Bambu-Entities der Plattform `bambu_lab` für die automatische Druckererkennung.
 
-## Discovery
+## Datenfluss
 
-Beim Laden werden über die Home-Assistant-WebSocket-API folgende Registrierungen gelesen:
-
-- `config/device_registry/list`
-- `config/entity_registry/list`
-
-Für die Bambu-Discovery werden ausschließlich Entity-Registry-Einträge mit `platform === "bambu_lab"` verwendet.
-
-Ein Root-Gerät gilt als Drucker, wenn es typische Druckerentitäten aus den Bereichen Temperatur und Druckstatus/-fortschritt besitzt. Entity-Zuordnungen berücksichtigen `unique_id` und `translation_key`.
-
-## AMS
-
-Automatisch werden untergeordnete Geräte über `via_device_id` gesammelt. Entitäten mit AMS-/Tray-Merkmalen werden zu AMS-Einheiten gruppiert.
-
-Optional kann pro Drucker `ams_device_ids` konfiguriert werden. Diese manuelle Auswahl ersetzt für diesen Drucker die automatische AMS-Zuordnung.
-
-## Konfiguration
-
-Die Card-Konfiguration kann pro Drucker enthalten:
-
-```yaml
-printers:
-  - device_id: abc123
-    name: X2D Werkstatt
-    order: 1
-    visible: true
-    power_entity: sensor.x2d_power
-    energy_entity: sensor.x2d_energy
-    ams_device_ids:
-      - ams_device_1
-    show_ams: true
-    show_camera: true
-    show_energy: true
-    show_maintenance: true
+```text
+Bambu Drucker -> greghesp/ha-bambulab -> Home Assistant Entities -> Bambu Lab Dashboard
 ```
 
-Diese IDs werden normalerweise über den visuellen Editor gesetzt; manuelles YAML ist nicht erforderlich.
+## Mehrdrucker
+
+Jeder erkannte Drucker wird als Root-Gerät behandelt. Untergeordnete Geräte werden über `via_device_id` rekursiv zugeordnet. AMS kann automatisch aus dieser Hierarchie oder manuell über die Kartenkonfiguration zugewiesen werden.
+
+## Overrides
+
+Die automatische Entity-Erkennung kann pro Drucker durch konkrete Entity-IDs überschrieben werden. Dadurch bleibt die Karte auch bei ungewöhnlichen Registry-Strukturen oder Modellunterschieden nutzbar.
+
+## Breite
+
+Die Karte hat kein internes `max-width`. Die tatsächliche Obergrenze wird vom Home-Assistant-View bzw. der Section bestimmt.

@@ -1,56 +1,29 @@
 # Hilfe und Fehlerbehebung
 
-## Übersicht zeigt einen falschen Drucker
+## Karte erscheint nicht
 
-Ab v1.1.0 berücksichtigt die Discovery nur Entity-Registry-Einträge mit Plattform `bambu_lab`. Ein HACS-Update-Gerät darf deshalb nicht mehr als Drucker auftauchen.
+Unter **Einstellungen → Dashboards → Ressourcen** prüfen, ob `Bambulab-Dashboard.js` als JavaScript-Modul registriert ist. Danach HACS → Bambu Lab Dashboard → **Neu herunterladen** und **Strg + F5**.
 
-Wenn trotzdem ein falsches Gerät erscheint, bitte die Geräteansicht unter **Einstellungen → Geräte & Dienste → Bambu Lab** und die betroffenen Entity-Namen dokumentieren.
+## Karte bleibt schmal
 
-## Drucker druckt, aber Fortschritt/Auftrag ist leer
+Die Karte kann ihre Home-Assistant-Section nicht selbst verbreitern. Entweder die Section auf 2–3 Sections Breite stellen oder eine Panel-View verwenden.
 
-Das Dashboard liest diese Werte direkt aus der Bambu-Lab-Integration. Prüfe am Druckergerät in Home Assistant insbesondere:
+## Druckerbutton reagiert nicht
 
-- Print progress
-- Print status
-- Remaining time
-- Subtask/Task name
-- Current layer / Total layers
+Ab v1.2.0 verwenden Druckerkarten und Druckerumschalter dieselbe direkte Navigation zur Detailansicht. Wenn nach einem Update noch das alte Verhalten sichtbar ist, HACS neu herunterladen und den Browser-Cache hart aktualisieren.
 
-Sind sie dort korrekt, aber im Dashboard falsch, ist das ein Mapping-Fehler im Dashboard.
+## Falscher Fortschritt / falscher Auftrag
 
-## AMS fehlt
+Im Karteneditor beim betroffenen Drucker **Erweiterte Entity-Zuordnung** öffnen und bei Bedarf `Status`, `Fortschritt` oder `Druckauftrag` auf die korrekte Home-Assistant-Entity legen.
 
-Standard ist automatische Zuordnung über die Gerätehierarchie. Falls diese nicht zur tatsächlichen Installation passt:
+## A2L-Bild fehlt
 
-1. Dashboard-Karte bearbeiten.
-2. Beim gewünschten Drucker **AMS-Zuordnung** öffnen.
-3. Das richtige AMS bzw. mehrere AMS-Einheiten anhaken.
-4. Speichern.
+Es wird bewusst kein falsches A1-Bild mehr eingesetzt. Hinterlege im Karteneditor ein eigenes Bild, z. B. `/local/bambu/a2l.png`.
 
-Keine Häkchen bedeutet: automatische Zuordnung.
+## Smart-Steckdose fehlt
 
-## Reihenfolge ändern
+Ab v1.2.0 werden alle `sensor.*`-Entities akzeptiert. Trage den Leistungssensor und Energiesensor direkt per Entity-ID ein, z. B. `sensor.steckdose_power` und `sensor.steckdose_energy`.
 
-Im visuellen Editor bei jedem Drucker eine Zahl bei **Reihenfolge** eintragen. Kleinere Zahlen erscheinen zuerst.
+## AMS fehlt oder ist falsch zugeordnet
 
-## Drucker umbenennen
-
-Der Anzeigename im Dashboard kann im visuellen Editor geändert werden. Der eigentliche Home-Assistant-Gerätename bleibt unverändert.
-
-## Energie fehlt
-
-Leistungs- und Energiesensoren müssen pro Drucker im Karteneditor ausgewählt werden. Das Dashboard errät keine Zuordnung zu Smart Plugs.
-
-## Kamera fehlt
-
-Prüfe zuerst, ob die Bambu-Integration für diesen Drucker eine `camera.*`-Entity bereitstellt. Ohne Kamera-Entity kann das Dashboard keinen Stream anzeigen.
-
-## Karte lädt nicht
-
-Prüfe unter **Einstellungen → Dashboards → Ressourcen**:
-
-```text
-/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js
-```
-
-Typ muss **JavaScript-Modul** sein. Danach HACS **Neu herunterladen** und Browser mit **Strg + F5** neu laden.
+Im Karteneditor unter dem Drucker die AMS-Zuordnung prüfen. Ohne Haken wird automatisch über die Gerätehierarchie zugeordnet. Mit Haken wird die manuelle Zuordnung erzwungen.

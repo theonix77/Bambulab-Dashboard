@@ -1,12 +1,12 @@
 {
   "name": "bambulab-dashboard",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
-  "description": "Multi-printer Bambu Lab control center for Home Assistant with editable ordering and AMS assignment",
+  "description": "Multi-printer Bambu Lab control center for Home Assistant with editable AMS, energy, images and entity overrides",
   "scripts": {
     "check": "node --check Bambulab-Dashboard.js",
-    "test": "node tests/discovery.test.mjs && node tests/registration.test.mjs",
+    "test": "node tests/discovery.test.mjs && node tests/runtime.test.mjs && node tests/features.test.mjs && node tests/registration.test.mjs",
     "validate": "npm run check && npm test"
   },
   "engines": {
