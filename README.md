@@ -33,7 +33,7 @@ Die Gesamtlaufzeit ist nur Information und löst keine Wartung aus. Hersteller-/
 type: custom:bambu-lab-dashboard
 ```
 
-## Funktionen in v1.6.3
+## Funktionen in v1.8.0
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
