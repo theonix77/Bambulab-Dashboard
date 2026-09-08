@@ -1,50 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="620" viewBox="0 0 1440 620" role="img" aria-labelledby="t d">
-  <title id="t">Bambu Lab Dashboard for Home Assistant</title>
-  <desc id="d">Abstrakte dunkle Dashboard-Vorschau ohne simulierte Messwerte</desc>
-  <defs>
-    <radialGradient id="g1" cx="0" cy="0" r="1" gradientTransform="translate(240 40) rotate(39) scale(620 430)" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#50D926" stop-opacity=".20"/><stop offset="1" stop-color="#050907" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="620"><stop stop-color="#07100C"/><stop offset="1" stop-color="#030605"/></linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
-  </defs>
-  <rect width="1440" height="620" rx="34" fill="url(#bg)"/>
-  <rect width="1440" height="620" rx="34" fill="url(#g1)"/>
-  <g opacity=".11" stroke="#A8B0AC"><path d="M0 100H1440M0 180H1440M0 260H1440M0 340H1440M0 420H1440M0 500H1440"/><path d="M120 0V620M240 0V620M360 0V620M480 0V620M600 0V620M720 0V620M840 0V620M960 0V620M1080 0V620M1200 0V620M1320 0V620"/></g>
-  <circle cx="1118" cy="78" r="130" fill="#50D926" opacity=".09" filter="url(#glow)"/>
-  <g font-family="Inter,Arial,sans-serif">
-    <text x="72" y="86" fill="#F4F7F5" font-size="34" font-weight="800" letter-spacing="1">BAMBU LAB</text>
-    <text x="72" y="116" fill="#A8B0AC" font-size="15" font-weight="700" letter-spacing="3">HOME ASSISTANT DASHBOARD</text>
-  </g>
-  <g transform="translate(72 158)">
-    <rect width="820" height="340" rx="25" fill="#0C1210" stroke="#24412D"/>
-    <text x="30" y="43" fill="#A8B0AC" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800" letter-spacing="2">PRINTER STATUS</text>
-    <circle cx="220" cy="185" r="105" fill="#09100C" stroke="#1D2923" stroke-width="18"/>
-    <path d="M220 80a105 105 0 0 1 92 155" fill="none" stroke="#50D926" stroke-width="18" stroke-linecap="round"/>
-    <circle cx="220" cy="185" r="58" fill="#0F1913" stroke="#1D2923"/>
-    <path d="M196 202h48v-51h-48zm7-43h34v35h-34z" fill="#50D926" opacity=".85"/>
-    <rect x="390" y="86" width="365" height="42" rx="12" fill="#111A16" stroke="#1D2923"/>
-    <rect x="390" y="144" width="172" height="72" rx="14" fill="#111A16" stroke="#1D2923"/>
-    <rect x="579" y="144" width="176" height="72" rx="14" fill="#111A16" stroke="#1D2923"/>
-    <rect x="390" y="232" width="172" height="72" rx="14" fill="#111A16" stroke="#1D2923"/>
-    <rect x="579" y="232" width="176" height="72" rx="14" fill="#111A16" stroke="#1D2923"/>
-  </g>
-  <g transform="translate(916 158)">
-    <rect width="452" height="210" rx="25" fill="#0C1210" stroke="#1D2923"/>
-    <text x="27" y="42" fill="#A8B0AC" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800" letter-spacing="2">LIVE CAMERA</text>
-    <rect x="27" y="63" width="398" height="118" rx="15" fill="#050806" stroke="#1D2923"/>
-    <path d="M177 105h100v38H177zM207 88h40l12 17h-64z" fill="#50D926" opacity=".28"/>
-  </g>
-  <g transform="translate(916 390)">
-    <rect width="452" height="108" rx="25" fill="#0C1210" stroke="#1D2923"/>
-    <text x="27" y="35" fill="#A8B0AC" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800" letter-spacing="2">AMS</text>
-    <g transform="translate(84 68)"><circle r="23" fill="#4FAE5A"/><circle r="9" fill="#0B110E"/></g>
-    <g transform="translate(178 68)"><circle r="23" fill="#D6D8D2"/><circle r="9" fill="#0B110E"/></g>
-    <g transform="translate(272 68)"><circle r="23" fill="#D9A350"/><circle r="9" fill="#0B110E"/></g>
-    <g transform="translate(366 68)"><circle r="23" fill="#6F7892"/><circle r="9" fill="#0B110E"/></g>
-  </g>
-  <rect x="72" y="522" width="1296" height="44" rx="14" fill="#0C1210" stroke="#1D2923"/>
-  <rect x="91" y="540" width="430" height="8" rx="4" fill="#50D926" opacity=".7"/>
-  <rect x="539" y="540" width="280" height="8" rx="4" fill="#26352C"/>
-  <rect x="837" y="540" width="260" height="8" rx="4" fill="#26352C"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07100c"/><stop offset="1" stop-color="#030605"/></linearGradient><filter id="g"><feGaussianBlur stdDeviation="24"/></filter></defs>
+<rect width="1400" height="720" rx="34" fill="url(#bg)"/><circle cx="240" cy="90" r="180" fill="#50d926" opacity=".08" filter="url(#g)"/>
+<rect x="34" y="34" width="230" height="652" rx="24" fill="#0c1210" stroke="#1d2923"/><rect x="58" y="62" width="48" height="48" rx="14" fill="#15351b" stroke="#50d926" opacity=".9"/><text x="122" y="82" fill="#f4f7f5" font-family="Arial" font-size="21" font-weight="700">BAMBU LAB</text><text x="122" y="102" fill="#a8b0ac" font-family="Arial" font-size="10">HA CONTROL CENTER</text>
+<g font-family="Arial" font-size="14" font-weight="700"><rect x="52" y="145" width="194" height="46" rx="12" fill="#143019" stroke="#50d926"/><text x="94" y="174" fill="#d7ffd0">Übersicht</text><text x="94" y="226" fill="#a8b0ac">Drucker</text><text x="94" y="278" fill="#a8b0ac">AMS &amp; Filament</text><text x="94" y="330" fill="#a8b0ac">Energie</text><text x="94" y="382" fill="#a8b0ac">Wartung</text></g>
+<rect x="290" y="34" width="1076" height="652" rx="24" fill="#070c09" stroke="#1d2923"/><text x="326" y="84" fill="#f4f7f5" font-family="Arial" font-size="30" font-weight="700">Übersicht</text><text x="326" y="108" fill="#a8b0ac" font-family="Arial" font-size="12">Automatisch erkannter Bambu Lab Drucker</text>
+<rect x="326" y="138" width="650" height="300" rx="22" fill="#0c1210" stroke="#315d2c"/><text x="352" y="174" fill="#a8b0ac" font-family="Arial" font-size="11" font-weight="700">PRINTER STATUS</text><rect x="352" y="196" width="240" height="214" rx="18" fill="#0a100d" stroke="#1d2923"/><path d="M405 345h132v-102H405zm22-79h88v55h-88z" fill="none" stroke="#50d926" stroke-width="7" opacity=".75"/><circle cx="690" cy="301" r="82" fill="none" stroke="#1d2923" stroke-width="16"/><path d="M690 219a82 82 0 0 1 76 112" fill="none" stroke="#50d926" stroke-width="16" stroke-linecap="round"/><text x="632" y="300" fill="#f4f7f5" font-family="Arial" font-size="17" font-weight="700">FORTSCHRITT</text><text x="632" y="328" fill="#a8b0ac" font-family="Arial" font-size="12">Live aus Home Assistant</text>
+<rect x="996" y="138" width="334" height="300" rx="22" fill="#0c1210" stroke="#1d2923"/><text x="1022" y="174" fill="#a8b0ac" font-family="Arial" font-size="11" font-weight="700">LIVE CAMERA</text><rect x="1022" y="196" width="282" height="178" rx="15" fill="#020403" stroke="#1d2923"/><text x="1112" y="292" fill="#607067" font-family="Arial" font-size="13">Kamera</text>
+<rect x="326" y="458" width="316" height="190" rx="22" fill="#0c1210" stroke="#1d2923"/><rect x="660" y="458" width="316" height="190" rx="22" fill="#0c1210" stroke="#1d2923"/><rect x="996" y="458" width="334" height="190" rx="22" fill="#0c1210" stroke="#1d2923"/><g fill="#f4f7f5" font-family="Arial" font-size="17" font-weight="700"><text x="352" y="500">Temperaturen &amp; Lüfter</text><text x="686" y="500">AMS &amp; Filament</text><text x="1022" y="500">Steuerung &amp; Energie</text></g><g fill="#50d926" opacity=".75"><rect x="352" y="530" width="240" height="9" rx="5"/><rect x="686" y="530" width="210" height="9" rx="5"/><rect x="1022" y="530" width="230" height="9" rx="5"/></g>
 </svg>

@@ -1,61 +1,56 @@
 # Hilfe und Fehlerbehebung
 
-## Kein Drucker wird angezeigt
+## Übersicht zeigt einen falschen Drucker
 
-Prüfe zuerst, ob der Drucker in Home Assistant über die Bambu-Lab-Integration vorhanden ist und seine normalen Sensoren sichtbar sind. Das Dashboard erzeugt selbst keine Druckerentitäten.
+Ab v1.1.0 berücksichtigt die Discovery nur Entity-Registry-Einträge mit Plattform `bambu_lab`. Ein HACS-Update-Gerät darf deshalb nicht mehr als Drucker auftauchen.
 
-Danach:
+Wenn trotzdem ein falsches Gerät erscheint, bitte die Geräteansicht unter **Einstellungen → Geräte & Dienste → Bambu Lab** und die betroffenen Entity-Namen dokumentieren.
 
-1. Home Assistant neu laden beziehungsweise die Seite vollständig aktualisieren.
-2. Prüfen, ob die Integration tatsächlich die Plattform `bambu_lab` verwendet.
-3. Browser-Konsole auf Meldungen mit `Bambu Lab Dashboard` prüfen.
+## Drucker druckt, aber Fortschritt/Auftrag ist leer
 
-## Ein bestimmter Wert fehlt
+Das Dashboard liest diese Werte direkt aus der Bambu-Lab-Integration. Prüfe am Druckergerät in Home Assistant insbesondere:
 
-Das Dashboard rendert nur Funktionen, für die eine passende Entität vorhanden ist. Unterschiede zwischen Druckermodellen und Firmware sind daher normal.
+- Print progress
+- Print status
+- Remaining time
+- Subtask/Task name
+- Current layer / Total layers
 
-Beispiele:
-
-- keine Kammertemperatur bei Modellen ohne entsprechenden Sensor
-- keine zweite Düse bei Ein-Düsen-Modellen
-- keine Türanzeige ohne Türsensor
-- keine Steuerbuttons, wenn die Integration sie im aktuellen Verbindungsmodus nicht bereitstellt
-
-## Kamera bleibt leer
-
-Prüfe:
-
-- Kamera in der Bambu-Lab-Integration aktiviert
-- Kamera-Entität in Home Assistant verfügbar
-- Kamera funktioniert direkt in Home Assistant
-- Browser hat keine alte Frontend-Version im Cache
-
-Das Dashboard verwendet den Home-Assistant-Kamera-Proxy und speichert keine Kamera-Zugangsdaten.
+Sind sie dort korrekt, aber im Dashboard falsch, ist das ein Mapping-Fehler im Dashboard.
 
 ## AMS fehlt
 
-AMS-Geräte werden über die Home-Assistant-Gerätehierarchie dem Drucker zugeordnet. Prüfe in Home Assistant unter **Geräte & Dienste**, ob das AMS als untergeordnetes Gerät des Druckers vorhanden ist und Tray-Entitäten liefert.
+Standard ist automatische Zuordnung über die Gerätehierarchie. Falls diese nicht zur tatsächlichen Installation passt:
 
-## Stromverbrauch fehlt
+1. Dashboard-Karte bearbeiten.
+2. Beim gewünschten Drucker **AMS-Zuordnung** öffnen.
+3. Das richtige AMS bzw. mehrere AMS-Einheiten anhaken.
+4. Speichern.
 
-Das ist beabsichtigt, solange keine externe Strommessung zugeordnet wurde. Eine smarte Steckdose kann nicht zuverlässig automatisch einem bestimmten Drucker zugeordnet werden.
+Keine Häkchen bedeutet: automatische Zuordnung.
 
-Öffne den visuellen Karteneditor und ordne den passenden Leistungs-/Energiesensor manuell zu.
+## Reihenfolge ändern
 
-## Steuerung reagiert nicht
+Im visuellen Editor bei jedem Drucker eine Zahl bei **Reihenfolge** eintragen. Kleinere Zahlen erscheinen zuerst.
 
-Die Karte ruft nur vorhandene Home-Assistant-Services der bereitgestellten Entitäten auf. Wenn Bambu-Firmware oder Verbindungsmodus Steuerbefehle sperren, kann die Karte diese Einschränkung nicht umgehen.
+## Drucker umbenennen
 
-## Nach Update sehe ich noch die alte Version
+Der Anzeigename im Dashboard kann im visuellen Editor geändert werden. Der eigentliche Home-Assistant-Gerätename bleibt unverändert.
 
-1. HACS-Update vollständig installieren.
-2. Home Assistant Frontend neu laden.
-3. Browser/App komplett neu starten.
-4. Falls nötig Browser-Cache leeren.
+## Energie fehlt
 
-In der Browser-Konsole wird beim Laden die Dashboard-Version ausgegeben.
+Leistungs- und Energiesensoren müssen pro Drucker im Karteneditor ausgewählt werden. Das Dashboard errät keine Zuordnung zu Smart Plugs.
 
+## Kamera fehlt
 
-### `Custom element doesn't exist: bambu-lab-dashboard`
+Prüfe zuerst, ob die Bambu-Integration für diesen Drucker eine `camera.*`-Entity bereitstellt. Ohne Kamera-Entity kann das Dashboard keinen Stream anzeigen.
 
-Dieser Fehler betraf die erste 1.0.0-Vorschau. Ab 1.0.1 ist `Bambulab-Dashboard.js` eine einzelne eigenständige Datei. Nach einem Update in HACS den Browser hart neu laden. Falls der Fehler bleibt, die Ressourcen-Seite prüfen und sicherstellen, dass `/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js` als JavaScript-Modul eingetragen ist.
+## Karte lädt nicht
+
+Prüfe unter **Einstellungen → Dashboards → Ressourcen**:
+
+```text
+/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js
+```
+
+Typ muss **JavaScript-Modul** sein. Danach HACS **Neu herunterladen** und Browser mit **Strg + F5** neu laden.

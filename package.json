@@ -1,9 +1,9 @@
 {
   "name": "bambulab-dashboard",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "description": "Auto-discovering Bambu Lab printer dashboard for Home Assistant",
+  "description": "Multi-printer Bambu Lab control center for Home Assistant with editable ordering and AMS assignment",
   "scripts": {
     "check": "node --check Bambulab-Dashboard.js",
     "test": "node tests/discovery.test.mjs && node tests/registration.test.mjs",

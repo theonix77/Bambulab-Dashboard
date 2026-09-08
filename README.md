@@ -2,135 +2,241 @@
 
 ![Bambu Lab Dashboard](docs/images/hero.svg)
 
-Ein eigenständiges, responsives Lovelace-Dashboard für Bambu-Lab-3D-Drucker in Home Assistant. Es erkennt unterstützte Drucker und AMS-Geräte automatisch über die Geräte- und Entitätsregistrierung von Home Assistant und benötigt für die Drucker selbst keine hart codierten Entity-IDs.
+Ein eigenständiges **Bambu Lab Control Center für Home Assistant**. Es zeigt alle über `greghesp/ha-bambulab` eingebundenen Drucker in einer gemeinsamen Übersicht und öffnet pro Drucker eine Detailansicht mit Status, Temperaturen, Kamera, Steuerung, AMS, Energie und Wartung.
 
-> **Wichtig:** Dieses Projekt erzeugt keine Messwerte, keine Sensoren und keine Dummy-Daten. Es visualisiert ausschließlich Entitäten, die in Home Assistant tatsächlich vorhanden sind. Nicht unterstützte Funktionen werden ausgeblendet oder als nicht verfügbar angezeigt.
+> **Wichtig:** Dieses Projekt ist nur die Benutzeroberfläche. Die Verbindung zu Bambu Cloud/LAN und zum Drucker übernimmt weiterhin die Home-Assistant-Integration **`greghesp/ha-bambulab`**. Die zusätzlichen Bambu-Lovelace-Karten sind **nicht erforderlich**.
 
-## Funktionen
+## Was ist neu in v1.1.0?
 
-- automatische Erkennung mehrerer Bambu-Lab-Drucker
-- automatische Zuordnung untergeordneter AMS-Geräte über die Home-Assistant-Gerätehierarchie
-- Druckfortschritt, Status, Druckauftrag, Restzeit und Layer
-- Düsen-, Bett- und Kammertemperaturen inklusive Sollwerten, sofern vorhanden
-- Lüfterwerte, WLAN, Druckbett, Druckgewicht, Drucklänge und Gesamtlaufzeit, sofern vorhanden
-- Live-Kamera über die vorhandene Kamera-Entität
-- AMS-Übersicht mit bis zu vier Slots je erkanntem AMS und den realen Filamentinformationen aus Home Assistant
-- Pause, Fortsetzen, Stop, Licht und Geschwindigkeitsprofil, sofern die Integration diese Steuerentitäten bereitstellt
-- mehrere Drucker über Tabs
-- optionale Zuordnung externer Leistungs- und Energiesensoren, z. B. einer smarten Steckdose
-- optionale Energiekostenberechnung mit eigenem Strompreis
-- optionale Wartungsintervalle ohne erfundene Herstellerwerte
-- vollständig responsives Layout für Desktop, Tablet und Smartphone
-- HACS-kompatible Dashboard-/Frontend-Struktur
+v1.1.0 ändert die Bedienlogik grundlegend:
 
-## Voraussetzung
+- **Übersicht zeigt alle Drucker gleichzeitig** statt nur den gerade ausgewählten Drucker.
+- Jeder Drucker hat eine kompakte Statuskarte mit Modell, Druckstatus, Fortschritt, Auftrag, Restzeit, Düse, Bett und AMS-Anzahl.
+- Klick auf einen Drucker öffnet dessen **Drucker-Details**.
+- **AMS wird innerhalb der Detailansicht des zugehörigen Druckers** angezeigt.
+- Drucker können im visuellen Editor **umbenannt, sortiert und ausgeblendet** werden.
+- AMS kann automatisch über Home Assistants Gerätehierarchie zugeordnet werden; falls das bei einer Installation nicht sauber ist, kann die Zuordnung **manuell pro Drucker** festgelegt werden.
+- Kamera, AMS, Energie und Wartung können **pro Drucker ein-/ausgeblendet** werden.
+- Leistungs- und Energiesensoren können **pro Drucker** zugeordnet werden.
+- Die Bambu-Erkennung akzeptiert nur Entitäten mit Plattform `bambu_lab`. HACS-/Dashboard-Update-Geräte werden dadurch nicht mehr fälschlich als Drucker behandelt.
+- Die Erkennung berücksichtigt zusätzlich `translation_key`, wodurch sie weniger von frei vergebenen Entity-Namen abhängig ist.
 
-Das Dashboard setzt die Home-Assistant-Integration **Bambu Lab** von `greghesp/ha-bambulab` voraus:
+## Architektur
 
-https://github.com/greghesp/ha-bambulab
+```text
+Bambu Drucker / AMS
+       │
+       ▼
+greghesp/ha-bambulab
+       │
+       ├─ Gerätekonfiguration
+       ├─ Status / Fortschritt
+       ├─ Temperaturen / Lüfter
+       ├─ Kamera
+       ├─ AMS / Filament
+       └─ Steuerentitäten
+       │
+       ▼
+Bambulab-Dashboard
+       │
+       ├─ Übersicht aller Drucker
+       ├─ Detailansicht pro Drucker
+       ├─ AMS-Zuordnung
+       ├─ Energie-Zuordnung
+       └─ Wartung
+```
 
-Die Drucker müssen dort bereits funktionieren. Dieses Repository ersetzt die Integration nicht, sondern stellt ihre vorhandenen Entitäten als eigenständiges Dashboard dar.
+Das Dashboard meldet sich **nicht selbst bei Bambu Lab an**, öffnet keine eigene MQTT-Verbindung und speichert keine Bambu-Zugangsdaten.
 
-## Installation über HACS als benutzerdefiniertes Repository
+## Voraussetzungen
 
-1. HACS in Home Assistant öffnen.
-2. Zu **Dashboard** wechseln.
-3. Oben rechts das Drei-Punkte-Menü öffnen.
-4. **Benutzerdefinierte Repositories** wählen.
-5. Repository-URL eintragen:
+Benötigt werden:
 
+1. Home Assistant
+2. HACS
+3. `greghesp/ha-bambulab`
+4. mindestens ein bereits in dieser Integration eingerichteter Drucker
+
+Projekt der benötigten Integration:
+
+`https://github.com/greghesp/ha-bambulab`
+
+### Nicht erforderlich
+
+Folgende Karten sind **keine Abhängigkeit** dieses Dashboards:
+
+- Bambu Lab AMS Card
+- Bambu Lab Print Control Card
+- Bambu Lab Print Status Card
+- Bambu Lab Spool Card
+- separate Installation von `ha-bambulab-cards`
+
+## Installation
+
+### 1. Bambu-Lab-Integration installieren
+
+Installiere und konfiguriere zuerst `greghesp/ha-bambulab`. Unter **Einstellungen → Geräte & Dienste → Bambu Lab** müssen deine Drucker und deren Entitäten sichtbar sein.
+
+Wenn du mehrere Drucker hast, müssen alle dort eingerichtet sein. AMS und Kamera müssen ebenfalls von dieser Integration bereitgestellt werden, sofern dein Modell/Verbindungsmodus sie unterstützt.
+
+### 2. Bambu Lab Dashboard über HACS installieren
+
+1. **HACS → Dashboard** öffnen.
+2. Oben rechts **⋮ → Benutzerdefinierte Repositories**.
+3. Repository eintragen:
    `https://github.com/theonix77/Bambulab-Dashboard`
+4. Typ **Dashboard** auswählen.
+5. Repository hinzufügen und **Bambu Lab Dashboard** installieren.
+6. Browser anschließend mit **Strg + F5** neu laden.
 
-6. Kategorie **Dashboard** auswählen.
-7. Repository installieren.
-8. Home Assistant beziehungsweise den Browser-Frontend-Cache aktualisieren, wenn HACS dazu auffordert.
+HACS sollte die JavaScript-Ressource automatisch registrieren. Unter **Einstellungen → Dashboards → Ressourcen** muss eine Ressource ähnlich dieser vorhanden sein:
 
-Solange das Repository noch nicht im offiziellen HACS-Standardverzeichnis enthalten ist, erfolgt die Installation als benutzerdefiniertes Repository.
+```text
+/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js
+```
 
-## Karte hinzufügen
+Typ: **JavaScript-Modul**.
 
-Die Minimal-Konfiguration lautet:
+### 3. Karte hinzufügen
+
+Im gewünschten Dashboard:
+
+**Dashboard bearbeiten → Karte hinzufügen → Bambu Lab Dashboard**
+
+Oder manuell:
 
 ```yaml
 type: custom:bambu-lab-dashboard
 ```
 
-Das reicht für die automatische Drucker- und AMS-Erkennung aus.
+Für die Grundfunktion sind **keine Drucker- oder Entity-IDs im YAML** notwendig.
 
-## Was wird automatisch erkannt?
+## Wie werden die Drucker erkannt?
 
-Das Dashboard liest zur Laufzeit die Home-Assistant-Geräte- und Entitätsregistrierung. Relevant sind Geräte und Entitäten der Plattform `bambu_lab`. Drucker werden anhand ihrer Gerätezuordnung und typischen, stabilen Unique-ID-Suffixe der Bambu-Lab-Integration erkannt. Untergeordnete Geräte werden über `via_device_id` dem jeweiligen Drucker zugeordnet.
+Die Karte liest über Home Assistants WebSocket-API die Geräte- und Entitätsregistrierung.
 
-Dadurch muss bei einem neu hinzugefügten Drucker normalerweise keine Dashboard-YAML geändert werden. Nach dem Neuladen der Karte erscheint er automatisch als weiterer Drucker-Tab.
+Ein Gerät wird nur als Drucker akzeptiert, wenn:
 
-## Externe Strommessung
+- seine relevanten Entitäten von der Plattform **`bambu_lab`** stammen und
+- typische Druckerinformationen wie Temperatur plus Druckstatus/Fortschritt vorhanden sind.
 
-Ein Bambu-Drucker und eine smarte Steckdose sind in Home Assistant getrennte Geräte. Eine automatische Zuordnung wäre deshalb nicht zuverlässig. Aus diesem Grund wird Strommessung bewusst **nicht geraten**.
+Dadurch werden HACS-Update-Geräte oder andere Geräte, deren Name zufällig „Bambu“ enthält, nicht mehr als Drucker behandelt.
 
-Im visuellen Karteneditor können pro Drucker optional zugeordnet werden:
+Die Zuordnung der Sensoren verwendet nach Möglichkeit die stabilen Daten der Integration (`unique_id` und `translation_key`) und ist dadurch unabhängig davon, wie du eine Entity in Home Assistant umbenannt hast.
 
-- ein Sensor mit `device_class: power`
-- ein Sensor mit `device_class: energy`
-- optional ein globaler Preis in €/kWh
+## Bedienung
 
-Fehlt die Zuordnung, zeigt das Dashboard keine erfundenen Leistungs- oder Energiewerte. Die kleine Leistungskurve entsteht ausschließlich aus echten Live-Werten während der geöffneten Dashboard-Sitzung.
+### Übersicht
 
-## Wartung
+Die Startseite zeigt **alle sichtbaren Drucker in der von dir festgelegten Reihenfolge**. Jede Karte enthält nur die wichtigsten Informationen:
 
-Die Gesamtlaufzeit des Druckers wird angezeigt, sofern die Integration einen entsprechenden Sensor liefert. Eigene Wartungsintervalle können zusätzlich in YAML hinterlegt werden. Es gibt absichtlich keine eingebauten Fantasieintervalle.
+- Name und Modell
+- Status
+- Fortschritt
+- aktueller Druckauftrag
+- Restzeit
+- Düsentemperatur
+- Betttemperatur
+- Anzahl der zugeordneten AMS-Einheiten
 
-Beispiel für ein selbst definiertes Intervall:
+Ein Klick auf die Druckerkarte öffnet die Detailansicht dieses Druckers.
 
-```yaml
-type: custom:bambu-lab-dashboard
-printers:
-  - device_id: "DEINE_HOME_ASSISTANT_DEVICE_ID"
-    maintenance:
-      - name: "Eigene Wartungsaufgabe"
-        interval_hours: 250
-        last_service_hours: 0
-```
+### Drucker-Details
 
-Die `device_id` wird nur für solche optionalen, benutzerspezifischen Zuordnungen benötigt. Die Druckererkennung selbst bleibt automatisch.
+Die Detailansicht enthält – soweit vom jeweiligen Drucker tatsächlich bereitgestellt –:
 
-## Firmware- und Steuerungsbeschränkungen
+- Druckfortschritt und Auftrag
+- Restzeit und Layer
+- Geschwindigkeit und WLAN
+- Temperaturen und Lüfter
+- Druckinformationen
+- Kamera
+- Steuerung
+- **AMS des gewählten Druckers**
+- Energie
+- Wartung
 
-Welche Steuerbefehle verfügbar sind, bestimmt die Bambu-Lab-Integration zusammen mit Druckermodell, Firmware und Verbindungsmodus. Neuere Bambu-Firmware kann Schreib-/Steuerfunktionen je nach Betriebsart einschränken. Das Dashboard zeigt deshalb nur tatsächlich vorhandene Steuerentitäten an.
+Es werden keine Dummywerte erzeugt. Nicht vorhandene Funktionen werden weggelassen oder als nicht verfügbar gekennzeichnet.
 
-## Datenschutz und Sicherheit
+## Drucker bearbeiten
 
-- keine eigene Cloud, kein eigener Backend-Dienst und keine Telemetrie
-- keine Telemetrie
-- keine externen Tracking-Skripte; die modellabhängige Druckergrafik wird direkt aus dem bestehenden GitHub-Projekt `greghesp/ha-bambulab-cards` geladen
-- keine gespeicherten Bambu-Zugangsdaten
-- Kamera- und Bildzugriffe laufen über die vorhandenen Home-Assistant-Proxy-Endpunkte und die aktive Home-Assistant-Sitzung
+Öffne die Karte im **visuellen Karteneditor**. Pro Drucker kannst du festlegen:
 
-## Dokumentation
+- **Anzeigename**
+- **Reihenfolge**
+- **anzeigen / ausblenden**
+- Leistungssensor
+- Energiesensor
+- AMS anzeigen / ausblenden
+- Kamera anzeigen / ausblenden
+- Energie anzeigen / ausblenden
+- Wartung anzeigen / ausblenden
+- **manuelle AMS-Zuordnung**
 
-- [Installation](docs/INSTALLATION.md)
-- [Hilfe und Fehlerbehebung](docs/HELP.md)
-- [Technische Architektur](docs/ARCHITECTURE.md)
-- [Minimales YAML-Beispiel](examples/dashboard-card.yaml)
+Die Reihenfolge `1, 2, 3 ...` bestimmt die Reihenfolge auf der Übersicht und im Druckerumschalter.
 
-## Entwicklung prüfen
+## AMS-Zuordnung
 
-Es gibt keine Laufzeitabhängigkeiten. Für einen Syntaxcheck reicht Node.js 20 oder neuer:
+Standardmäßig versucht das Dashboard, AMS-Geräte über die Home-Assistant-Gerätehierarchie (`via_device_id`) automatisch dem richtigen Drucker zuzuordnen.
+
+Wenn deine Installation die AMS-Geräte anders anlegt oder die automatische Zuordnung nicht stimmt, kannst du im Editor beim jeweiligen Drucker die AMS-Einheiten manuell anhaken.
+
+**Wichtig:** Sobald für einen Drucker mindestens eine manuelle AMS-Zuordnung gewählt wurde, wird für diesen Drucker diese Zuordnung verwendet. Lässt du alle AMS-Häkchen leer, arbeitet das Dashboard wieder automatisch.
+
+## Energie
+
+Die Bambu-Integration kennt eine externe smarte Steckdose nicht automatisch. Deshalb kannst du pro Drucker einen Home-Assistant-Sensor mit `device_class: power` und einen Sensor mit `device_class: energy` zuordnen.
+
+Optional lässt sich ein globaler Strompreis in €/kWh eintragen. Ohne Sensorzuordnung zeigt das Dashboard keine erfundenen Verbrauchswerte.
+
+## Modellbilder
+
+Das Druckermodell wird aus der Home-Assistant-Geräteregistrierung gelesen. Für bekannte Modelle verwendet die Karte vorhandene Modellgrafiken aus dem öffentlichen Projekt `greghesp/ha-bambulab-cards`.
+
+`ha-bambulab-cards` muss dafür **nicht installiert** sein. Gibt es für ein Modell keine eindeutige Grafik oder kann sie nicht geladen werden, wird ein neutrales Druckersymbol gezeigt.
+
+## Updates
+
+Nach einem Update des GitHub-Repositories:
+
+1. **HACS → Bambu Lab Dashboard**
+2. **⋮ → Neu herunterladen**
+3. anschließend **Strg + F5**
+
+Damit wird verhindert, dass Home Assistant oder der Browser noch eine ältere JavaScript-Datei verwendet.
+
+## Fehlerbehebung
+
+### Falsche Geräte erscheinen als Drucker
+
+Ab v1.1.0 werden nur noch Entitäten mit Plattform `bambu_lab` für die Druckererkennung verwendet. Falls trotzdem ein falsches Gerät erscheint, bitte die Geräte- und Entitätsstruktur der Bambu-Integration melden.
+
+### Druckauftrag/Fortschritt ist falsch
+
+Öffne zuerst den betroffenen Drucker unter **Einstellungen → Geräte & Dienste → Bambu Lab** und prüfe dort `Print progress`, `Print status` und den Auftragsnamen. Das Dashboard liest diese Werte direkt aus Home Assistant.
+
+### AMS fehlt oder hängt am falschen Drucker
+
+Öffne den Karteneditor und nutze die **manuelle AMS-Zuordnung** beim gewünschten Drucker.
+
+### `Custom element doesn't exist: bambu-lab-dashboard`
+
+In HACS **Neu herunterladen**, dann unter **Einstellungen → Dashboards → Ressourcen** prüfen, ob `Bambulab-Dashboard.js` als JavaScript-Modul vorhanden ist, danach **Strg + F5**.
+
+Weitere Hilfe: [docs/HELP.md](docs/HELP.md)
+
+## Datenschutz
+
+Das Dashboard verarbeitet nur Daten, die das angemeldete Home-Assistant-Frontend bereits lesen darf. Es enthält keine Bambu-Zugangsdaten. Für die optionalen Modellbilder wird eine öffentliche GitHub-Raw-Quelle aufgerufen.
+
+## Entwicklung und Validierung
 
 ```bash
-npm run check
+npm run validate
 ```
 
-## Lizenz und Markenhinweis
+führt Syntax-, Discovery- und Registrierungsprüfungen aus. Eine echte Ende-zu-Ende-Prüfung gegen alle Bambu-Modelle ist nur in realen Home-Assistant-Installationen möglich.
 
-MIT License. Siehe [LICENSE](LICENSE).
+## Lizenz
 
-Dieses Projekt ist ein unabhängiges Community-Projekt und steht in keiner offiziellen Verbindung zu Bambu Lab. „Bambu Lab“ und zugehörige Produktnamen/Marken gehören ihren jeweiligen Rechteinhabern. Die Druckergrafiken werden nicht in diesem Repository kopiert, sondern zur Laufzeit direkt aus dem bestehenden `greghesp/ha-bambulab-cards`-Repository geladen.
-
-
-## Druckerabbildungen
-
-Das Dashboard erkennt das Modell aus der Home-Assistant-Geräteregistrierung und lädt automatisch die bereits im Projekt `greghesp/ha-bambulab-cards` verwendete Modellgrafik (z. B. P1S, X1C, A1, A1 Mini, P2S, H2-Serie, X2D). Es muss keine Bild-URL konfiguriert werden. Ist für ein neues Modell noch keine Upstream-Grafik vorhanden oder ist GitHub nicht erreichbar, zeigt die Karte automatisch ein neutrales Drucker-Symbol statt eines falschen Bildes.
-
-## Laufzeitdatei
-
-HACS lädt nur `Bambulab-Dashboard.js`. Diese Datei ist vollständig eigenständig und hat keine relativen JavaScript-Imports. Dadurch reicht nach der HACS-Installation die Lovelace-Konfiguration `type: custom:bambu-lab-dashboard`.
+MIT. Bambu Lab ist eine Marke des jeweiligen Rechteinhabers. Dieses Community-Projekt ist nicht offiziell mit Bambu Lab verbunden.
