@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
 const code=fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url),"utf8");
-assert.match(code,/const VERSION = "1\.6\.0"/);
+assert.match(code,/const VERSION = "1\.6\.2"/);
 assert.match(code,/_isInCardPicker/);
 assert.match(code,/preview: true/);
 assert.match(code,/data-open-printer=/);
@@ -38,3 +38,8 @@ assert.match(code,/hybrid_mode_blocks_control/);
 assert.match(code,/Developer LAN Mode/);
 assert.match(code,/data-maint-source/);
 assert.match(code,/_renderMaintenanceModal/);
+
+assert.match(code,/_mobileTouchActive/);
+assert.match(code,/spool-modal-backdrop/);
+assert.match(code,/data-close-spool-backdrop/);
+assert.match(code,/touch-action:pan-x/);

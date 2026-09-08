@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.6.0 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.6.2 | standalone HACS resource */
 
-const VERSION = "1.6.0";
+const VERSION = "1.6.2";
 const DOMAIN = "bambu_lab";
 
 
@@ -441,7 +441,7 @@ const styles = `
   .shell.theme-light .bar,.shell.theme-light .fleet-progress { background:#dce6df; }
   .shell.theme-light .panel-title,.shell.theme-light h1,.shell.theme-light h2,.shell.theme-light h3,.shell.theme-light strong,.shell.theme-light .fleet-name,.shell.theme-light .ams-name { color:var(--bd-text) !important; }
   .shell.theme-light .shell::before { opacity:.08; }
-  .spool { cursor:pointer; width:100%; color:inherit; font:inherit; }
+  .spool { cursor:pointer; touch-action:manipulation; width:100%; color:inherit; font:inherit; }
   .spool:hover { border-color:rgba(80,217,38,.42); background:rgba(80,217,38,.055); }
   .spool:focus-visible { outline:2px solid var(--bd-accent); outline-offset:2px; }
   .spool-dialog-backdrop { position:fixed; inset:0; z-index:9999; display:grid; place-items:center; padding:18px; background:rgba(0,0,0,.62); backdrop-filter:blur(5px); }
@@ -567,7 +567,7 @@ const styles = `
   .active-filament{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--bd-muted);font-size:12px}.active-filament strong{color:var(--bd-text)}.filament-dot{--filament:#8e9a92;width:14px;height:14px;border-radius:50%;background:var(--filament);border:2px solid rgba(255,255,255,.25);box-shadow:0 0 10px color-mix(in srgb,var(--filament) 45%,transparent);flex:0 0 auto}.active-filament.muted{opacity:.7}
   .number-set-row{display:grid;grid-template-columns:1fr auto;gap:7px}.number-set-row button,.maint-actions button{border:1px solid var(--bd-green-dim);background:rgba(80,217,38,.08);color:var(--bd-text);border-radius:9px;padding:8px 10px;cursor:pointer}.toggle-row{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bd-border);background:var(--bd-card);color:var(--bd-text);border-radius:11px;padding:10px;cursor:pointer}.toggle-row.on strong,.plug-state.on{color:var(--bd-green)}
   .smart-plug{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--bd-border);border-radius:13px;padding:12px;margin-bottom:12px}.smart-plug small,.smart-plug strong,.smart-plug span{display:block}.plug-state{margin-top:4px;font-size:11px;font-weight:800;color:var(--bd-muted)}
-  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}.control-warning{margin:0 17px 14px;padding:12px 13px;border:1px solid rgba(241,162,27,.45);background:rgba(241,162,27,.08);border-radius:13px;font-size:11px;line-height:1.5}.control-warning strong{display:block;margin-bottom:4px}.control-warning a,.maint-source-link,.maintenance-modal a{color:var(--bd-green);font-weight:800;text-decoration:none}.capability-list{display:grid;gap:5px;margin-top:8px}.capability-row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--bd-border);padding-top:5px}.capability-row code{font-size:9px;overflow-wrap:anywhere;text-align:right}.maint-source-link{background:none;border:0;padding:0;cursor:pointer;font:inherit}.maintenance-modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.maintenance-modal{width:min(720px,96vw);max-height:min(86vh,820px);overflow:auto;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:20px}.maintenance-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.maintenance-modal h3{margin:4px 0 10px;font-size:22px}.maintenance-modal p{line-height:1.6;color:var(--bd-muted)}.maintenance-modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.maintenance-modal-actions a,.maintenance-modal-actions button{border:1px solid var(--bd-border);border-radius:10px;padding:10px 12px;background:var(--bd-card);color:var(--bd-text);font-weight:800;cursor:pointer}.maintenance-modal-actions a{background:rgba(80,217,38,.10);border-color:rgba(80,217,38,.35)}@media(max-width:600px){.maintenance-modal-backdrop{padding:0}.maintenance-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px;box-sizing:border-box}}
+  .maint-item.due{border-color:rgba(255,166,0,.55);box-shadow:inset 3px 0 0 #f1a21b}.maint-item small{display:block;color:var(--bd-muted);margin-top:6px;line-height:1.45}.maint-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;font-size:10px;color:var(--bd-muted)}.maintenance-log{margin-top:8px}.maintenance-log summary{cursor:pointer;font-weight:800}.maintenance-log table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px}.maintenance-log th,.maintenance-log td{text-align:left;padding:7px;border-bottom:1px solid var(--bd-border)}.control-warning{margin:0 17px 14px;padding:12px 13px;border:1px solid rgba(241,162,27,.45);background:rgba(241,162,27,.08);border-radius:13px;font-size:11px;line-height:1.5}.control-warning strong{display:block;margin-bottom:4px}.control-warning a,.maint-source-link,.maintenance-modal a{color:var(--bd-green);font-weight:800;text-decoration:none}.capability-list{display:grid;gap:5px;margin-top:8px}.capability-row{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--bd-border);padding-top:5px}.capability-row code{font-size:9px;overflow-wrap:anywhere;text-align:right}.maint-source-link{background:none;border:0;padding:0;cursor:pointer;font:inherit}.spool-modal-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px;touch-action:pan-y}.spool-modal{width:min(680px,96vw);max-height:min(86vh,820px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:18px;box-sizing:border-box}.spool-dialog-grid{display:grid;gap:7px;margin-top:14px}.spool-detail-row{display:grid;grid-template-columns:minmax(110px,.8fr) minmax(0,1.2fr);gap:12px;padding:8px 0;border-bottom:1px solid var(--bd-border)}.spool-detail-row small{color:var(--bd-muted);text-transform:capitalize}.spool-detail-row strong{overflow-wrap:anywhere}.spool-dialog-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}@media(max-width:600px){.spool-modal-backdrop{padding:0}.spool-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px}.spool-detail-row{grid-template-columns:1fr;gap:3px}}.maintenance-modal-backdrop{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.maintenance-modal{width:min(720px,96vw);max-height:min(86vh,820px);overflow:auto;background:var(--bd-panel);color:var(--bd-text);border:1px solid var(--bd-border);border-radius:18px;box-shadow:0 28px 80px rgba(0,0,0,.48);padding:20px}.maintenance-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.maintenance-modal h3{margin:4px 0 10px;font-size:22px}.maintenance-modal p{line-height:1.6;color:var(--bd-muted)}.maintenance-modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.maintenance-modal-actions a,.maintenance-modal-actions button{border:1px solid var(--bd-border);border-radius:10px;padding:10px 12px;background:var(--bd-card);color:var(--bd-text);font-weight:800;cursor:pointer}.maintenance-modal-actions a{background:rgba(80,217,38,.10);border-color:rgba(80,217,38,.35)}@media(max-width:600px){.maintenance-modal-backdrop{padding:0}.maintenance-modal{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:18px;box-sizing:border-box}}
   .shell.theme-light .active-filament strong,.shell.theme-light .toggle-row,.shell.theme-light .number-set-row button,.shell.theme-light .maint-actions button{color:#102017!important}.shell.theme-light .toggle-row,.shell.theme-light .smart-plug{background:#fff!important;border-color:#c9d8cd!important}
 
   .camera-wrap { position:relative; aspect-ratio:16/9; margin:14px 17px 17px; border-radius:15px; overflow:hidden; background:#030504; border:1px solid rgba(255,255,255,.05); display:grid; place-items:center; }
@@ -670,7 +670,7 @@ const styles = `
   .side-title { font-size:16px; font-weight:900; letter-spacing:.04em; }
   .side-sub { margin-top:3px; font-size:9px; color:var(--bd-muted); text-transform:uppercase; letter-spacing:.13em; }
   .nav { display:grid; gap:7px; }
-  .nav-btn { width:100%; cursor:pointer; border:1px solid transparent; background:transparent; border-radius:13px; padding:11px 12px; display:flex; align-items:center; gap:10px; text-align:left; color:var(--bd-muted); transition:.16s ease; }
+  .nav-btn { width:100%; cursor:pointer; touch-action:manipulation; border:1px solid transparent; background:transparent; border-radius:13px; padding:11px 12px; display:flex; align-items:center; gap:10px; text-align:left; color:var(--bd-muted); transition:.16s ease; }
   .nav-btn:hover { color:var(--bd-text); background:rgba(255,255,255,.025); }
   .nav-btn.active { color:#d7ffd0; border-color:rgba(80,217,38,.35); background:linear-gradient(90deg,rgba(80,217,38,.15),rgba(80,217,38,.035)); box-shadow:inset 3px 0 0 var(--bd-accent); }
   .nav-btn ha-icon { --mdc-icon-size:19px; color:var(--bd-accent); }
@@ -698,15 +698,15 @@ const styles = `
     .hero-body .task { grid-column:1/-1; }
   }
   @container (max-width: 760px) {
-    .shell { padding:12px; border-radius:20px; }
+    .shell { padding:12px; border-radius:20px; overflow-anchor:none; }
     .app-grid { display:block; }
     .sidebar { position:static; }
     .side-brand,.sidebar > .nav,.side-footer { display:none; }
-    .side-printers { padding:8px; margin-bottom:8px; overflow:auto; }
+    .side-printers { padding:8px; margin-bottom:8px; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; touch-action:pan-x; overscroll-behavior-x:contain; }
     .side-printers .side-label { display:none; }
     .printer-switch { display:flex; min-width:max-content; }
     .printer-switch .tab { width:auto; }
-    .mobile-nav { display:flex; overflow:auto; gap:6px; padding:3px 0 10px; scrollbar-width:none; }
+    .mobile-nav { display:flex; overflow-x:auto; overflow-y:hidden; gap:6px; padding:3px 0 10px; scrollbar-width:none; -webkit-overflow-scrolling:touch; touch-action:pan-x; overscroll-behavior-x:contain; position:relative; z-index:5; }
     .mobile-nav .nav-btn { width:auto; flex:0 0 auto; padding:8px 10px; }
     .workspace-head { align-items:flex-start; }
     .workspace-title p { display:none; }
@@ -827,6 +827,10 @@ class BambuLabDashboard extends HTMLElement {
     this._lastPowerSampleAt = new Map();
     this._selectedSpoolEntityId = null;
     this._lastRenderSignature = "";
+    this._mobileTouchActive = false;
+    this._renderDirtyDuringTouch = false;
+    this._touchGuardBound = false;
+    this._touchReleaseTimer = null;
   }
 
   setConfig(config) {
@@ -841,7 +845,10 @@ class BambuLabDashboard extends HTMLElement {
     if (!this._loaded && !this._loading) this._discover();
     if (this._loaded) {
       this._samplePower();
-      if (previous !== hass) this._scheduleRender();
+      if (previous !== hass) {
+        if (this._mobileTouchActive) this._renderDirtyDuringTouch = true;
+        else this._scheduleRender();
+      }
     }
   }
 
@@ -854,11 +861,32 @@ class BambuLabDashboard extends HTMLElement {
 
   connectedCallback() {
     if (!this._rediscoverTimer) this._rediscoverTimer = setInterval(() => this._discover(false), 60000);
+    if (!this._touchGuardBound) {
+      this._touchGuardBound = true;
+      this.addEventListener("touchstart", () => {
+        this._mobileTouchActive = true;
+        if (this._touchReleaseTimer) clearTimeout(this._touchReleaseTimer);
+      }, { passive:true });
+      const release = () => {
+        if (this._touchReleaseTimer) clearTimeout(this._touchReleaseTimer);
+        this._touchReleaseTimer = setTimeout(() => {
+          this._mobileTouchActive = false;
+          if (this._renderDirtyDuringTouch) {
+            this._renderDirtyDuringTouch = false;
+            this._scheduleRender();
+          }
+        }, 220);
+      };
+      this.addEventListener("touchend", release, { passive:true });
+      this.addEventListener("touchcancel", release, { passive:true });
+    }
   }
 
   disconnectedCallback() {
     if (this._rediscoverTimer) clearInterval(this._rediscoverTimer);
     this._rediscoverTimer = null;
+    if (this._touchReleaseTimer) clearTimeout(this._touchReleaseTimer);
+    this._touchReleaseTimer = null;
   }
 
   async _discover(showLoading = true) {
@@ -1107,7 +1135,7 @@ class BambuLabDashboard extends HTMLElement {
     if (!this.shadowRoot) return;
     const scrollState = this._captureScrollState();
     const body = this._renderBody();
-    this.shadowRoot.innerHTML = `<style>${styles}</style>${body}${this._renderMaintenanceModal()}`;
+    this.shadowRoot.innerHTML = `<style>${styles}</style>${body}${this._renderMaintenanceModal()}${this._renderSelectedSpoolDetail()}`;
     this._bindEvents();
     this._restoreScrollState(scrollState);
   }
@@ -1338,7 +1366,7 @@ class BambuLabDashboard extends HTMLElement {
   _renderAMS(printer) {
     const groups = this._collectAmsGroups(printer);
     if (!groups.length) return `<section class="panel"><div class="panel-head"><div><div class="eyebrow">Material System</div><div class="panel-title">AMS</div></div></div><div class="empty"><ha-icon icon="mdi:printer-3d-nozzle-alert-outline"></ha-icon>Kein AMS für diesen Drucker erkannt.</div></section>`;
-    return `<section class="panel glow"><div class="panel-head"><div><div class="eyebrow">Material System</div><div class="panel-title">AMS · ${groups.length} ${groups.length === 1 ? "Einheit" : "Einheiten"}</div></div></div><div class="ams-list">${groups.map((g) => this._renderAmsUnit(g)).join("")}</div>${this._renderSelectedSpoolDetail()}</section>`;
+    return `<section class="panel glow"><div class="panel-head"><div><div class="eyebrow">Material System</div><div class="panel-title">AMS · ${groups.length} ${groups.length === 1 ? "Einheit" : "Einheiten"}</div></div></div><div class="ams-list">${groups.map((g) => this._renderAmsUnit(g)).join("")}</div></section>`;
   }
 
   _collectAmsGroups(printer) {
@@ -1411,7 +1439,7 @@ class BambuLabDashboard extends HTMLElement {
     const preferred = ["friendly_name","slot","tray_type","type","filament_type","tray_sub_brands","filament_name","tray_color","color","remaining_filament","remaining","tray_weight","nozzle_temp_min","nozzle_temp_max","tag_uid","tray_uuid"];
     const keys = [...preferred.filter((k)=>attrs[k] !== undefined), ...Object.keys(attrs).filter((k)=>!preferred.includes(k) && !["icon","entity_picture"].includes(k))];
     const rows = keys.map((k)=>`<div class="spool-detail-row"><small>${cssEscape(k.replaceAll("_"," "))}</small><strong>${cssEscape(Array.isArray(attrs[k]) ? attrs[k].join(", ") : typeof attrs[k] === "object" ? JSON.stringify(attrs[k]) : attrs[k])}</strong></div>`).join("");
-    return `<div class="ams-slot-detail"><div class="spool-dialog-head"><div><div class="eyebrow">AMS Slot Details</div><div class="panel-title">${cssEscape(attrs.friendly_name || entityId)}</div></div><button class="dialog-close" data-close-spool-inline aria-label="Schließen">×</button></div><div class="spool-dialog-grid"><div class="spool-detail-row"><small>Status</small><strong>${cssEscape(st.state)}</strong></div>${rows}</div><button class="fleet-detail" data-more-info="${cssEscape(entityId)}">Home-Assistant-Details öffnen <ha-icon icon="mdi:open-in-new"></ha-icon></button></div>`;
+    return `<div class="spool-modal-backdrop" data-close-spool-backdrop><div class="spool-modal" data-spool-modal-box><div class="spool-dialog-head"><div><div class="eyebrow">AMS Slot Details</div><div class="panel-title">${cssEscape(attrs.friendly_name || entityId)}</div></div><button class="dialog-close" data-close-spool-inline aria-label="Schließen">×</button></div><div class="spool-dialog-grid"><div class="spool-detail-row"><small>Status</small><strong>${cssEscape(st.state)}</strong></div>${rows}</div><button class="fleet-detail" data-more-info="${cssEscape(entityId)}">Home-Assistant-Details öffnen <ha-icon icon="mdi:open-in-new"></ha-icon></button></div></div>`;
   }
 
   _showSpoolDetail(entityId) {
@@ -1566,7 +1594,8 @@ class BambuLabDashboard extends HTMLElement {
     }));
     this.shadowRoot.querySelectorAll("[data-action]").forEach((btn) => btn.addEventListener("click", (ev) => this._handleAction(ev.currentTarget.dataset.action)));
     this.shadowRoot.querySelectorAll("[data-spool-entity]").forEach((el)=>el.addEventListener("click", (ev)=>this._showSpoolDetail(ev.currentTarget.dataset.spoolEntity)));
-    this.shadowRoot.querySelector("[data-close-spool-inline]")?.addEventListener("click", ()=>{ this._selectedSpoolEntityId=null; this._render(); });
+    this.shadowRoot.querySelector("[data-close-spool-inline]")?.addEventListener("click", (ev)=>{ ev.stopPropagation(); this._selectedSpoolEntityId=null; this._render(); });
+    this.shadowRoot.querySelector("[data-close-spool-backdrop]")?.addEventListener("click", (ev)=>{ if (ev.target.closest?.("[data-spool-modal-box]")) return; this._selectedSpoolEntityId=null; this._render(); });
     this.shadowRoot.querySelectorAll("[data-more-info]").forEach((el)=>el.addEventListener("click", (ev)=>this._showMoreInfo(ev.currentTarget.dataset.moreInfo)));
     this.shadowRoot.querySelectorAll("[data-entity-action]").forEach((el)=>el.addEventListener("click", (ev)=>this._callEntity({entity_id:ev.currentTarget.dataset.entityAction})));
     this.shadowRoot.querySelectorAll("[data-number-set]").forEach((el)=>el.addEventListener("click", (ev)=>{ const id=ev.currentTarget.dataset.numberSet; const input=this.shadowRoot.querySelector(`[data-number-input="${CSS.escape(id)}"]`); if(input)this._setNumber(id,input.value); }));

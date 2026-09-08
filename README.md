@@ -2,6 +2,11 @@
 
 Eigenständiges Mehrdrucker-Control-Center für Home Assistant. Die Karte nutzt ausschließlich die Geräte, Entitäten und Services der Home-Assistant-Integration [greghesp/ha-bambulab](https://github.com/greghesp/ha-bambulab). Zusätzliche Bambu-Lovelace-Karten sind nicht erforderlich.
 
+<p align="center">
+  <img src="docs/images/dashboard-overview.png" alt="Bambu Lab Dashboard – Übersicht" width="1000">
+</p>
+
+
 ## Wichtig: Schreibzugriffe und „nur Licht geht“
 
 `greghesp/ha-bambulab` dokumentiert selbst eine Firmware-/Autorisierungsbeschränkung von Bambu Lab: Lesefunktionen bleiben erhalten, aber im Cloud-/Hybrid-Betrieb können die meisten Schreibfunktionen fehlen. Für ältere Hybrid-Firmwares nennt die Integration ausdrücklich den Fall, dass **nur das Licht steuerbar bleibt**. Für volle Schreibzugriffe verlangt die Integration LAN Mode plus Developer LAN Mode. Das Dashboard kann diese Sperre nicht umgehen und zeigt sie ab v1.6.0 direkt im Steuerbereich an.
@@ -19,7 +24,7 @@ Plugin-Hinweis: https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx
 type: custom:bambu-lab-dashboard
 ```
 
-## Funktionen in v1.6.0
+## Funktionen in v1.6.2
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
@@ -43,7 +48,7 @@ type: custom:bambu-lab-dashboard
 
 ## Steuerung: genaue Zuordnung zum offiziellen Plugin
 
-v1.6.0 ordnet Steuerungen nicht mehr anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
+v1.6.2 ordnet Steuerungen nicht mehr anhand beliebiger Namen zu, sondern nach **Domain + `translation_key`/Unique-ID** aus dem kompletten Gerätebaum des Druckers.
 
 | Funktion | `ha-bambulab` Entity |
 |---|---|
@@ -119,3 +124,7 @@ Die Tests prüfen Syntax, Discovery, Entity-Zuordnung, Steuerungs-Rendering, Hyb
 ## Lizenz
 
 MIT. Bambu Lab ist eine Marke des jeweiligen Rechteinhabers. Dieses Community-Projekt ist nicht offiziell mit Bambu Lab verbunden.
+
+### Mobile Bedienung
+
+Ab v1.6.1 werden laufende Home-Assistant-Statusupdates während eines aktiven Touch-/Scroll-Vorgangs kurz zurückgestellt, damit die Ansicht auf iPhone/Android nicht springt. Die AMS-Slot-Details öffnen auf Mobilgeräten als vollflächiges responsives Fenster und nicht mehr inline unter der AMS-Liste.

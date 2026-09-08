@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.2
+
+- README um einen verkleinerten, zentrierten Dashboard-Screenshot ergänzt (`docs/images/dashboard-overview.png`, 1000 px Darstellungsbreite).
+- Alle Korrekturen aus v1.6.0 und v1.6.1 vollständig enthalten: Plugin-konforme Steuerung/Diagnose, aktives Filament, X2D-Kameradiagnose, Wartungs-Popups, proportionale Druckerbilder, Smart-Steckdose sowie mobile Scroll-/Touch-Stabilisierung und responsive AMS-Slot-Details.
+- Sichtbare Dashboard-Versionsanzeige und Paketversion auf v1.6.2 aktualisiert.
+
+## 1.6.1
+
+- Mobilansicht stabilisiert: Live-Entity-Updates lösen während eines aktiven Touch-/Scroll-Vorgangs keinen kompletten DOM-Neuaufbau mehr aus.
+- Horizontale mobile Navigation und Druckerumschaltung mit eigenem Touch-Scrolling und `touch-action` abgesichert.
+- AMS-Slot-Details öffnen jetzt in einem responsiven Modal statt unterhalb der AMS-Liste. Auf Smartphones nutzt das Detailfenster die gesamte Bildschirmfläche.
+- AMS-Detailfenster lässt sich über X oder den Hintergrund schließen; Home-Assistant-Details bleiben direkt erreichbar.
+- Mobile Scroll-Anker werden unterdrückt, um Sprünge bei Live-Updates zu vermeiden.
+
 ## 1.6.0
 
 - Entity-Erkennung der Steuerung gegen die aktuelle `greghesp/ha-bambulab`-Struktur neu aufgebaut: `button`, `select`, `number`, `fan`, `light` und `switch` werden domain- und translation-key-genau zugeordnet.
