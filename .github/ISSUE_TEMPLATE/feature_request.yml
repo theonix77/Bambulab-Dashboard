@@ -1,0 +1,16 @@
+name: Funktionswunsch
+description: Eine Erweiterung für das Dashboard vorschlagen
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: request
+    attributes:
+      label: Gewünschte Funktion
+    validations:
+      required: true
+  - type: textarea
+    id: entities
+    attributes:
+      label: Vorhandene Home-Assistant-Entitäten
+      description: Welche echten Entitäten der Bambu-Lab-Integration könnten dafür verwendet werden?

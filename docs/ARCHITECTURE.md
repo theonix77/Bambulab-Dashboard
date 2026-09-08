@@ -60,3 +60,8 @@ Bilder werden über Home Assistant geladen:
 - `/api/image_proxy/<entity_id>`
 
 Der Zugriff nutzt die laufende Home-Assistant-Sitzung. Das Dashboard enthält keine Bambu-Zugangsdaten.
+
+
+## Standalone-Build
+
+Die HACS-Ressource enthält sämtliche Runtime-Logik und Styles in `Bambulab-Dashboard.js`. Es gibt zur Laufzeit keine relativen Modulimporte. Modellgrafiken werden anhand von `device.model` auf die vorhandenen Upstream-Bilder des Bambu-Lab-Cards-Projekts abgebildet.

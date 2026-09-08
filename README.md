@@ -99,9 +99,9 @@ Welche Steuerbefehle verfügbar sind, bestimmt die Bambu-Lab-Integration zusamme
 
 ## Datenschutz und Sicherheit
 
-- keine Cloud-Dienste dieses Dashboards
+- keine eigene Cloud, kein eigener Backend-Dienst und keine Telemetrie
 - keine Telemetrie
-- keine externen Tracking-Skripte
+- keine externen Tracking-Skripte; die modellabhängige Druckergrafik wird direkt aus dem bestehenden GitHub-Projekt `greghesp/ha-bambulab-cards` geladen
 - keine gespeicherten Bambu-Zugangsdaten
 - Kamera- und Bildzugriffe laufen über die vorhandenen Home-Assistant-Proxy-Endpunkte und die aktive Home-Assistant-Sitzung
 
@@ -124,4 +124,13 @@ npm run check
 
 MIT License. Siehe [LICENSE](LICENSE).
 
-Dieses Projekt ist ein unabhängiges Community-Projekt und steht in keiner offiziellen Verbindung zu Bambu Lab. „Bambu Lab“ und zugehörige Produktnamen/Marken gehören ihren jeweiligen Rechteinhabern. Das Repository enthält bewusst keine kopierten Produkt-Renderings.
+Dieses Projekt ist ein unabhängiges Community-Projekt und steht in keiner offiziellen Verbindung zu Bambu Lab. „Bambu Lab“ und zugehörige Produktnamen/Marken gehören ihren jeweiligen Rechteinhabern. Die Druckergrafiken werden nicht in diesem Repository kopiert, sondern zur Laufzeit direkt aus dem bestehenden `greghesp/ha-bambulab-cards`-Repository geladen.
+
+
+## Druckerabbildungen
+
+Das Dashboard erkennt das Modell aus der Home-Assistant-Geräteregistrierung und lädt automatisch die bereits im Projekt `greghesp/ha-bambulab-cards` verwendete Modellgrafik (z. B. P1S, X1C, A1, A1 Mini, P2S, H2-Serie, X2D). Es muss keine Bild-URL konfiguriert werden. Ist für ein neues Modell noch keine Upstream-Grafik vorhanden oder ist GitHub nicht erreichbar, zeigt die Karte automatisch ein neutrales Drucker-Symbol statt eines falschen Bildes.
+
+## Laufzeitdatei
+
+HACS lädt nur `Bambulab-Dashboard.js`. Diese Datei ist vollständig eigenständig und hat keine relativen JavaScript-Imports. Dadurch reicht nach der HACS-Installation die Lovelace-Konfiguration `type: custom:bambu-lab-dashboard`.

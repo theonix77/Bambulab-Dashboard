@@ -1,21 +1,27 @@
+import fs from "node:fs";
+import vm from "node:vm";
 import assert from "node:assert/strict";
-import { buildPrinterModels, entitySuffixMatches } from "../bambu-dashboard-utils.js";
-
-const devices = [
-  { id: "printer", manufacturer: "Bambu Lab", model: "X-Series", name: "Werkstattdrucker", via_device_id: null, identifiers: [["bambu_lab", "SERIAL"]] },
-  { id: "ams", manufacturer: "Bambu Lab", model: "AMS", name: "AMS", via_device_id: "printer", identifiers: [["bambu_lab", "AMS_SERIAL"]] },
+const code = fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url), "utf8");
+const marker = "class BambuLabDashboard extends HTMLElement";
+const prelude = code.slice(0, code.indexOf(marker));
+const context = { console, Intl, URL };
+vm.createContext(context);
+vm.runInContext(`${prelude}\nthis.__test={buildPrinterModels,printerArtworkUrl,entitySuffixMatches};`, context);
+const {buildPrinterModels, printerArtworkUrl, entitySuffixMatches}=context.__test;
+const devices=[
+ {id:"printer",manufacturer:"Bambu Lab",model:"P1S",name:"P1S",via_device_id:null,identifiers:[["bambu_lab","SERIAL"]]},
+ {id:"ams",manufacturer:"Bambu Lab",model:"AMS",name:"AMS",via_device_id:"printer",identifiers:[["bambu_lab","AMS"]]},
 ];
-const entities = [
-  { entity_id: "sensor.p_bed", platform: "bambu_lab", device_id: "printer", unique_id: "SERIAL_bed_temp" },
-  { entity_id: "sensor.p_nozzle", platform: "bambu_lab", device_id: "printer", unique_id: "SERIAL_nozzle_temp" },
-  { entity_id: "sensor.p_progress", platform: "bambu_lab", device_id: "printer", unique_id: "SERIAL_print_progress" },
-  { entity_id: "sensor.ams_tray", platform: "bambu_lab", device_id: "ams", unique_id: "SERIAL_AMS_AMS_SERIAL_tray_1" },
+const entities=[
+ {entity_id:"sensor.p1s_print_progress",platform:"bambu_lab",device_id:"printer",unique_id:"SERIAL_print_progress"},
+ {entity_id:"sensor.p1s_bed_temp",platform:"bambu_lab",device_id:"printer",unique_id:"SERIAL_bed_temp"},
+ {entity_id:"sensor.ams_tray_1",platform:"bambu_lab",device_id:"ams",unique_id:"SERIAL_AMS_X_tray_1"},
 ];
-
-const printers = buildPrinterModels(devices, entities);
-assert.equal(printers.length, 1);
-assert.equal(printers[0].id, "printer");
-assert.equal(printers[0].childEntries.length, 1);
-assert.equal(entitySuffixMatches("SERIAL_target_bed_temp", "target_bed_temp"), true);
-assert.equal(entitySuffixMatches("SERIAL_Speed", "Speed"), true);
-console.log("Discovery tests OK");
+const models=buildPrinterModels(devices,entities);
+assert.equal(models.length,1);
+assert.equal(models[0].id,"printer");
+assert.equal(models[0].childEntries.length,1);
+assert.equal(entitySuffixMatches("SERIAL_print_progress","print_progress"),true);
+assert.equal(printerArtworkUrl(devices[0]),"https://raw.githubusercontent.com/greghesp/ha-bambulab-cards/main/src/images/P1S.png");
+assert.equal(printerArtworkUrl({...devices[0],model:"A1 Mini"}).endsWith("/A1Mini.png"),true);
+console.log("discovery/model artwork tests: ok");

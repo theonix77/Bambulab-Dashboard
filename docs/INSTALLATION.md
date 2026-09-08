@@ -48,3 +48,8 @@ Im Karteneditor kann ein Preis in Euro pro kWh eingetragen werden. Kosten werden
 Updates erfolgen über HACS. Nach einem Frontend-Update kann ein vollständiges Neuladen des Browser-Caches nötig sein.
 
 Auf iOS/Safari hilft bei hartnäckigem Cache gegebenenfalls ein erneutes Laden der Home-Assistant-App beziehungsweise der WebView.
+
+
+### Technischer Check
+
+Unter **Einstellungen → Dashboards → Ressourcen** muss eine Ressource ähnlich `/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js` als JavaScript-Modul stehen. Die Datei ist ab v1.0.1 vollständig standalone; zusätzliche JS-Ressourcen sind nicht erforderlich.

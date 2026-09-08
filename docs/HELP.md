@@ -54,3 +54,8 @@ Die Karte ruft nur vorhandene Home-Assistant-Services der bereitgestellten Entit
 4. Falls nötig Browser-Cache leeren.
 
 In der Browser-Konsole wird beim Laden die Dashboard-Version ausgegeben.
+
+
+### `Custom element doesn't exist: bambu-lab-dashboard`
+
+Dieser Fehler betraf die erste 1.0.0-Vorschau. Ab 1.0.1 ist `Bambulab-Dashboard.js` eine einzelne eigenständige Datei. Nach einem Update in HACS den Browser hart neu laden. Falls der Fehler bleibt, die Ressourcen-Seite prüfen und sicherstellen, dass `/hacsfiles/Bambulab-Dashboard/Bambulab-Dashboard.js` als JavaScript-Modul eingetragen ist.

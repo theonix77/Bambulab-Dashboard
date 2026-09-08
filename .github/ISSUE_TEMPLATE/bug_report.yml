@@ -1,0 +1,38 @@
+name: Fehler melden
+description: Einen reproduzierbaren Fehler im Dashboard melden
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Danke für den Fehlerbericht. Bitte keine Zugangsdaten oder Seriennummern veröffentlichen.
+  - type: input
+    id: ha
+    attributes:
+      label: Home-Assistant-Version
+    validations:
+      required: true
+  - type: input
+    id: integration
+    attributes:
+      label: Version der Bambu-Lab-Integration
+    validations:
+      required: true
+  - type: input
+    id: printer
+    attributes:
+      label: Druckermodell
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Fehlerbeschreibung
+      description: Was passiert und was wurde erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Browser-Konsole
+      description: Relevante Meldungen ohne Zugangsdaten einfügen.
