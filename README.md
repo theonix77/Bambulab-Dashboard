@@ -37,6 +37,7 @@ type: custom:bambu-lab-dashboard
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
+- Endzeit des aktiven Druckauftrags in der Übersicht, automatisch erkannt oder über `end_time_entity` manuell zugeordnet.
 - Druckerbilder ausschließlich proportional skalieren (`object-fit: contain`, keine Verzerrung).
 - Dark / Light / automatisch nach Home Assistant.
 - Druckbild/Cover groß in der Detailansicht.
@@ -51,6 +52,7 @@ type: custom:bambu-lab-dashboard
   - `light`: Kammerlicht
   - `switch`: Kamera-/Bildmodus und Hinweistöne, sofern vorhanden
 - Optionales zweites `light.*`-Licht pro Drucker, im Karteneditor über ein Dropdown auswählbar und in den Quick Controls als „Licht 2“ steuerbar.
+- Optionaler Idle-Shutdown-Helper (`input_boolean`), in den Quick Controls mit Timer-Status und EIN/AUS-Anzeige steuerbar.
 - Externe Smart-Steckdose als `switch.*` pro Drucker, inklusive EIN/AUS und Sicherheitsabfrage beim Ausschalten während eines Drucks.
 - Leistungs- und Energiesensoren frei zuordnen.
 - Wartungsplan pro Drucker mit quittierbaren Aufgaben und Wartungsbuch.
