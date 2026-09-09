@@ -13,10 +13,11 @@ const printer={id:"p",device:{model:"P1S",name:"P1S"},entries:[
  {entity_id:"sensor.p_progress",unique_id:"S_print_progress",translation_key:"print_progress",platform:"bambu_lab"},
  {entity_id:"sensor.p_usage",unique_id:"S_total_usage_hours",translation_key:"total_usage_hours",platform:"bambu_lab"},
 ],childDevices:[]};
-card._config={}; card._printers=[printer]; card._selectedPrinterId='p'; card._devices=[]; card._entities=[];
+card._config={printers:[{device_id:'p',secondary_light_entity:'light.p_extra'}]}; card._printers=[printer]; card._selectedPrinterId='p'; card._devices=[]; card._entities=[];
 card._hass={themes:{darkMode:true},entities:{
  'select.p_speed':{entity_id:'select.p_speed',device_id:'p',translation_key:'printing_speed',platform:'bambu_lab'},
  'button.p_pause':{entity_id:'button.p_pause',device_id:'p',translation_key:'pause',platform:'bambu_lab'},
+ 'light.p_extra':{entity_id:'light.p_extra',device_id:'p',translation_key:'extra_light',platform:'bambu_lab'},
  'number.p_nozzle':{entity_id:'number.p_nozzle',device_id:'p',translation_key:'target_nozzle_temperature',platform:'bambu_lab'},
  'fan.p_cooling':{entity_id:'fan.p_cooling',device_id:'p',translation_key:'cooling_fan',platform:'bambu_lab'},
  'binary_sensor.p_hybrid':{entity_id:'binary_sensor.p_hybrid',device_id:'p',translation_key:'hybrid_mode_blocks_control',platform:'bambu_lab'},
@@ -38,5 +39,6 @@ assert.equal(card._themeClass(),'theme-dark');
 card._config.theme='light'; assert.equal(card._themeClass(),'theme-light');
 assert.match(card._renderPrinterOverviewCard(printer),/42<span>%<\/span>/);
 const controls=card._renderControls(printer); assert.match(controls,/Pause/); assert.match(controls,/Düse Soll/); assert.match(controls,/Bauteillüfter/); assert.match(controls,/Druckgeschwindigkeit/); assert.match(controls,/Schreibzugriffe sind für diesen Drucker eingeschränkt/);
+assert.match(controls,/Licht 2/); assert.match(controls,/light\.p_extra/);
 assert.match(card._renderActiveFilament(printer),/Bambu PETG/); assert.match(card._renderActiveFilament(printer),/66%/);
 console.log('runtime tests: ok');

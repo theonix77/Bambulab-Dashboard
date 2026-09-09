@@ -28,6 +28,9 @@ assert.match(code,/data-close-spool-inline/);
 assert.match(code,/total_usage_entity/);
 
 assert.match(code,/smart_plug_entity/);
+assert.match(code,/secondary_light_entity/);
+assert.match(code,/allLightEntities/);
+assert.match(code,/secondaryChamberLight/);
 assert.match(code,/camera_proxy_stream/);
 assert.match(code,/_officialMaintenanceTasks/);
 assert.match(code,/_activeFilament/);

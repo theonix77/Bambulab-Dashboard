@@ -50,6 +50,7 @@ type: custom:bambu-lab-dashboard
   - `fan`: Bauteil-, Aux-, Kammer- und weitere Lüfter
   - `light`: Kammerlicht
   - `switch`: Kamera-/Bildmodus und Hinweistöne, sofern vorhanden
+- Optionales zweites `light.*`-Licht pro Drucker, im Karteneditor über ein Dropdown auswählbar und in den Quick Controls als „Licht 2“ steuerbar.
 - Externe Smart-Steckdose als `switch.*` pro Drucker, inklusive EIN/AUS und Sicherheitsabfrage beim Ausschalten während eines Drucks.
 - Leistungs- und Energiesensoren frei zuordnen.
 - Wartungsplan pro Drucker mit quittierbaren Aufgaben und Wartungsbuch.
