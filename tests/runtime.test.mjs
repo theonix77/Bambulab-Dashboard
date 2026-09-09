@@ -35,6 +35,7 @@ card._hass={themes:{darkMode:true},entities:{
  'fan.p_cooling':{entity_id:'fan.p_cooling',state:'on',attributes:{percentage:50}},
  'binary_sensor.p_hybrid':{entity_id:'binary_sensor.p_hybrid',state:'on',attributes:{}},
  'sensor.p_active_tray':{entity_id:'sensor.p_active_tray',state:'Bambu PETG',attributes:{name:'Bambu PETG',type:'PETG',color:'#112233',remain:66}},
+ 'light.p_extra':{entity_id:'light.p_extra',state:'on',attributes:{}},
  'input_boolean.idle_shutdown':{entity_id:'input_boolean.idle_shutdown',state:'on',attributes:{}},
 }};
 assert.equal(card._isPrinterActive(printer),true);
@@ -45,7 +46,7 @@ assert.match(card._renderPrinterOverviewCard(printer),/42<span>%<\/span>/);
 assert.match(card._renderPrinterOverviewCard(printer),/Endzeit/);
 assert.match(card._renderPrinterOverviewCard(printer),/09\.09\.2026/);
 const controls=card._renderControls(printer); assert.match(controls,/Pause/); assert.match(controls,/Düse Soll/); assert.match(controls,/Bauteillüfter/); assert.match(controls,/Druckgeschwindigkeit/); assert.match(controls,/Schreibzugriffe sind für diesen Drucker eingeschränkt/);
-assert.match(controls,/Licht 2/); assert.match(controls,/light\.p_extra/);
+assert.match(controls,/Licht 2 EIN/); assert.match(controls,/light\.p_extra/); assert.match(controls,/mdi:lightbulb/);
 assert.match(controls,/Leerlaufabschaltung EIN/); assert.match(controls,/mdi:timer/);
 assert.match(card._renderActiveFilament(printer),/Bambu PETG/); assert.match(card._renderActiveFilament(printer),/66%/);
 console.log('runtime tests: ok');
