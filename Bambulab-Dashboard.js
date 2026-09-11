@@ -80,6 +80,7 @@ const ENTITY_KEYS = {
   timelapse: ["timelapse"],
   speed: ["printing_speed", "Speed", "speed", "speed_profile"],
   chamberLight: ["chamber_light", "camera_light", "light"],
+  idleShutdown: ["idle_shutdown"],
   camera: ["camera"],
   coverImage: ["cover_image"],
   jobImage: ["cover_image", "pick_image"],
@@ -112,6 +113,7 @@ const ENTITY_OVERRIDE_FIELDS = Object.freeze({
   status: "status_entity",
   taskName: "task_entity",
   remainingTime: "remaining_time_entity",
+  endTime: "end_time_entity",
   nozzleTemp: "nozzle_temp_entity",
   bedTemp: "bed_temp_entity",
   online: "online_entity",
@@ -125,6 +127,8 @@ const ENTITY_OVERRIDE_FIELDS = Object.freeze({
   resume: "resume_entity",
   stop: "stop_entity",
   chamberLight: "light_entity",
+  secondaryChamberLight: "secondary_light_entity",
+  idleShutdown: "idle_shutdown_entity",
   targetNozzleControl: "target_nozzle_control_entity",
   targetBedControl: "target_bed_control_entity",
   targetChamberControl: "target_chamber_control_entity",
@@ -229,6 +233,18 @@ function formatDurationMinutes(value) {
   const m = minutes % 60;
   if (h > 0) return `${h} h ${m.toString().padStart(2, "0")} min`;
   return `${m} min`;
+}
+
+function formatEndTime(value, hass) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "–";
+  let date = new Date(raw);
+  if (!Number.isFinite(date.getTime()) && /^\d+(\.\d+)?$/.test(raw)) {
+    const numeric = Number(raw);
+    date = new Date(numeric < 100000000000 ? numeric * 1000 : numeric);
+  }
+  if (!Number.isFinite(date.getTime())) return raw;
+  return date.toLocaleString(uiLocale(hass), { dateStyle: "short", timeStyle: "short" });
 }
 
 function translateStatus(value) {
@@ -403,7 +419,7 @@ function formatWatt(value) {
 
 const I18N_EN = Object.freeze({
   "Übersicht":"Overview","Drucker-Details":"Printer Details","Energie":"Energy","Wartung":"Maintenance",
-  "Restzeit":"Remaining","Düse":"Nozzle","Bett":"Bed","Laufzeit":"Runtime","Details öffnen":"Open details",
+  "Restzeit":"Remaining","Endzeit":"End time","Düse":"Nozzle","Bett":"Bed","Laufzeit":"Runtime","Details öffnen":"Open details",
   "Alle Drucker":"All printers","Drucker erkannt":"printers detected","aktiv":"active","druckt":"printing","gesamt":"total",
   "Kein Drucker ausgewählt.":"No printer selected.","Mehrdrucker-Control-Center mit AMS, Kamera, Steuerung, Energie und Wartung.":"Multi-printer control center with AMS, camera, controls, energy and maintenance.",
   "Bambu-Geräte werden automatisch erkannt …":"Bambu devices are being detected automatically …","Geräteerkennung fehlgeschlagen":"Device discovery failed",
@@ -477,7 +493,7 @@ const I18N_EN = Object.freeze({
   "Nur verwenden, wenn ein automatisch erkannter Wert falsch ist. Damit lassen sich z. B. Fortschritt, Status oder Auftrag eines Druckers eindeutig auf eine bestimmte Home-Assistant-Entity festlegen.":"Use only if an automatically detected value is incorrect. This lets you explicitly map values such as progress, status or print job to a specific Home Assistant entity.",
   "Status":"Status","Online-Status":"Online status","Druckbild":"Print image","Luftkanal-Modus":"Air duct mode","Keine passenden":"No matching","verfügbar":"available","Keine zusätzlichen":"No additional","vorhanden":"present","fehlt":"missing","nicht gemeldet":"not reported",
   "Mit warmem Wasser und Spülmittel reinigen und vollständig trocknen. Bambu nennt bei normaler Nutzung 1 Woche.":"Clean with warm water and dish soap, then dry completely. Bambu specifies one week for normal use.",
-  "Steuerung":"Controls","Schalter":"Switches","Temperaturen":"Temperatures","Modi":"Modes","Setzen":"Set","Alarm aus":"Silence alarm","Signalton":"Buzzer","Die Bambu-Integration stellt für diesen Drucker aktuell keine steuerbaren Entities außer ggf. Licht bereit.":"The Bambu integration currently provides no controllable entities for this printer except possibly the light.",
+  "Steuerung":"Controls","Schalter":"Switches","Temperaturen":"Temperatures","Modi":"Modes","Setzen":"Set","Alarm aus":"Silence alarm","Signalton":"Buzzer","Leerlaufabschaltung":"Idle shutdown","EIN":"ON","AUS":"OFF","Zusatzlicht":"Additional light","Die Bambu-Integration stellt für diesen Drucker aktuell keine steuerbaren Entities außer ggf. Licht bereit.":"The Bambu integration currently provides no controllable entities for this printer except possibly the light.",
   "Die Karte nutzt immer die komplette Breite, die Home Assistant ihrer Section gibt. Für mehr als eine normale Section-Breite musst du die ":"The card always uses the full width provided by its Home Assistant section. For more than a normal section width, you must make the ","Section selbst breiter":"section itself wider"," machen (2–3 Sections) oder eine ":" (2–3 sections) or use a "," verwenden. Eine Custom Card kann die Breite ihrer übergeordneten Section technisch nicht verändern.":". A custom card cannot technically change the width of its parent section.",
   "Für die Steckdose werden alle ":"For the smart plug, all ","-Entities angeboten; für Messwerte alle ":"-entities are offered; for measurements, all ","-Entities. Dadurch werden Smart-Steckdosen-Sensoren nicht mehr durch einen zu engen Filter ausgeblendet.":"-entities are offered. This prevents smart-plug sensors from being hidden by an overly restrictive filter."
 
@@ -697,6 +713,9 @@ const styles = `
   .spool-meta { margin-top:3px; color:var(--bd-muted); font-size:9px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .controls { padding:14px 17px 17px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
   .control-btn { cursor:pointer; border-radius:13px; padding:11px 10px; border:1px solid var(--bd-border); background:rgba(255,255,255,.022); display:flex; align-items:center; justify-content:center; gap:8px; font-size:12px; font-weight:800; transition:.18s ease; }
+  .control-btn.on { color:#c5ffba; border-color:rgba(80,217,38,.42); background:rgba(80,217,38,.08); }
+  .control-state { color:var(--bd-muted); font-size:10px; letter-spacing:.06em; }
+  .control-btn.on .control-state { color:#c5ffba; }
   .control-btn:hover:not(:disabled) { transform:translateY(-1px); border-color:rgba(80,217,38,.42); background:rgba(80,217,38,.06); }
   .control-btn:disabled { opacity:.35; cursor:not-allowed; }
   .control-btn.danger:hover:not(:disabled) { border-color:rgba(255,95,98,.45); background:rgba(255,95,98,.06); }
@@ -1271,6 +1290,7 @@ class BambuLabDashboard extends HTMLElement {
     const statusRaw = this._val(printer, "status", "unknown");
     const taskRaw = this._val(printer, "taskName", null);
     const remaining = this._num(printer, "remainingTime", null);
+    const endTime = this._val(printer, "endTime", null);
     const nozzle = this._st(printer, "nozzleTemp");
     const bed = this._st(printer, "bedTemp");
     const product = this._printerArtworkUrl(printer);
@@ -1287,6 +1307,7 @@ class BambuLabDashboard extends HTMLElement {
       </div>
       <div class="fleet-metrics">
         <div><span>Restzeit</span><strong>${!isPrinting || remaining === null ? "–" : formatDurationMinutes(remaining)}</strong></div>
+        <div><span>Endzeit</span><strong>${!isPrinting ? "–" : formatEndTime(endTime, this._hass)}</strong></div>
         <div><span>Düse</span><strong>${this._formatStateWithUnit(nozzle)}</strong></div>
         <div><span>Bett</span><strong>${this._formatStateWithUnit(bed)}</strong></div>
         <div><span>AMS</span><strong>${amsCount || "–"}</strong></div><div><span>Laufzeit</span><strong>${this._formatDurationState(this._totalUsageState(printer).state)}</strong></div>
@@ -1591,7 +1612,13 @@ class BambuLabDashboard extends HTMLElement {
   _renderControls(printer) {
     const ce=(key)=>this._controlEntity(printer,key);
     const state=(r)=>r?.entity_id?this._hass?.states?.[r.entity_id]:null;
-    const buttons=[[ce("pause"),"mdi:pause","Pause",false],[ce("resume"),"mdi:play","Fortsetzen",false],[ce("stop"),"mdi:stop","Stop",true],[ce("chamberLight"),"mdi:lightbulb","Licht",false],[ce("buzzerSilence"),"mdi:alarm-light-off-outline","Alarm aus",false],[ce("buzzerBeep"),"mdi:alarm-light-outline","Signalton",false]].filter(([r])=>r?.entity_id);
+    const idleShutdown=ce("idleShutdown");
+    const idleOn=normalize(state(idleShutdown)?.state)==="on";
+    const chamberLight=ce("chamberLight");
+    const secondaryChamberLight=ce("secondaryChamberLight");
+    const chamberLightOn=normalize(state(chamberLight)?.state)==="on";
+    const secondaryChamberLightOn=normalize(state(secondaryChamberLight)?.state)==="on";
+    const buttons=[[ce("pause"),"mdi:pause","Pause",false],[ce("resume"),"mdi:play","Fortsetzen",false],[ce("stop"),"mdi:stop","Stop",true],[chamberLight,chamberLightOn?"mdi:lightbulb":"mdi:lightbulb-off","Licht",false,chamberLightOn,chamberLightOn?"EIN":"AUS"],[secondaryChamberLight,secondaryChamberLightOn?"mdi:lightbulb":"mdi:lightbulb-off","Licht 2",false,secondaryChamberLightOn,secondaryChamberLightOn?"EIN":"AUS"],[idleShutdown,idleOn?"mdi:timer":"mdi:timer-off",`Leerlaufabschaltung ${idleOn?"EIN":"AUS"}`,false],[ce("buzzerSilence"),"mdi:alarm-light-off-outline","Alarm aus",false],[ce("buzzerBeep"),"mdi:alarm-light-outline","Signalton",false]].filter(([r])=>r?.entity_id);
     const switches=[[ce("cameraSwitch"),"Kamera aktiv"],[ce("imageCameraSwitch"),"Kamera Einzelbilder"],[ce("promptSound"),"Hinweistöne"]].filter(([r])=>r?.entity_id);
     const numbers=[[ce("targetNozzleControl"),"Düse Soll"],[ce("targetBedControl"),"Bett Soll"],[ce("targetChamberControl"),"Kammer Soll"]].filter(([r])=>r?.entity_id);
     const fans=[[ce("coolingFanControl"),"Bauteillüfter"],[ce("auxFanControl"),"Aux-Lüfter"],[ce("chamberFanControl"),"Kammerlüfter"],[ce("secondaryAuxFanControl"),"Aux-Lüfter 2"]].filter(([r])=>r?.entity_id);
@@ -1599,7 +1626,7 @@ class BambuLabDashboard extends HTMLElement {
     const restriction=this._writeRestriction(printer);
     const writableCount=buttons.filter(([r])=>r.entity_id.split(".")[0]!=="light").length+switches.length+numbers.length+fans.length+selects.length;
     const warning=(restriction.restricted || writableCount===0) ? `<div class="control-warning"><strong>Schreibzugriffe sind für diesen Drucker eingeschränkt.</strong>Die offizielle ha-bambulab-Integration dokumentiert, dass bei gesperrter Firmware bzw. Hybrid-/Cloud-Betrieb die meisten Schreibfunktionen nicht bereitgestellt werden; bei älteren Hybrid-Firmwares bleibt ausdrücklich nur das Licht steuerbar. Für volle Schreibzugriffe verlangt die Integration LAN Mode + Developer LAN Mode. <a href="https://github.com/greghesp/ha-bambulab/blob/main/docs/index.mdx" target="_blank" rel="noopener">Plugin-Hinweis öffnen</a><div class="capability-list"><div class="capability-row"><span>Hybrid blockiert</span><code>${cssEscape(restriction.hybridState||"nicht gemeldet")}</code></div><div class="capability-row"><span>Developer LAN Mode</span><code>${cssEscape(restriction.developerState||"nicht gemeldet")}</code></div><div class="capability-row"><span>MQTT-Verschlüsselung</span><code>${cssEscape(restriction.encryptionState||"nicht gemeldet")}</code></div></div></div>` : "";
-    const buttonHtml=buttons.length?`<div class="control-group"><div class="control-group-title">Druck & Gerät</div><div class="controls">${buttons.map(([r,i,l,d])=>`<button class="control-btn ${d?"danger":""}" data-entity-action="${cssEscape(r.entity_id)}"><ha-icon icon="${i}"></ha-icon>${l}</button>`).join("")}</div></div>`:"";
+    const buttonHtml=buttons.length?`<div class="control-group"><div class="control-group-title">Druck & Gerät</div><div class="controls">${buttons.map(([r,i,l,d,on,status])=>`<button class="control-btn ${d?"danger":""} ${on===true?"on":""}" data-entity-action="${cssEscape(r.entity_id)}"><ha-icon icon="${i}"></ha-icon><span>${l}</span>${status?`<strong class="control-state">${status}</strong>`:""}</button>`).join("")}</div></div>`:"";
     const switchHtml=switches.length?`<div class="control-group"><div class="control-group-title">Schalter</div><div class="control-grid">${switches.map(([r,l])=>{const st=state(r),on=normalize(st?.state)==="on";return `<button class="toggle-row ${on?"on":""}" data-entity-action="${cssEscape(r.entity_id)}"><span>${l}</span><strong>${on?"EIN":"AUS"}</strong></button>`}).join("")}</div></div>`:"";
     const numberHtml=numbers.length?`<div class="control-group"><div class="control-group-title">Temperaturen</div><div class="control-grid">${numbers.map(([r,l])=>{const st=state(r);return `<div class="control-field"><label>${l}</label><div class="number-set-row"><input type="number" data-number-input="${cssEscape(r.entity_id)}" value="${cssEscape(st?.state??"")}" min="${cssEscape(st?.attributes?.min??0)}" max="${cssEscape(st?.attributes?.max??350)}" step="${cssEscape(st?.attributes?.step??1)}" ${st?"":"disabled"}><button data-number-set="${cssEscape(r.entity_id)}" ${st?"":"disabled"}>Setzen</button></div><small>${cssEscape(r.entity_id)}</small></div>`}).join("")}</div></div>`:"";
     const fanHtml=fans.length?`<div class="control-group"><div class="control-group-title">Lüfter</div><div class="control-grid">${fans.map(([r,l])=>{const st=state(r);const pct=Number(st?.attributes?.percentage ?? 0);return `<div class="control-field"><label>${l}</label><div class="fan-control-row"><input type="range" min="0" max="100" step="5" value="${Number.isFinite(pct)?pct:0}" data-fan-entity="${cssEscape(r.entity_id)}" ${st?"":"disabled"}><strong data-fan-value>${Number.isFinite(pct)?Math.round(pct):0}%</strong></div><small>${cssEscape(r.entity_id)}</small></div>`}).join("")}</div></div>`:"";
@@ -1843,7 +1870,7 @@ class BambuLabDashboard extends HTMLElement {
     try {
       if (domain === "button") return await this._hass.callService("button", "press", { entity_id: reg.entity_id });
       if (domain === "light") return await this._hass.callService("light", "toggle", { entity_id: reg.entity_id });
-      if (domain === "switch") return await this._hass.callService("switch", "toggle", { entity_id: reg.entity_id });
+      if (domain === "switch" || domain === "input_boolean") return await this._hass.callService(domain, "toggle", { entity_id: reg.entity_id });
       if (domain === "input_button") return await this._hass.callService("input_button", "press", { entity_id: reg.entity_id });
     } catch (err) {
       console.error("[Bambu Lab Dashboard] Action failed", reg.entity_id, err);
@@ -1928,6 +1955,7 @@ class BambuLabDashboardEditor extends HTMLElement {
     const allEntities = Object.values(this._hass?.states || {}).filter((st) => !!st.entity_id).sort((a,b)=>(a.attributes?.friendly_name||a.entity_id).localeCompare(b.attributes?.friendly_name||b.entity_id,"de"));
     const allSensorEntities = allEntities.filter((st) => st.entity_id?.startsWith("sensor."));
     const allSwitchEntities = allEntities.filter((st)=>st.entity_id?.startsWith("switch.") || st.entity_id?.startsWith("input_boolean."));
+    const allLightEntities = allEntities.filter((st)=>st.entity_id?.startsWith("light."));
     const unitOf = (st) => String(st.attributes?.unit_of_measurement || "").trim().toLowerCase();
     const searchable = (st) => `${st.entity_id} ${st.attributes?.friendly_name || ""}`.toLowerCase();
     const scorePower = (st) => (st.attributes?.device_class === "power" ? 100 : 0) + (["w","kw","mw"].includes(unitOf(st)) ? 50 : 0) + (/(^|[._ -])(power|leistung)([._ -]|$)/.test(searchable(st)) ? 20 : 0);
@@ -1961,13 +1989,14 @@ class BambuLabDashboardEditor extends HTMLElement {
       }).join("");
     };
     const switchOptionHtml=(selected)=>`<option value="">Nicht zugeordnet</option>`+allSwitchEntities.map(st=>{const reg=registryByEntity.get(st.entity_id);const dev=reg?.device_id?deviceById.get(reg.device_id):null;const dn=dev?(dev.name_by_user||dev.name||dev.model||""):"";return `<option value="${cssEscape(st.entity_id)}" ${selected===st.entity_id?"selected":""}>${dn?`${cssEscape(dn)} — `:""}${cssEscape(st.attributes?.friendly_name||st.entity_id)} · ${cssEscape(st.entity_id)}</option>`}).join("");
+    const lightOptionHtml=(selected)=>`<option value="">Nicht zugeordnet</option>`+allLightEntities.map(st=>{const reg=registryByEntity.get(st.entity_id);const dev=reg?.device_id?deviceById.get(reg.device_id):null;const dn=dev?(dev.name_by_user||dev.name||dev.model||""):"";return `<option value="${cssEscape(st.entity_id)}" ${selected===st.entity_id?"selected":""}>${dn?`${cssEscape(dn)} — `:""}${cssEscape(st.attributes?.friendly_name||st.entity_id)} · ${cssEscape(st.entity_id)}</option>`}).join("");
     this.shadowRoot.innerHTML = `<style>${styles}</style><datalist id="all-entity-ids">${entityOptions}</datalist><datalist id="sensor-entity-ids">${sensorOptions}</datalist><div class="editor"><h3>Bambu Lab Dashboard</h3><div class="help">Die Bambu-Lab-Integration liefert die Druckerdaten. Hier kannst du Reihenfolge, Namen, AMS, Energie, Theme und bei Bedarf auch die automatisch erkannten Kern-Entitäten pro Drucker überschreiben. Die Drucker-Modellbilder werden automatisch aus derselben Upstream-Bildquelle wie die Bambu-Karten bezogen und sind nicht manuell konfigurierbar.<br><br><strong>Breite:</strong> Die Karte nutzt immer die komplette Breite, die Home Assistant ihrer Section gibt. Für mehr als eine normale Section-Breite musst du die <strong>Section selbst breiter</strong> machen (2–3 Sections) oder eine <strong>Panel-View</strong> verwenden. Eine Custom Card kann die Breite ihrer übergeordneten Section technisch nicht verändern.</div><div class="editor-section"><div class="editor-row"><div><label>Design</label><select data-theme><option value="auto" ${(this._config.theme||"auto")==="auto"?"selected":""}>Automatisch (Home Assistant)</option><option value="dark" ${this._config.theme==="dark"?"selected":""}>Dunkel</option><option value="light" ${this._config.theme==="light"?"selected":""}>Hell</option></select></div><div><label>Strompreis in €/kWh</label><input type="number" min="0" step="0.01" data-kwh-price value="${cssEscape(this._config.kwh_price ?? "")}" placeholder="optional"></div></div></div>${sortedPrinters.map((p,idx) => {
       const cfg = resolveConfiguredPrinter(this._config, p.id);
       const selectedAms = new Set(Array.isArray(cfg.ams_device_ids) ? cfg.ams_device_ids : []);
       const autoAms = new Set((p.childDevices || []).map((d)=>d.id));
       const overrideFields = [
         ["status_entity","Status"], ["progress_entity","Fortschritt"], ["task_entity","Druckauftrag"],
-        ["remaining_time_entity","Restzeit"], ["nozzle_temp_entity","Düsentemperatur"], ["bed_temp_entity","Betttemperatur"],
+        ["remaining_time_entity","Restzeit"], ["end_time_entity","Endzeit"], ["nozzle_temp_entity","Düsentemperatur"], ["bed_temp_entity","Betttemperatur"],
         ["online_entity","Online-Status"], ["camera_entity","Kamera"], ["cover_image_entity","Druckbild / Cover"],
         ["current_layer_entity","Aktueller Layer"], ["total_layers_entity","Layer gesamt"], ["total_usage_entity","Gesamtlaufzeit"], ["speed_entity","Geschwindigkeit"],
         ["pause_entity","Pause-Button"], ["resume_entity","Fortsetzen-Button"], ["stop_entity","Stop-Button"], ["light_entity","Licht"],
@@ -1985,6 +2014,10 @@ class BambuLabDashboardEditor extends HTMLElement {
           <div class="entity-picker-wrap"><label>Leistungssensor</label><select data-field="power_entity">${measurementOptionHtml(cfg.power_entity || "", scorePower)}</select></div>
           <div class="entity-picker-wrap"><label>Energiesensor</label><select data-field="energy_entity">${measurementOptionHtml(cfg.energy_entity || "", scoreEnergy)}</select></div>
         </div><div class="custom-image-hint">Für die Steckdose werden alle <strong>switch.*</strong>-Entities angeboten; für Messwerte alle <strong>sensor.*</strong>-Entities. Dadurch werden Smart-Steckdosen-Sensoren nicht mehr durch einen zu engen Filter ausgeblendet.</div></div>
+        <div class="editor-sub"><label>Steuerung</label><div class="editor-row">
+          <div class="entity-picker-wrap"><label>Zusatzlicht</label><select data-field="secondary_light_entity">${lightOptionHtml(cfg.secondary_light_entity||"")}</select></div>
+          <div class="entity-picker-wrap"><label>Idle-Abschaltung</label><select data-field="idle_shutdown_entity">${switchOptionHtml(cfg.idle_shutdown_entity||"")}</select></div>
+        </div><div class="custom-image-hint">Optionales zweites Licht für die Quick Controls. Es werden alle <strong>light.*</strong>-Entities angeboten.</div></div>
         <div class="editor-sub"><label>Bereiche im Detail</label><div class="editor-checks">${[["ams","AMS"],["camera","Kamera"],["energy","Energie"],["maintenance","Wartung"]].map(([key,label])=>`<label class="check"><input type="checkbox" data-field="show_${key}" ${cfg[`show_${key}`] !== false ? "checked" : ""}> ${label}</label>`).join("")}</div></div>
         <div class="editor-sub"><label>AMS-Zuordnung</label><div class="help">Leer lassen = automatische Zuordnung über die Home-Assistant-Gerätehierarchie. Nur echte AMS-Geräte werden angeboten; ExternalSpool-/Tray-/Cache-Hilfsgeräte sind hier ausgefiltert.</div><div class="ams-editor">${amsCandidates.length ? amsCandidates.map((d)=>`<label class="check ams-option"><input type="checkbox" data-ams-device="${cssEscape(d.id)}" ${(selectedAms.size ? selectedAms.has(d.id) : false) ? "checked" : ""}> ${cssEscape(d.name_by_user || d.name || d.model || "AMS")}${autoAms.has(d.id) ? " <small>(automatisch erkannt)</small>" : ""}</label>`).join("") : `<span class="help">Keine echten AMS-Geräte in der Bambu-Integration gefunden.</span>`}</div></div>
         <details class="editor-sub" data-detail-key="entities-${cssEscape(p.id)}"><summary>Erweiterte Entity-Zuordnung</summary><div class="help">Nur verwenden, wenn ein automatisch erkannter Wert falsch ist. Damit lassen sich z. B. Fortschritt, Status oder Auftrag eines Druckers eindeutig auf eine bestimmte Home-Assistant-Entity festlegen.</div><div class="entity-override-grid">${overrideFields.map(([field,label])=>`<label>${label}<input type="text" list="all-entity-ids" data-field="${field}" value="${cssEscape(cfg[field] || "")}" placeholder="automatisch"></label>`).join("")}</div></details>
