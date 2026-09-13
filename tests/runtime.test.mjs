@@ -47,7 +47,7 @@ assert.equal(card._themeClass(),'theme-dark');
 card._config.theme='light'; assert.equal(card._themeClass(),'theme-light');
 assert.match(card._renderPrinterOverviewCard(printer),/42<span>%<\/span>/);
 assert.match(card._renderPrinterOverviewCard(printer),/Endzeit/);
-assert.match(card._renderPrinterOverviewCard(printer),/09\.09\.2026/);
+assert.match(card._renderPrinterOverviewCard(printer),/09\.09\.26, 18:30/);
 const controls=card._renderControls(printer); assert.match(controls,/Pause/); assert.match(controls,/Düse Soll/); assert.match(controls,/Bauteillüfter/); assert.match(controls,/Druckgeschwindigkeit/); assert.match(controls,/Schreibzugriffe sind für diesen Drucker eingeschränkt/);
 assert.match(controls,/>Licht 2<.*>EIN<\/strong>/); assert.match(controls,/light\.p_extra/); assert.match(controls,/mdi:lightbulb/); assert.match(controls,/control-state/);
 card._hass.states['light.p_extra'].state='off';
