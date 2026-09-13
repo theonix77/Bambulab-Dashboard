@@ -2,6 +2,13 @@
 
 ## 1.8.3
 
+- Optionales zweites Licht pro Drucker ergänzt; frei zuordenbar und in den Quick Controls steuerbar.
+- Druck-Endzeit in der Druckerübersicht ergänzt; automatische Erkennung über `end_time` bzw. manuelle Zuordnung möglich.
+- Optionale Idle-/Leerlaufabschaltung über einen frei zuordenbaren `input_boolean` ergänzt.
+- Licht und zweites Licht zeigen ihren aktuellen EIN/AUS-Status direkt in den Quick Controls und werden bei aktivem Zustand hervorgehoben.
+- Runtime-Tests für Endzeit, zweites Licht, Idle-Shutdown und Lichtstatus erweitert.
+- Endzeit-Test robust auf die deutsche Home-Assistant-Locale abgestimmt.
+- Automatischer GitHub-Release-Workflow ergänzt: Änderungen aus diesem Changelog werden künftig als Release Notes veröffentlicht, damit HACS Versionsupdates und Änderungsinformationen sauber anzeigen kann.
 - Deutsch/Englisch vollständig gegen die tatsächlich sichtbaren Dashboard-, Editor-, Popup-, Wartungs- und Bestätigungstexte gegengeprüft und fehlende englische Übersetzungen ergänzt.
 - Neue modellabhängige Wartungstexte für A1, A1 mini, A2L, P1/P2, X1, H2/H2S, X2D und den sicheren Generic-Fallback vollständig in die englische Oberfläche aufgenommen.
 - Smart-Steckdosen-Sicherheitsabfrage folgt jetzt ebenfalls der Home-Assistant-Sprache.
@@ -29,7 +36,7 @@
 - Dashboard-Oberfläche automatisch zweisprachig: Deutsch bei deutscher Home-Assistant-Sprache, Englisch bei englischer bzw. sonstiger Sprache als Fallback; Datumsformat passt sich an.
 - Wartung vollständig modellabhängig: Profil wird automatisch aus dem von `ha-bambulab` gemeldeten Druckermodell gewählt.
 - Abdeckung der aktuell von `ha-bambulab` gelisteten Modelle A1, A1 mini, A2L, P1P, P1S, P2S, H2C, H2D, H2D Pro, H2S, X1, X1C, X1E und X2D.
-- Keine Übernahme von X2D-Intervallen auf andere Modelle; Kalendertermine nur bei verifiziertem modellbezogenem Herstellerintervall.
+- Keine Übernahme von X2D-Intervallen auf andere Modelle; Kalendertermine nur bei verifiziertem modellbezogenen Herstellerintervall.
 - Unbekannte zukünftige Modelle erhalten einen sicheren allgemeinen Fallback ohne erfundene Fristen.
 - Wartungsseite zeigt das automatisch gewählte Modell-/Familienprofil an.
 - Wartungsbuttons mit Hover-/Active-/Focus-Feedback und sichtbarer Bestätigung nach Quittierung.
