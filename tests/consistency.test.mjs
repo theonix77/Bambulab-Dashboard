@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
-const current = "1.8.3";
-const oldVersions = ["1.3.0","1.4.0","1.5.0","1.6.0","1.6.1","1.6.2","1.6.3","1.7.0","1.7.1","1.8.0","1.8.1","1.8.2"];
+const current = "1.8.4";
+const oldVersions = ["1.3.0","1.4.0","1.5.0","1.6.0","1.6.1","1.6.2","1.6.3","1.7.0","1.7.1","1.8.0","1.8.1","1.8.2","1.8.3"];
 const textExt = new Set([".js",".mjs",".md",".json",".yaml",".yml",".svg"]);
 
 function walk(dir) {
