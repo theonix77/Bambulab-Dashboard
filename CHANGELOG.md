@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.4
+
+- Mobile Scroll-Stabilisierung überarbeitet: vollständige Shadow-DOM-Neuaufbauten werden während Touch-, Scroll- und Momentum-Scroll-Interaktionen blockiert und anschließend gebündelt nachgeholt.
+- Die 60-Sekunden-Geräteerkennung verwendet jetzt denselben Render-Guard wie Live-State-Updates und kann beim Scrollen keinen ungeschützten Full-Render mehr auslösen.
+- Alte Scrollpositions-Wiederherstellung per nachträglichem `scrollTo` entfernt, um sichtbare Sprünge auf mobilen Browsern/WebViews zu vermeiden.
+- Home-Assistant-Karteneditor/Adminbereich bleibt von Live-State-Neuaufbauten getrennt und bewahrt geöffnete Bereiche sowie seine interne Scrollposition.
+- Regressionstests für den neuen Mobile-/Admin-Render-Schutz ergänzt.
+
 ## 1.8.3
 
 - Optionales zweites Licht pro Drucker ergänzt; frei zuordenbar und in den Quick Controls steuerbar.
