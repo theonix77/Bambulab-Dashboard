@@ -1,6 +1,6 @@
-/* Bambu Lab Dashboard v1.8.3 | standalone HACS resource */
+/* Bambu Lab Dashboard v1.8.4 | standalone HACS resource */
 
-const VERSION = "1.8.3";
+const VERSION = "1.8.4";
 const DOMAIN = "bambu_lab";
 
 
