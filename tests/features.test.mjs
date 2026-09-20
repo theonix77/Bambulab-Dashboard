@@ -71,7 +71,7 @@ assert.match(code,/data-maint-log-delete/);
 assert.match(code,/data-maint-log-clear/);
 assert.match(code,/maintenance-summary/);
 
-// v1.8.3: maintenance must be selected by the detected model, never globally from X2D.
+// Maintenance must be selected by the detected model, never globally from X2D.
 for (const model of ["A1","A1MINI","A2L","P1P","P1S","P2S","H2C","H2D","H2DPRO","H2S","X1","X1C","X1E","X2D"]) {
   assert.ok(code.includes(`\"${model}\"`), `maintenance/model support missing: ${model}`);
 }
