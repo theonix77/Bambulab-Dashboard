@@ -33,7 +33,7 @@ Die Gesamtlaufzeit ist nur Information und löst keine Wartung aus. Hersteller-/
 type: custom:bambu-lab-dashboard
 ```
 
-## Funktionen in v1.8.3
+## Funktionen in v1.8.4
 
 - Mehrere Bambu-Drucker automatisch erkennen.
 - Übersicht mit Status, Fortschritt, Restzeit, Temperaturen, AMS-Anzahl und Gesamtlaufzeit.
@@ -109,7 +109,7 @@ Nach dem Quittieren einer Wartung erscheint eine sichtbare Bestätigung. Die War
 
 ## Sprache / Language
 
-Die Dashboard-Oberfläche übernimmt automatisch die Sprache von Home Assistant. Deutsch wird als Deutsch dargestellt; Englisch sowie derzeit nicht separat übersetzte Home-Assistant-Sprachen verwenden Englisch als Fallback. Übersetzt werden Navigation, Übersicht, Druckerdetails, Steuerung, Kamera/AMS, Energie, Wartungsprofile und -hinweise, Wartungsbuch, Popups, Sicherheitsabfragen sowie der Karteneditor. Datumsangaben wechseln ebenfalls zwischen deutschem und englischem Format. Die Entity-Namen und bestimmte Zustände der Bambu-Integration selbst bleiben davon getrennt und richten sich nach Home Assistant bzw. der Integration. Ab v1.8.3 wird diese Abdeckung zusätzlich durch einen eigenen i18n-Test geprüft.
+Die Dashboard-Oberfläche übernimmt automatisch die Sprache von Home Assistant. Deutsch wird als Deutsch dargestellt; Englisch sowie derzeit nicht separat übersetzte Home-Assistant-Sprachen verwenden Englisch als Fallback. Übersetzt werden Navigation, Übersicht, Druckerdetails, Steuerung, Kamera/AMS, Energie, Wartungsprofile und -hinweise, Wartungsbuch, Popups, Sicherheitsabfragen sowie der Karteneditor. Datumsangaben wechseln ebenfalls zwischen deutschem und englischem Format. Die Entity-Namen und bestimmte Zustände der Bambu-Integration selbst bleiben davon getrennt und richten sich nach Home Assistant bzw. der Integration. Ab v1.8.4 wird diese Abdeckung zusätzlich durch einen eigenen i18n-Test geprüft.
 
 ## Smart-Steckdose / Energie
 
