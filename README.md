@@ -33,6 +33,14 @@ Die Gesamtlaufzeit ist nur Information und löst keine Wartung aus. Hersteller-/
 type: custom:bambu-lab-dashboard
 ```
 
+## Änderungen / Fehlerbehebungen in v1.8.4
+
+- **Mobile Scroll-Zuckeln behoben:** Während Touch-, Scroll- und Momentum-Scroll-Vorgängen wird kein vollständiger Neuaufbau des Dashboard-Shadow-DOM mehr ausgeführt.
+- **Ungewolltes Hochspringen der Seite behoben:** Die frühere nachträgliche Wiederherstellung der Scrollposition per `scrollTo` wurde entfernt; Aktualisierungen werden stattdessen während der Bedienung zurückgestellt und anschließend gebündelt ausgeführt.
+- **60-Sekunden-Aktualisierung abgesichert:** Die automatische Geräte-Neuerkennung darf während einer laufenden Touch-/Scroll-Interaktion keinen ungeschützten Full-Render mehr auslösen.
+- **Home-Assistant-Admin/Karteneditor stabilisiert:** Live-State-Aktualisierungen bauen den Editor nicht neu auf; bei notwendigen Konfigurations-Neuaufbauten bleiben geöffnete Bereiche und die interne Scrollposition erhalten.
+- **Regressionstests erweitert:** Tests sichern den neuen Mobile-/Admin-Render-Schutz ab und verhindern die Wiedereinführung der alten Scroll-Restore-Logik.
+
 ## Funktionen in v1.8.4
 
 - Mehrere Bambu-Drucker automatisch erkennen.
