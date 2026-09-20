@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import assert from "node:assert/strict";
 const code=fs.readFileSync(new URL("../Bambulab-Dashboard.js", import.meta.url),"utf8");
-assert.match(code,/const VERSION = "1\\.8\\.4"/);
+assert.match(code,/const VERSION = "1\.8\.4"/);
 assert.match(code,/_isInCardPicker/);
 assert.match(code,/preview: true/);
 assert.match(code,/data-open-printer=/);
